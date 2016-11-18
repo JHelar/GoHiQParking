@@ -1,0 +1,50 @@
+<html lang="en">
+    <head>
+        <meta name="description" content="GoHiQParking for your hiq parking needs.">
+        <meta name="author" content="HiQÖrebro">
+        <meta charset="UTF-8">
+        <meta name="keywords" content="web,golang,parking,hiqörebro,html5,css">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta property="og:title" content="HiQParking">
+        <!--<meta property="og:image" content="link_to_image">-->
+        <meta property="og:description" content="HiQParking för HiQÖrebro">
+        {{block "links" .}}{{end}}
+        <title>{{block "title" .}}HiQParking{{end}}</title>
+    </head>
+    <body>
+        <!--[if lt IE 8]> <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p> <![endif]-->
+        <header>
+            <nav class="navbar navbar-inverse">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">HiQParking</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="myNavbar">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main class="container">
+            <div class="clearfix">
+                {{block "main" .}}{{end}}
+            </div>
+        </main>
+        <footer class="wrapper">
+            <div class="container">
+                {{block "footer" .}}{{end}}
+            </div>
+        </footer>
+        <script type="text/javascript" src="/public/general/helpers.js"></script>
+        {{block "scripts" . }}{{end}}
+    </body>
+</html>

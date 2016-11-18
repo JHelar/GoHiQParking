@@ -19,20 +19,20 @@ type member struct {
 	Value reflect.Value
 }
 
-func getTableInfo(table interface{}) (string, []member) {
+func getDataInfo(table interface{}) (string, []member) {
 
 	t := reflect.TypeOf(table).Elem()
 	v := reflect.ValueOf(table).Elem()
 
 	members := make([]member, 0)
-	tableName := t.Name() + "s"
+	name := t.Name()
 
 	for i := 0; i < v.NumField(); i++{
 		valueField := v.Field(i)
 		typeField := v.Type().Field(i)
 		members = append(members, member{Name:typeField.Name, Value:valueField})
 	}
-	return tableName, members
+	return name, members
 }
 
 func setTableValues(table interface{}, values [][]byte){
@@ -61,6 +61,7 @@ func setReflectValues(t reflect.Value, values [][]byte){
 				field.SetBool(b)
 				break
 			default:
+				field.Set(reflect.Zero(reflect.TypeOf(nil)))
 				log.Printf("Could not determine value type: %v", field.Kind())
 			}
 		}else{
@@ -91,7 +92,9 @@ Table name is determined by the given interface (struct name) with a 's' appende
 The data is then inserted to the table, returns success state.
 */
 func Create(db *sql.DB, data interface{}) bool {
-	tableName, members := getTableInfo(data)
+	tableName, members := getDataInfo(data)
+	tableName += "s"
+
 	names := getMemberNames(members)
 	values := getMemberValues(members)
 
@@ -115,9 +118,11 @@ func Create(db *sql.DB, data interface{}) bool {
 /*
 Reads and returns the first row that satisfies the data's first member value.
 The data is read and inserted to the given passed by reference, interface.
+SelectName and SelectValue is optional, if nil the first datamember in data will be user as selector.
 */
-func Read(db *sql.DB, data interface{}) bool {
-	tableName,members := getTableInfo(data)
+func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue interface{}) bool {
+	tableName,members := getDataInfo(data)
+	tableName += "s"
 
 	values := make([]interface{}, len(members))
 	bytes := make([][]byte, len(members))
@@ -126,14 +131,27 @@ func Read(db *sql.DB, data interface{}) bool {
 		values[i] = &bytes[i]
 	}
 
+	var queryStr string
+	var row *sql.Row
 
-	queryStr := fmt.Sprintf("SELECT * FROM %v WHERE %v = ?", tableName, members[0].Name)
-	row := db.QueryRow(queryStr, members[0].Value.Interface())
+	if(selectName == nil || selectValue == nil) {
+		queryStr = fmt.Sprintf("SELECT * FROM %v WHERE %v = ?", tableName, members[0].Name)
+		row = db.QueryRow(queryStr, members[0].Value.Interface())
+	}else{
+		queryStr = fmt.Sprintf("SELECT * FROM %v WHERE %v = ?", tableName, selectName)
+		row = db.QueryRow(queryStr, selectValue)
+	}
 
 	err := row.Scan(values...)
-	if err != nil {
-		log.Panic(err)
+	switch {
+	case err == sql.ErrNoRows:
+		log.Print("No rows found.")
 		return false
+	case err != nil:
+		log.Print("Something went wrong in crud Read")
+		return false
+	default:
+		break
 	}
 	setTableValues(data, bytes)
 	return true
@@ -141,7 +159,9 @@ func Read(db *sql.DB, data interface{}) bool {
 
 func ReadAll(db *sql.DB, dataType interface{}) ([]interface{},bool) {
 
-	tableName, members := getTableInfo(dataType)
+	tableName, members := getDataInfo(dataType)
+	tableName += "s"
+
 	queryStr := fmt.Sprintf("SELECT * FROM %v", tableName)
 
 	rows,err := db.Query(queryStr)
@@ -168,7 +188,7 @@ func ReadAll(db *sql.DB, dataType interface{}) ([]interface{},bool) {
 		default:
 			t := reflect.New(reflect.TypeOf(dataType).Elem()).Elem()
 			setReflectValues(t, bytes)
-			datas = append(datas, t)
+			datas = append(datas, t.Interface())
 		}
 	}
 	return datas, true
@@ -178,7 +198,9 @@ Updates the first row that satisfies the data's first member.
 The row is updated by the data given by the interface.
 */
 func Update(db *sql.DB, data interface{}) bool {
-	tableName, members := getTableInfo(data)
+	tableName, members := getDataInfo(data)
+	tableName += "s"
+
 	names := getMemberNames(members)
 	values := getMemberValues(members)
 
@@ -207,7 +229,9 @@ func Update(db *sql.DB, data interface{}) bool {
 Deletes the first row that satisfies the data's first member value.
 */
 func Delete(db *sql.DB, data interface{}) bool {
-	tableName, members := getTableInfo(data)
+	tableName, members := getDataInfo(data)
+	tableName += "s"
+
 	stmtStr := fmt.Sprintf("DELETE FROM %v WHERE %v = ?", tableName, members[0].Name)
 
 	stmt, err := db.Prepare(stmtStr)

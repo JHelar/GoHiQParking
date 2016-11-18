@@ -25,37 +25,13 @@ func (db *HiQDb) MustPing() bool {
 	return true
 }
 
-func (db *HiQDb) MustPrepare(query string) *sql.Stmt {
-	stmt, err := db.Prepare(query)
-	if err != nil {
-		log.Panic(err)
-		return nil
+func (db *HiQDb) MustClose() {
+	flareLog("Closing...")
+	err := db.Close()
+	if err != nil{
+		flareLog(err)
 	}
-	return stmt
-}
-
-func (db *HiQDb) MustQuery(query string, args ...interface{}) *sql.Rows{
-	var rows *sql.Rows
-	var err error
-	if len(args) > 0 {
-		rows, err = db.Query(query, args...)
-	}else{
-		rows, err = db.Query(query)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-	return rows
-}
-
-func (db HiQDb) MustQueryRow(query string, args ...interface{}) *sql.Row {
-	var row *sql.Row
-	if len(args) > 0{
-		row = db.QueryRow(query, args...)
-	}else{
-		row = db.QueryRow(query)
-	}
-	return row
+	flareLog("Closed")
 }
 
 func New(dbSource string) *HiQDb {

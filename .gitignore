@@ -50,3 +50,6 @@ gen
 pkg
 src/github.com
 src/golang.org
+
+public/bootstrap
+public/jQuery
