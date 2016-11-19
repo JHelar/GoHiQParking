@@ -12,6 +12,7 @@ import (
 )
 
 type JSpot struct {
+	JResponse
 	ID   int `json:"id"`
 	Name string `json:"name"`
 	IsParked bool `json:"isparked"`
@@ -19,17 +20,32 @@ type JSpot struct {
 }
 
 type JSession struct {
+	JResponse
 	Key string `json:"sessionkey"`
 }
 
 type JUser struct {
+	JResponse
 	ID int `json:"id"`
 	UserName string `json:"username"`
 	Parked time.Time `json:"parked"`
 }
 
-const GENERAL_ERROR_MSG = "{'error':true,'message':'Something went wrong, try again later!'}"
-const MAIL_IN_USE_MSG = "{'error':true,'message':'Email allready in user!'}"
+type JResponse struct {
+	Error bool `json:"error"`
+	Message string `json:"message"`
+}
+
+var MAIL_IN_USE_MSG = JResponse{
+	Error:true,
+	Message:"Email allready in use!",
+}
+
+var GENERAL_ERROR_MSG = JResponse{
+	Error:true,
+	Message:"Something went wrong, try again later!",
+}
+
 
 func AsJson(data interface{}) string {
 	dataVal := reflect.ValueOf(data)
@@ -40,16 +56,16 @@ func AsJson(data interface{}) string {
 		for i := 0; i < dataVal.Len(); i++ {
 			dArr[i] = asJson(dataVal.Index(i).Interface())
 		}
-		return toJson(true, dArr)
+		return toJson(dArr)
 	case reflect.Struct:
 		d := asJson(data)
-		return toJson(true, d)
+		return toJson(d)
 	case reflect.String:
-		return toJson(false, data)
+		return toJson(JResponse{Error:false, Message:data.(string)})
 	default:
 		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", dataVal.Kind())
 		log.Printf(err)
-		return toJson(false, "'message':'"+ err +"'")
+		return toJson(JResponse{Error:true,Message:"'message':'"+ err +"'"})
 	}
 }
 
@@ -70,28 +86,31 @@ func asJson(data interface{}) interface{}{
 		return spotToJSpot(data.(spot.Spot))
 	case "UserSession":
 		return sessionToJSession(data.(session.UserSession))
+	case "JResponse":
+		return data
 	default:
 		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", dataType.String())
 		return fmt.Sprintf("Bad kind of data: %v", err)
 	}
 }
 
-func toJson(success bool , data interface{}) string {
+func toJson(data interface{}) string {
 	type Payload struct {
-		Success bool `json:"success"`
 		Data interface{} `json:"data"`
 	}
-	j, _ := json.MarshalIndent(Payload{Success:success,Data:data}, "", "")
+	j, _ := json.MarshalIndent(Payload{Data:data}, "", "")
 	return string(j)
 }
 func sessionToJSession(session session.UserSession) JSession {
-	return JSession{Key:session.SessionKey}
+	return JSession{Key:session.SessionKey,JResponse:JResponse{Error:false}}
 }
 func spotToJSpot(spot spot.Spot) JSpot {
 	js := JSpot{
 		ID:spot.ID,
 		Name:spot.Name,
 		IsParked:spot.IsParked,
+		JResponse:JResponse{Error:false},
+
 	}
 	if js.IsParked {
 		//TODO: INSERT USER.

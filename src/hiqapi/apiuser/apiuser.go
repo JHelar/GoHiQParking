@@ -22,10 +22,10 @@ func register(w http.ResponseWriter, r *http.Request, nope *user.User){
 	}{}
 	hiqjson.Parse(r.Body,&data)
 	if user, ok := user.Create(db, data.Email, data.Username, data.Password); ok {
-		ses, _ := session.NewUserSession(db, user.ID)
+		ses, _ := session.NewUserSession(db, *user.ID)
 		fmt.Fprintf(w, hiqjson.AsJson(*ses))
 	}else{
-		fmt.Fprintf(w, hiqjson.MAIL_IN_USE_MSG)
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.MAIL_IN_USE_MSG))
 	}
 }
 

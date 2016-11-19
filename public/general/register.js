@@ -7,22 +7,22 @@ function submit(){
     if(validateEmail(email)){
         console.log(email);
         var username = $('#username').val();
-        var password = $('#password').val();
+        var password = $('#pwd').val();
         var data = {
             email:email,
             username:username,
             password:password,
         };
         $.post('/api/user/register',JSON.stringify(data), function(e){
-            if(e.success){
-                createCookie("skey",e.data.sessionkey);
+            if(!e.data.error){
+                createCookie("skey",e.data.sessionkey,365);
                 window.location.href = '/';
             }else{
-                $('#warning').innerHTML = e.data.message;
+                document.getElementById('warning').innerHTML = e.data.message;
             }
         },'json');
     }else{
-        $('#warning').innerHTML = "Wrong mail format";
+        document.getElementById('warning').innerHTML = "Wrong mail format";
     }
     return false;
 }

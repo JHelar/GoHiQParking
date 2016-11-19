@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	ID int
+	ID *int
 	Email string
 	Username string
 	Salt string
@@ -35,20 +35,23 @@ func GetByLogin(db *hiqdb.HiQDb, email, password string) (*User, bool) {
 
 func Create(db *hiqdb.HiQDb, email, username, password string) (*User, bool) {
 	//If email is not in use, continue
+
 	if ok := crud.Read(db.DB, &User{Email:email}, "Email", email); !ok{
 		salt, saltedPassword := hiqsecurity.NewSaltedPassword(password)
 		user := User{
+			ID:nil,
 			Email:email,
 			Username:username,
 			Salt:salt,
 			Password:saltedPassword,
+			Created:time.Now(),
 		}
 		if ok = crud.Create(db.DB, &user); ok {
 			ok = crud.Read(db.DB, &user, "Email", user.Email)
 			return &user, ok
 		}
 	}else{
-		log.Printf("Mail is allready in user: %v", email)
+		log.Printf("Mail is allready in use: %v", email)
 	}
 	return nil, false
 }

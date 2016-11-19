@@ -12,6 +12,7 @@ import (
 	"log"
 	"strconv"
 	"database/sql"
+	"time"
 )
 
 type member struct {
@@ -19,7 +20,7 @@ type member struct {
 	Value reflect.Value
 }
 
-func getDataInfo(table interface{}) (string, []member) {
+func getDataInfo(table interface{}, includeNil bool) (string, []member) {
 
 	t := reflect.TypeOf(table).Elem()
 	v := reflect.ValueOf(table).Elem()
@@ -29,8 +30,10 @@ func getDataInfo(table interface{}) (string, []member) {
 
 	for i := 0; i < v.NumField(); i++{
 		valueField := v.Field(i)
-		typeField := v.Type().Field(i)
-		members = append(members, member{Name:typeField.Name, Value:valueField})
+		if valueField.Interface() != nil || includeNil {
+			typeField := v.Type().Field(i)
+			members = append(members, member{Name:typeField.Name, Value:valueField})
+		}
 	}
 	return name, members
 }
@@ -60,8 +63,30 @@ func setReflectValues(t reflect.Value, values [][]byte){
 				b, _ := strconv.ParseBool(val)
 				field.SetBool(b)
 				break
+			case reflect.Struct:
+				log.Printf("Time struct val: %v", val)
+				structName := reflect.TypeOf(field.Interface()).Name()
+				switch structName {
+				case "Time":
+					t,err := time.Parse(time.RFC3339Nano, val)
+					if err != nil {
+						log.Print(err)
+					}else{
+						field.Set(reflect.ValueOf(t))
+					}
+
+				default:
+
+				}
+				break
+			case reflect.Ptr:
+				log.Printf("Pointer, kind: %v", field.Type().String())
+				if field.Type().String() == "*int"{
+					x, _ := strconv.Atoi(val)
+					field.Set(reflect.ValueOf(&x))
+				}
 			default:
-				field.Set(reflect.Zero(reflect.TypeOf(nil)))
+				//field.Set(reflect.Zero(reflect.TypeOf(nil)))
 				log.Printf("Could not determine value type: %v", field.Kind())
 			}
 		}else{
@@ -92,7 +117,9 @@ Table name is determined by the given interface (struct name) with a 's' appende
 The data is then inserted to the table, returns success state.
 */
 func Create(db *sql.DB, data interface{}) bool {
-	tableName, members := getDataInfo(data)
+	log.Print("CRUD CREATE START------------------------------")
+	tableName, members := getDataInfo(data, false)
+	log.Print("CRUD CREATE DONE------------------------------")
 	tableName += "s"
 
 	names := getMemberNames(members)
@@ -121,7 +148,7 @@ The data is read and inserted to the given passed by reference, interface.
 SelectName and SelectValue is optional, if nil the first datamember in data will be user as selector.
 */
 func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue interface{}) bool {
-	tableName,members := getDataInfo(data)
+	tableName,members := getDataInfo(data, true)
 	tableName += "s"
 
 	values := make([]interface{}, len(members))
@@ -159,7 +186,7 @@ func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue inte
 
 func ReadAll(db *sql.DB, dataType interface{}) ([]interface{},bool) {
 
-	tableName, members := getDataInfo(dataType)
+	tableName, members := getDataInfo(dataType, true)
 	tableName += "s"
 
 	queryStr := fmt.Sprintf("SELECT * FROM %v", tableName)
@@ -198,7 +225,7 @@ Updates the first row that satisfies the data's first member.
 The row is updated by the data given by the interface.
 */
 func Update(db *sql.DB, data interface{}) bool {
-	tableName, members := getDataInfo(data)
+	tableName, members := getDataInfo(data, false)
 	tableName += "s"
 
 	names := getMemberNames(members)
@@ -229,7 +256,7 @@ func Update(db *sql.DB, data interface{}) bool {
 Deletes the first row that satisfies the data's first member value.
 */
 func Delete(db *sql.DB, data interface{}) bool {
-	tableName, members := getDataInfo(data)
+	tableName, members := getDataInfo(data, false)
 	tableName += "s"
 
 	stmtStr := fmt.Sprintf("DELETE FROM %v WHERE %v = ?", tableName, members[0].Name)
