@@ -3,6 +3,8 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+//ToDo: Fix datetime show.
 class Spot extends React.Component{
     constructor(props){
         super(props);
@@ -46,6 +48,7 @@ class Spot extends React.Component{
     }
 }
 
+//ToDO: Fix the spot toggle.
 class App extends React.Component {
     constructor(props){
         super(props);
