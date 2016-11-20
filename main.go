@@ -31,6 +31,16 @@ func register(w http.ResponseWriter, r *http.Request){
 	}
 }
 
+func login(w http.ResponseWriter, r *http.Request){
+	tmp, err := template.ParseFiles("templates/layout.gohtml", "templates/login.gohtml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err = tmp.Execute(w, nil); err != nil {
+		log.Fatal(err)
+	}
+}
+
 var db *hiqdb.HiQDb
 var mux *http.ServeMux
 var api *hiqapi.ApiMaster
@@ -43,6 +53,7 @@ func main(){
 
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/register", register)
+	mux.HandleFunc("/login", login)
 
 	//apispot.Start(db, mux)
 	api = hiqapi.Start(db, mux)

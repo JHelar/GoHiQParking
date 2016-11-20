@@ -56,7 +56,7 @@ func GenerateSessionKey() string{
 
 //Resturns empty string if cookie not found.
 func GetSessionKeyFromHeader(r *http.Request)  (string, error) {
-	session, err := r.Cookie("sKey")
+	session, err := r.Cookie("skey")
 	if err != nil {
 		return "", fmt.Errorf("No session key found")
 	}

@@ -15,25 +15,32 @@ const FLARE = "HiQSpotApi:"
 
 func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	var jspots = make([]hiqjson.JSpot, 0)
-	for _,spot := range spot.GetAll(db){
+	var userSpot *spot.Spot
+
+	if myUser != nil {
+		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
+	}
+	for _,s := range spot.GetAll(db){
 		jspot := hiqjson.JSpot{
-			ID:spot.ID,
-			Name: spot.Name,
-			IsParked: spot.IsParked,
+			ID:s.ID,
+			Name: s.Name,
+			IsParked: s.IsParked,
 			CanModify:false,
 			JResponse: hiqjson.JResponse{Error:false},
 		}
+
 		if myUser != nil{
-			jspot.CanModify = (spot.IsParked && spot.ParkedBy == *myUser.ID) || !spot.IsParked
+			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
 		}
-		if spot.IsParked{
-			usr := user.User{ID:&spot.ParkedBy}
+		if s.IsParked{
+			usr := user.User{ID:&s.ParkedBy}
 			if err := user.Get(db, &usr); err == nil {
 				jspot.ParkedBy = usr.Username
 			}else{
 				log.Printf("%v %v", FLARE, err)
 			}
 		}
+		
 		jspots = append(jspots, jspot)
 	}
 	fmt.Fprintf(w, hiqjson.AsJson(jspots))

@@ -55,28 +55,32 @@ func GetByLogin(db *hiqdb.HiQDb, emailusername, password string) (*User, error) 
 }
 
 func Create(db *hiqdb.HiQDb, email, username, password string) (*User, error) {
-	//If email is not in use, continue
+	//If email and username is not in use, continue
 
-	if ok := crud.Read(db.DB, &User{Email:email}, "Email", email); !ok{
-		salt, saltedPassword := hiqsecurity.NewSaltedPassword(password)
-		user := User{
-			ID:nil,
-			Email:email,
-			Username:username,
-			Salt:salt,
-			Password:saltedPassword,
-			Created:time.Now(),
-		}
-		if ok = crud.Create(db.DB, &user); ok {
-			if crud.Read(db.DB, &user, "Email", user.Email){
-				return &user, nil
-			}else{
+	if !crud.Read(db.DB, &User{}, "Email", email) {
+		if !crud.Read(db.DB, &User{}, "Username", username) {
+			salt, saltedPassword := hiqsecurity.NewSaltedPassword(password)
+			user := User{
+				ID:nil,
+				Email:email,
+				Username:username,
+				Salt:salt,
+				Password:saltedPassword,
+				Created:time.Now(),
+			}
+			if crud.Create(db.DB, &user) {
+				if crud.Read(db.DB, &user, "Email", user.Email) {
+					return &user, nil
+				} else {
+					return nil, fmt.Errorf("Something went wrong try again later.")
+				}
+			} else {
 				return nil, fmt.Errorf("Something went wrong try again later.")
 			}
 		}else{
-			return nil, fmt.Errorf("Something went wrong try again later.")
+			return nil, fmt.Errorf("The username is allready in use.")
 		}
 	}else{
-		return nil, fmt.Errorf("The email is allready in user.")
+		return nil, fmt.Errorf("The email is allready in use.")
 	}
 }

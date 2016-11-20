@@ -63,10 +63,22 @@ func AsJson(data interface{}) string {
 		return toJson(d)
 	case reflect.String:
 		return toJson(JResponse{Error:false, Message:data.(string)})
+	case reflect.Interface:
+		d := asJson(data)
+		return toJson(d)
+	case reflect.Ptr:
+		switch data.(type) {
+		case error:
+			d := asJson(data)
+			return toJson(d)
+		default:
+			err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
+			return toJson(JResponse{Error:true,Message:err.Error()})
+		}
 	default:
-		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", dataVal.Kind())
-		log.Printf(err)
-		return toJson(JResponse{Error:true,Message:"'message':'"+ err +"'"})
+		err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
+
+		return toJson(JResponse{Error:true,Message:err.Error()})
 	}
 }
 
@@ -81,20 +93,20 @@ func Parse(body io.ReadCloser, receiver interface{}){
 }
 
 func asJson(data interface{}) interface{}{
-	dataType := reflect.TypeOf(data)
-	switch dataType.Name() {
-	case "Spot":
+	switch t := data.(type) {
+	case spot.Spot:
 		return spotToJSpot(data.(spot.Spot))
-	case "UserSession":
+	case session.UserSession:
 		return sessionToJSession(data.(session.UserSession))
-	case "JResponse":
+	case JResponse:
 		return data
-	case "JSpot":
+	case JSpot:
 		return data
-	case "error":
+	case error:
 		return JResponse{Error:true, Message:data.(error).Error()}
 	default:
-		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", dataType.String())
+		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", t)
+		log.Print(err)
 		return fmt.Sprintf("Bad kind of data: %v", err)
 	}
 }
