@@ -14,8 +14,20 @@ class Spot extends React.Component{
         this.handleToggle = this.handleToggle.bind(this);
     }
     handleToggle(){
-        this.state.spot.isParked = !this.state.spot.isParked;
-
+        var data = {
+            id: this.state.spot.id
+        };
+        var _this = this;
+        $.post('/api/spot/toggle', JSON.stringify(data), function (e) {
+            if(!e.data.error){
+                document.getElementById('warning').innerHTML = "";
+                _this.setState({
+                    spot:e.data
+                });
+            }else{
+                document.getElementById('warning').innerHTML = e.data.message;
+            }
+        }, 'json');
         this.setState((oldState) => ({
             spot: oldState.spot
         }));
@@ -24,10 +36,10 @@ class Spot extends React.Component{
     render(){
         return (
             <div className="col-md-6 col-sm-6 col-xs-6">
-                <div className={this.state.spot.isParked ? "panel panel-danger" : "panel panel-success"}>
+                <div className={this.state.spot.isparked ? "panel panel-danger" : "panel panel-success"}>
                     <div className="panel-heading">{this.state.spot.name}</div>
-                    <div className="panel-body">{this.state.spot.isParked ? "Upptagen" : "Ledig"}</div>
-                    {this.state.spot.canmodify && <button onClick={this.handleToggle} className="btn btn-primary btn-block btn-lg">{this.state.spot.isParked ? "Lämna" : "Parkera"}</button>}
+                    <div className="panel-body">{this.state.spot.isparked ? "Upptagen" : "Ledig"}</div>
+                    {this.state.spot.canmodify && <button onClick={this.handleToggle} className="btn btn-primary btn-block btn-lg">{this.state.spot.isparked ? "Lämna" : "Parkera"}</button>}
                 </div>
             </div>
         );

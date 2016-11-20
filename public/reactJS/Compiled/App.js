@@ -20457,21 +20457,33 @@ var Spot = function (_React$Component) {
     function Spot(props) {
         _classCallCheck(this, Spot);
 
-        var _this = _possibleConstructorReturn(this, (Spot.__proto__ || Object.getPrototypeOf(Spot)).call(this, props));
+        var _this2 = _possibleConstructorReturn(this, (Spot.__proto__ || Object.getPrototypeOf(Spot)).call(this, props));
 
-        _this.state = {
+        _this2.state = {
             spot: props.spot,
             isLogged: true
         };
-        _this.handleToggle = _this.handleToggle.bind(_this);
-        return _this;
+        _this2.handleToggle = _this2.handleToggle.bind(_this2);
+        return _this2;
     }
 
     _createClass(Spot, [{
         key: 'handleToggle',
         value: function handleToggle() {
-            this.state.spot.isParked = !this.state.spot.isParked;
-
+            var data = {
+                id: this.state.spot.id
+            };
+            var _this = this;
+            $.post('/api/spot/toggle', JSON.stringify(data), function (e) {
+                if (!e.data.error) {
+                    document.getElementById('warning').innerHTML = "";
+                    _this.setState({
+                        spot: e.data
+                    });
+                } else {
+                    document.getElementById('warning').innerHTML = e.data.message;
+                }
+            }, 'json');
             this.setState(function (oldState) {
                 return {
                     spot: oldState.spot
@@ -20486,7 +20498,7 @@ var Spot = function (_React$Component) {
                 { className: 'col-md-6 col-sm-6 col-xs-6' },
                 _react2.default.createElement(
                     'div',
-                    { className: this.state.spot.isParked ? "panel panel-danger" : "panel panel-success" },
+                    { className: this.state.spot.isparked ? "panel panel-danger" : "panel panel-success" },
                     _react2.default.createElement(
                         'div',
                         { className: 'panel-heading' },
@@ -20495,12 +20507,12 @@ var Spot = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'panel-body' },
-                        this.state.spot.isParked ? "Upptagen" : "Ledig"
+                        this.state.spot.isparked ? "Upptagen" : "Ledig"
                     ),
                     this.state.spot.canmodify && _react2.default.createElement(
                         'button',
                         { onClick: this.handleToggle, className: 'btn btn-primary btn-block btn-lg' },
-                        this.state.spot.isParked ? "Lämna" : "Parkera"
+                        this.state.spot.isparked ? "Lämna" : "Parkera"
                     )
                 )
             );
@@ -20516,13 +20528,13 @@ var App = function (_React$Component2) {
     function App(props) {
         _classCallCheck(this, App);
 
-        var _this2 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+        var _this3 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-        _this2.state = {
+        _this3.state = {
             spots: props.spots
         };
 
-        return _this2;
+        return _this3;
     }
 
     _createClass(App, [{

@@ -42,6 +42,11 @@ var MAIL_IN_USE_MSG = JResponse{
 	Message:"Email allready in use!",
 }
 
+var LOGIN_ERROR_MSG = JResponse{
+	Error:true,
+	Message:"You need to be logged in.",
+}
+
 var GENERAL_ERROR_MSG = JResponse{
 	Error:true,
 	Message:"Something went wrong, try again later!",

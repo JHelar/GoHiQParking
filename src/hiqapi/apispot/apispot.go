@@ -21,26 +21,11 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
 	}
 	for _,s := range spot.GetAll(db){
-		jspot := hiqjson.JSpot{
-			ID:s.ID,
-			Name: s.Name,
-			IsParked: s.IsParked,
-			CanModify:false,
-			JResponse: hiqjson.JResponse{Error:false},
-		}
-
+		jspot := spotToJResponse(s)
 		if myUser != nil{
 			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
 		}
-		if s.IsParked{
-			usr := user.User{ID:&s.ParkedBy}
-			if err := user.Get(db, &usr); err == nil {
-				jspot.ParkedBy = usr.Username
-			}else{
-				log.Printf("%v %v", FLARE, err)
-			}
-		}
-		
+
 		jspots = append(jspots, jspot)
 	}
 	fmt.Fprintf(w, hiqjson.AsJson(jspots))
@@ -70,7 +55,9 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.IsParked = false
 					s.ParkedBy = 0
 					ok = spot.Update(db, s)
-					fmt.Fprintf(w, hiqjson.AsJson("Update success."))
+					jspot := spotToJResponse(s)
+					jspot.CanModify = true
+					fmt.Fprintf(w, hiqjson.AsJson(jspot))
 				}else{
 					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."}))
 				}
@@ -81,18 +68,40 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.IsParked = true
 					s.ParkedBy = *myUser.ID
 					ok = spot.Update(db, s)
-					fmt.Fprintf(w, hiqjson.AsJson("Update success."))
+
+					jspot := spotToJResponse(s)
+					jspot.CanModify = true
+					fmt.Fprintf(w, hiqjson.AsJson(jspot))
 				}else{
-					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to in two spots."}))
+					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}))
 				}
 			}
 		}else{
 			fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG))
 		}
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You need to be logged in."}))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
 	}
 
+}
+
+func spotToJResponse(s spot.Spot) hiqjson.JSpot{
+	jspot := hiqjson.JSpot{
+		ID:s.ID,
+		Name: s.Name,
+		IsParked: s.IsParked,
+		CanModify:false,
+		JResponse: hiqjson.JResponse{Error:false},
+	}
+	if s.IsParked{
+		usr := user.User{ID:&s.ParkedBy}
+		if err := user.Get(db, &usr); err == nil {
+			jspot.ParkedBy = usr.Username
+		}else{
+			log.Printf("%v %v", FLARE, err)
+		}
+	}
+	return jspot
 }
 
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
