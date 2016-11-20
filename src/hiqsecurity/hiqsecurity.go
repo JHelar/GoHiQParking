@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"encoding/base64"
+	"fmt"
 )
 
 const saltSymols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZåäöÅÄÖ!#¤%&/()=?"
@@ -54,11 +55,11 @@ func GenerateSessionKey() string{
 }
 
 //Resturns empty string if cookie not found.
-func GetSessionKeyFromHeader(r *http.Request)  string {
-	session, err := r.Cookie("SessionKey")
+func GetSessionKeyFromHeader(r *http.Request)  (string, error) {
+	session, err := r.Cookie("sKey")
 	if err != nil {
-		return ""
+		return "", fmt.Errorf("No session key found")
 	}
 	str := session.String()
-	return str[11:len(str)]
+	return str[5:len(str)], nil
 }

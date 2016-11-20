@@ -5,6 +5,7 @@ import (
 	"hiqdb"
 	"database/crud"
 	"hiqsecurity"
+	"fmt"
 )
 
 type UserSession struct {
@@ -14,8 +15,12 @@ type UserSession struct {
 	LastSeenTime time.Time
 }
 
-func Get(db *hiqdb.HiQDb, session *UserSession) bool {
-	return crud.Read(db.DB, session, nil, nil)
+func Get(db *hiqdb.HiQDb, session *UserSession) error {
+	if crud.Read(db.DB, session, nil, nil) {
+		return nil
+	}else {
+		return fmt.Errorf("No usersession found with that key.")
+	}
 }
 
 func Delete(db *hiqdb.HiQDb, session *UserSession) bool {

@@ -45,7 +45,7 @@ func main(){
 	mux.HandleFunc("/register", register)
 
 	//apispot.Start(db, mux)
-	api = hiqapi.Start(mux)
+	api = hiqapi.Start(db, mux)
 	apispot.Register(db, api)
 	apiuser.Register(db, api)
 

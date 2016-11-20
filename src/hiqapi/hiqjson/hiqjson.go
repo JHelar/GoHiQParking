@@ -13,10 +13,11 @@ import (
 
 type JSpot struct {
 	JResponse
-	ID   int `json:"id"`
+	ID int `json:"id"`
 	Name string `json:"name"`
 	IsParked bool `json:"isparked"`
-	ParkedBy JUser `json:"parkedby,omitempty"`
+	ParkedBy string `json:"parkedby,omitempty"`
+	CanModify bool `json:"canmodify"`
 }
 
 type JSession struct {
@@ -33,7 +34,7 @@ type JUser struct {
 
 type JResponse struct {
 	Error bool `json:"error"`
-	Message string `json:"message"`
+	Message interface{} `json:"message"`
 }
 
 var MAIL_IN_USE_MSG = JResponse{
@@ -88,6 +89,10 @@ func asJson(data interface{}) interface{}{
 		return sessionToJSession(data.(session.UserSession))
 	case "JResponse":
 		return data
+	case "JSpot":
+		return data
+	case "error":
+		return JResponse{Error:true, Message:data.(error).Error()}
 	default:
 		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", dataType.String())
 		return fmt.Sprintf("Bad kind of data: %v", err)
@@ -106,14 +111,10 @@ func sessionToJSession(session session.UserSession) JSession {
 }
 func spotToJSpot(spot spot.Spot) JSpot {
 	js := JSpot{
-		ID:spot.ID,
 		Name:spot.Name,
 		IsParked:spot.IsParked,
 		JResponse:JResponse{Error:false},
 
-	}
-	if js.IsParked {
-		//TODO: INSERT USER.
 	}
 	return js
 }

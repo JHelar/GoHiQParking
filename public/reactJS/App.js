@@ -27,7 +27,7 @@ class Spot extends React.Component{
                 <div className={this.state.spot.isParked ? "panel panel-danger" : "panel panel-success"}>
                     <div className="panel-heading">{this.state.spot.name}</div>
                     <div className="panel-body">{this.state.spot.isParked ? "Upptagen" : "Ledig"}</div>
-                    {this.state.isLogged && <button onClick={this.handleToggle} className="btn btn-primary btn-block btn-lg">{this.state.spot.isParked ? "Lämna" : "Parkera"}</button>}
+                    {this.state.spot.canmodify && <button onClick={this.handleToggle} className="btn btn-primary btn-block btn-lg">{this.state.spot.isParked ? "Lämna" : "Parkera"}</button>}
                 </div>
             </div>
         );
@@ -43,7 +43,6 @@ class App extends React.Component {
 
     }
     render(){
-        console.log("tjoo");
         var spots = [];
         this.state.spots.forEach(function(spot){
             spots.push(<Spot spot={spot} key={spot.id}/>);

@@ -117,9 +117,7 @@ Table name is determined by the given interface (struct name) with a 's' appende
 The data is then inserted to the table, returns success state.
 */
 func Create(db *sql.DB, data interface{}) bool {
-	log.Print("CRUD CREATE START------------------------------")
 	tableName, members := getDataInfo(data, false)
-	log.Print("CRUD CREATE DONE------------------------------")
 	tableName += "s"
 
 	names := getMemberNames(members)

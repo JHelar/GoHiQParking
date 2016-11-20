@@ -3,13 +3,14 @@ package spot
 import (
 	"hiqdb"
 	"database/crud"
+	"fmt"
 )
 
 type Spot struct {
-	ID int
-	Name string
-	IsParked bool
-	ParkedBy int
+	ID int `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	IsParked bool `json:"isparked,omitempty"`
+	ParkedBy int `json:"parkedby, omitempty"`
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {
@@ -26,6 +27,14 @@ func GetAll(db *hiqdb.HiQDb) []Spot {
 
 func Get(db *hiqdb.HiQDb, spot *Spot) bool {
 	return crud.Read(db.DB, spot, nil, nil)
+}
+
+func GetByUserID(db *hiqdb.HiQDb, userID int) (*Spot, error) {
+	spot := Spot{}
+	if ok := crud.Read(db.DB, &spot, "ParkedBy", userID); ok {
+		return &spot, nil
+	}
+	return nil, fmt.Errorf("No spot is parked by that userID")
 }
 
 func Update(db *hiqdb.HiQDb,spot Spot) bool {
