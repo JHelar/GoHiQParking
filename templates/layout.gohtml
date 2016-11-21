@@ -9,13 +9,15 @@
         <meta property="og:title" content="HiQParking">
         <!--<meta property="og:image" content="link_to_image">-->
         <meta property="og:description" content="HiQParking för HiQÖrebro">
+
         {{block "links" .}}{{end}}
+        <link href="/public/css/styles.css" rel="stylesheet">
         <title>{{block "title" .}}HiQParking{{end}}</title>
     </head>
     <body>
         <!--[if lt IE 8]> <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p> <![endif]-->
         <header>
-            <nav class="navbar navbar-inverse">
+            <nav class="navbar navbar-inverse margin-0">
                 <div class="container">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -26,19 +28,12 @@
                         <a class="navbar-brand" href="/">HiQParking</a>
                     </div>
                     <div class="collapse navbar-collapse" id="myNavbar">
-                        <ul class="nav navbar-nav navbar-right">
-                            <li><a href="/register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                            <li><a href="/login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                        </ul>
                     </div>
                 </div>
             </nav>
         </header>
-        <main class="container">
-            <div class="clearfix">
-                <div id="warning" class="alert alert-danger">
-
-                </div>
+        <main class="cover-image" style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|Fabriksgatan 20,Örebro&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s');">
+            <div class="cover-white flex center-center">
                 {{block "main" .}}{{end}}
             </div>
         </main>
@@ -47,7 +42,10 @@
                 {{block "footer" .}}{{end}}
             </div>
         </footer>
+        <script src="/public/jQuery/jquery.js" type="text/javascript"></script>
+        <script src="/public/bootstrap/dist/js/bootstrap.js" type="text/javascript"></script>
         <script type="text/javascript" src="/public/general/helpers.js"></script>
+        <script type="text/javascript" src="/public/reactJS/Compiled/Layout.js"></script>
         {{block "scripts" . }}{{end}}
     </body>
 </html>

@@ -44,10 +44,35 @@ func login(w http.ResponseWriter, r *http.Request, nope *user.User)  {
 	}
 }
 
+func logout(w http.ResponseWriter, r *http.Request, myUser *user.User){
+	if(myUser != nil){
+		ses, err := session.GetByUserID(db, *myUser.ID)
+		if err == nil {
+			if err = session.Delete(db, ses); err == nil {
+				fmt.Fprintf(w, hiqjson.AsJson("Succsess."))
+				return
+			}
+		}
+		fmt.Fprintf(w, hiqjson.AsJson(err))
+	}else{
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
+	}
+}
+
+func get(w http.ResponseWriter, r *http.Request, myUser *user.User){
+	if(myUser != nil){
+		fmt.Fprintf(w, hiqjson.AsJson(*myUser))
+	}else{
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
+	}
+}
+
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)
 	master.Register("user/register", register)
 	master.Register("user/login", login)
+	master.Register("user/logout", logout)
+	master.Register("user/get", get)
 	log.Printf("%v Registred.",FLARE)
 }

@@ -23,9 +23,22 @@ func Get(db *hiqdb.HiQDb, session *UserSession) error {
 	}
 }
 
-func Delete(db *hiqdb.HiQDb, session *UserSession) bool {
-	return crud.Delete(db.DB, session)
+func GetByUserID(db *hiqdb.HiQDb, userID int) (*UserSession, error) {
+	ses := UserSession{}
+	if crud.Read(db.DB, &ses, "UserID", userID){
+		return &ses, nil
+	}else{
+		return nil, fmt.Errorf("No usersession with that userID.")
+	}
 }
+
+func Delete(db *hiqdb.HiQDb, session *UserSession) error {
+	if crud.Delete(db.DB, session){
+		return nil
+	}
+	return fmt.Errorf("Something went badly in usersession delete.")
+}
+
 
 func NewUserSession(db *hiqdb.HiQDb, userID int) (*UserSession, bool) {
 	session := UserSession{}

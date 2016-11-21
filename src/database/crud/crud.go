@@ -64,10 +64,9 @@ func setReflectValues(t reflect.Value, values [][]byte){
 				field.SetBool(b)
 				break
 			case reflect.Struct:
-				log.Printf("Time struct val: %v", val)
-				structName := reflect.TypeOf(field.Interface()).Name()
-				switch structName {
-				case "Time":
+				//structName := reflect.TypeOf(field.Interface()).Name()
+				switch field.Interface().(type){
+				case time.Time:
 					t,err := time.Parse(time.RFC3339Nano, val)
 					if err != nil {
 						log.Print(err)

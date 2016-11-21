@@ -9,6 +9,7 @@ import (
 	"log"
 	"hiqapi"
 	"hiqdb/user"
+	"time"
 )
 var db *hiqdb.HiQDb
 const FLARE = "HiQSpotApi:"
@@ -55,9 +56,8 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.IsParked = false
 					s.ParkedBy = 0
 					ok = spot.Update(db, s)
-					jspot := spotToJResponse(s)
-					jspot.CanModify = true
-					fmt.Fprintf(w, hiqjson.AsJson(jspot))
+					getAll(w, r, myUser)
+					return
 				}else{
 					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."}))
 				}
@@ -67,11 +67,10 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 				if err != nil{
 					s.IsParked = true
 					s.ParkedBy = *myUser.ID
+					s.ParkedTime = time.Now()
 					ok = spot.Update(db, s)
-
-					jspot := spotToJResponse(s)
-					jspot.CanModify = true
-					fmt.Fprintf(w, hiqjson.AsJson(jspot))
+					getAll(w, r, myUser)
+					return
 				}else{
 					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}))
 				}
@@ -97,6 +96,7 @@ func spotToJResponse(s spot.Spot) hiqjson.JSpot{
 		usr := user.User{ID:&s.ParkedBy}
 		if err := user.Get(db, &usr); err == nil {
 			jspot.ParkedBy = usr.Username
+			jspot.ParkedTime = s.ParkedTime
 		}else{
 			log.Printf("%v %v", FLARE, err)
 		}

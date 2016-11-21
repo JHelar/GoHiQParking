@@ -4,6 +4,7 @@ import (
 	"hiqdb"
 	"database/crud"
 	"fmt"
+	"time"
 )
 
 type Spot struct {
@@ -11,6 +12,7 @@ type Spot struct {
 	Name string `json:"name,omitempty"`
 	IsParked bool `json:"isparked,omitempty"`
 	ParkedBy int `json:"parkedby, omitempty"`
+	ParkedTime time.Time `json:"parkedtime, omitempty"`
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {

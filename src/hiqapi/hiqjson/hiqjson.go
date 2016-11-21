@@ -1,7 +1,6 @@
 package hiqjson
 
 import (
-	"time"
 	"reflect"
 	"hiqdb/spot"
 	"log"
@@ -9,6 +8,8 @@ import (
 	"fmt"
 	"io"
 	"hiqdb/session"
+	"hiqdb/user"
+	"time"
 )
 
 type JSpot struct {
@@ -17,6 +18,7 @@ type JSpot struct {
 	Name string `json:"name"`
 	IsParked bool `json:"isparked"`
 	ParkedBy string `json:"parkedby,omitempty"`
+	ParkedTime time.Time `json:"parkedtime"`
 	CanModify bool `json:"canmodify"`
 }
 
@@ -27,9 +29,7 @@ type JSession struct {
 
 type JUser struct {
 	JResponse
-	ID int `json:"id"`
 	UserName string `json:"username"`
-	Parked time.Time `json:"parked"`
 }
 
 type JResponse struct {
@@ -103,6 +103,8 @@ func asJson(data interface{}) interface{}{
 		return spotToJSpot(data.(spot.Spot))
 	case session.UserSession:
 		return sessionToJSession(data.(session.UserSession))
+	case user.User:
+		return JUser{JResponse:JResponse{Error:false, Message:""}, UserName:data.(user.User).Username}
 	case JResponse:
 		return data
 	case JSpot:

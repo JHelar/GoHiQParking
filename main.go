@@ -7,7 +7,6 @@ import (
 	"text/template"
 	"hiqapi"
 	"hiqapi/apispot"
-	"hiqdb/spot"
 	"hiqapi/apiuser"
 )
 
@@ -16,7 +15,7 @@ func index(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err = tmp.Execute(w, spot.GetAll(db)); err != nil {
+	if err = tmp.Execute(w, nil); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -26,6 +25,7 @@ func register(w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if err = tmp.Execute(w, nil); err != nil {
 		log.Fatal(err)
 	}
@@ -61,6 +61,6 @@ func main(){
 	apiuser.Register(db, api)
 
 	mux.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
-	http.ListenAndServe("localhost:8080", mux)
+	http.ListenAndServe("0.0.0.0:8080", mux)
 
 }

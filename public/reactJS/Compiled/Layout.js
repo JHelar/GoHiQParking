@@ -20775,179 +20775,105 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by johnla on 2016-11-17.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by johnla on 2016-11-21.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
-var Warning = function (_React$Component) {
-    _inherits(Warning, _React$Component);
+var Navbar = function (_React$Component) {
+    _inherits(Navbar, _React$Component);
 
-    function Warning() {
-        _classCallCheck(this, Warning);
+    function Navbar(props) {
+        _classCallCheck(this, Navbar);
 
-        return _possibleConstructorReturn(this, (Warning.__proto__ || Object.getPrototypeOf(Warning)).apply(this, arguments));
-    }
+        var _this = _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).call(this, props));
 
-    _createClass(Warning, [{
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'div',
-                { className: 'alert alert-danger fade in' },
-                _react2.default.createElement(
-                    'strong',
-                    null,
-                    'Error:'
-                ),
-                ' ',
-                this.props.message
-            );
-        }
-    }]);
-
-    return Warning;
-}(_react2.default.Component);
-
-//ToDo: Fix datetime show.
-
-
-var Spot = function (_React$Component2) {
-    _inherits(Spot, _React$Component2);
-
-    function Spot(props) {
-        _classCallCheck(this, Spot);
-
-        var _this3 = _possibleConstructorReturn(this, (Spot.__proto__ || Object.getPrototypeOf(Spot)).call(this, props));
-
-        _this3.handleToggle = _this3.handleToggle.bind(_this3);
-        return _this3;
-    }
-
-    _createClass(Spot, [{
-        key: 'handleToggle',
-        value: function handleToggle() {
-            this.props.onToggle(this.props.spot);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var btnClasses = this.props.spot.canmodify ? "btn btn-primary btn-block btn-lg" : "btn btn-primary btn-block btn-lg disabled";
-            var time = timeDifference(new Date(this.props.spot.parkedtime));
-            var bodyStr = this.props.spot.isparked ? _react2.default.createElement(
-                'span',
-                null,
-                'Parked: ',
-                _react2.default.createElement(
-                    'strong',
-                    null,
-                    time
-                ),
-                _react2.default.createElement('br', null),
-                'Parked by: ',
-                _react2.default.createElement(
-                    'strong',
-                    null,
-                    this.props.spot.parkedby
-                )
-            ) : "Ledig";
-            return _react2.default.createElement(
-                'div',
-                { className: 'col-md-6 col-sm-6 col-xs-6' },
-                _react2.default.createElement(
-                    'div',
-                    { className: this.props.spot.isparked ? "panel panel-danger" : "panel panel-success" },
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'panel-heading' },
-                        this.props.spot.name
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'panel-body' },
-                        bodyStr
-                    ),
-                    _react2.default.createElement(
-                        'button',
-                        { onClick: this.handleToggle, className: btnClasses },
-                        this.props.spot.isparked ? "Lämna" : "Parkera"
-                    )
-                )
-            );
-        }
-    }]);
-
-    return Spot;
-}(_react2.default.Component);
-
-//ToDO: Fix the spot toggle.
-
-
-var App = function (_React$Component3) {
-    _inherits(App, _React$Component3);
-
-    function App(props) {
-        _classCallCheck(this, App);
-
-        var _this4 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
-
-        _this4.state = {
-            spots: props.spots,
-            error: false,
-            message: ""
+        _this.state = {
+            isLogged: props.isLogged,
+            user: props.user
         };
-        _this4.handleSpotToggle = _this4.handleSpotToggle.bind(_this4);
-
-        return _this4;
+        _this.handleLogout = _this.handleLogout.bind(_this);
+        return _this;
     }
 
-    _createClass(App, [{
-        key: 'handleSpotToggle',
-        value: function handleSpotToggle(spot) {
-            var _this = this;
-            $.post('/api/spot/toggle', JSON.stringify({ id: spot.id }), function (e) {
+    _createClass(Navbar, [{
+        key: 'handleLogout',
+        value: function handleLogout(e) {
+            e.preventDefault();
+            //var _this = this;
+            $.post('api/user/logout', null, function (e) {
                 if (!e.data.error) {
-                    _this.setState({
-                        spots: e.data,
-                        error: false
-                    });
-                } else {
-                    _this.setState({
-                        error: true,
-                        message: e.data.message
-                    });
+                    /*_this.setState({
+                        isLogged:false,
+                        user:null,
+                    });*/
+                    window.location.href = '/';
                 }
             }, 'json');
         }
     }, {
         key: 'render',
         value: function render() {
-            var spots = [];
-            var _this = this;
-            this.state.spots.forEach(function (spot) {
-                spots.push(_react2.default.createElement(Spot, { spot: spot, onToggle: _this.handleSpotToggle, key: spot.id + spot.isparked.toString() }));
-            });
+            var rows = [];
+            if (this.state.isLogged) {
+                rows.push(_react2.default.createElement(
+                    'li',
+                    { key: "username" },
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'navbar-text' },
+                        ' ',
+                        this.state.user.username
+                    )
+                ));
+                rows.push(_react2.default.createElement(
+                    'li',
+                    { key: "logout" },
+                    _react2.default.createElement(
+                        'a',
+                        { href: '/', onClick: this.handleLogout },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
+                        ' Logout'
+                    )
+                ));
+            } else {
+                rows.push(_react2.default.createElement(
+                    'li',
+                    { key: "register" },
+                    _react2.default.createElement(
+                        'a',
+                        { href: '/register' },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-user' }),
+                        ' Register'
+                    )
+                ));
+                rows.push(_react2.default.createElement(
+                    'li',
+                    { key: "login" },
+                    _react2.default.createElement(
+                        'a',
+                        { href: '/login' },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
+                        ' Login'
+                    )
+                ));
+            }
             return _react2.default.createElement(
-                'div',
-                { className: 'clearfix' },
-                this.state.error && _react2.default.createElement(
-                    'div',
-                    { className: 'row container' },
-                    _react2.default.createElement(Warning, { message: this.state.message })
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'row' },
-                    spots
-                )
+                'ul',
+                { className: 'nav navbar-nav navbar-right' },
+                rows
             );
         }
     }]);
 
-    return App;
+    return Navbar;
 }(_react2.default.Component);
 
-$.post('/api/spot/getAll', null, function (e) {
-    _reactDom2.default.render(_react2.default.createElement(App, { spots: e.data }), document.getElementById("spots"));
+$.post('api/user/get', null, function (e) {
+    if (!e.data.error) {
+        _reactDom2.default.render(_react2.default.createElement(Navbar, { isLogged: true, user: e.data }), document.getElementById('myNavbar'));
+    } else {
+        _reactDom2.default.render(_react2.default.createElement(Navbar, { isLogged: false, user: null }), document.getElementById('myNavbar'));
+    }
 }, 'json');
 
 },{"react":171,"react-dom":2}]},{},[172]);

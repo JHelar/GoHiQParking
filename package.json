@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t [ babelify --presets [ react ] ] public/reactJS/App.js -o public/reactJS/Compiled/App.js"
+    "buildApp": "browserify -t [ babelify --presets [ react ] ] public/reactJS/App.js -o public/reactJS/Compiled/App.js",
+    "buildLayout": "browserify -t [ babelify --presets [ react ] ] public/reactJS/Layout.js -o public/reactJS/Compiled/Layout.js"
   },
   "repository": {
     "type": "git",
@@ -22,10 +23,13 @@
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
-    "browserify":"^13.1.1",
+    "browserify": "^13.1.1",
     "bootstrap": "^3.3.7",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "webpack": "^1.13.3"
+  },
+  "dependencies": {
+    "moment": "^2.16.0"
   }
 }
