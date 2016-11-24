@@ -24,7 +24,7 @@ func (master *ApiMaster) Register(pattern string, handler func(http.ResponseWrit
 }
 
 func (master *ApiMaster) RetrieveUser(r *http.Request) (*user.User, error){
-	sKey, err := hiqsecurity.GetSessionKeyFromHeader(r)
+	sKey, err := hiqsecurity.GetSessionKeyFromRequest(r)
 	if err == nil {
 		ses := session.UserSession{
 			SessionKey:sKey,
@@ -46,7 +46,10 @@ const FLARE = "HiQApi"
 func apiHandler(w http.ResponseWriter, r *http.Request){
 
 	w.Header().Set("Content-Type", "application/json")
+
+
 	apiPath := strings.TrimPrefix(r.URL.Path, "/api/")
+	log.Printf("New request from: %v, requested: %v", r.RemoteAddr, apiPath)
 
 	if val, ok := master.childHandlers[apiPath]; ok {
 		//Retrive user if there is one.

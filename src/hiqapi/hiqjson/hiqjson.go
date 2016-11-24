@@ -13,7 +13,6 @@ import (
 )
 
 type JSpot struct {
-	JResponse
 	ID int `json:"id"`
 	Name string `json:"name"`
 	IsParked bool `json:"isparked"`
@@ -23,18 +22,17 @@ type JSpot struct {
 }
 
 type JSession struct {
-	JResponse
 	Key string `json:"sessionkey"`
 }
 
 type JUser struct {
-	JResponse
 	UserName string `json:"username"`
 }
 
 type JResponse struct {
 	Error bool `json:"error"`
 	Message interface{} `json:"message"`
+	Data interface{} `json:"data"`
 }
 
 var MAIL_IN_USE_MSG = JResponse{
@@ -104,7 +102,7 @@ func asJson(data interface{}) interface{}{
 	case session.UserSession:
 		return sessionToJSession(data.(session.UserSession))
 	case user.User:
-		return JUser{JResponse:JResponse{Error:false, Message:""}, UserName:data.(user.User).Username}
+		return JUser{UserName:data.(user.User).Username}
 	case JResponse:
 		return data
 	case JSpot:
@@ -119,20 +117,23 @@ func asJson(data interface{}) interface{}{
 }
 
 func toJson(data interface{}) string {
-	type Payload struct {
-		Data interface{} `json:"data"`
+	var resp JResponse
+	switch t := data.(type) {
+	case JResponse:
+		resp = t
+	default:
+		resp = JResponse{Error:false, Data:t}
 	}
-	j, _ := json.MarshalIndent(Payload{Data:data}, "", "")
+	j, _ := json.MarshalIndent(resp, "", "")
 	return string(j)
 }
 func sessionToJSession(session session.UserSession) JSession {
-	return JSession{Key:session.SessionKey,JResponse:JResponse{Error:false}}
+	return JSession{Key:session.SessionKey}
 }
 func spotToJSpot(spot spot.Spot) JSpot {
 	js := JSpot{
 		Name:spot.Name,
 		IsParked:spot.IsParked,
-		JResponse:JResponse{Error:false},
 
 	}
 	return js

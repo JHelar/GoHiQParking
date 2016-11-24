@@ -1,11 +1,6 @@
-# GoHiQParking
-Parking webb app and REST Api.
-
-# ApiDescription
 HiQParking API
 
-##General:
-
+General:
 	Results from calls will result in this structure:
 		{
 			error (bool),
@@ -15,10 +10,8 @@ HiQParking API
 	Calls will go through an authorization handler, that checks if user exist / is allowed. Results will wary on the sessionkey provided in a cookie or in json data, can be omited too.
 	Calls are formed by: CONTROLLER_NAME + MTHOD_NAME (example: "/api/spot/getAll")
 
-##Controllers:
-
-###User (/api/user):
-
+Controllers:
+User (/api/user):
 	register (/register):
 		desc:
 			Tries to create a new user, with provided information.
@@ -84,8 +77,7 @@ HiQParking API
 					username (string)
 				}
 			}
-###Spot (/api/spot):
-
+Spot (/api/spot):
 	getAll (/getAll):
 		desc:
 			Returns all parkingspots, if user is logged in spots returned will contain a extra modify field.
@@ -151,4 +143,4 @@ HiQParking API
 						canmodify (bool), //If current user is allowed to modify the field.
 					}
 				]
-			}````
+			}

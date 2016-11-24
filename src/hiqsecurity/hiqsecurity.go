@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"encoding/base64"
 	"fmt"
+	"encoding/json"
 )
 
 const saltSymols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZåäöÅÄÖ!#¤%&/()=?"
@@ -54,11 +55,23 @@ func GenerateSessionKey() string{
 	return base64.StdEncoding.EncodeToString(key)
 }
 
-//Resturns empty string if cookie not found.
-func GetSessionKeyFromHeader(r *http.Request)  (string, error) {
+//Resturns empty string if cookie not found or no json.
+func GetSessionKeyFromRequest(r *http.Request)  (string, error) {
 	session, err := r.Cookie("skey")
 	if err != nil {
-		return "", fmt.Errorf("No session key found")
+		//Try get the sessionkey from json.
+		decoder := json.NewDecoder(r.Body)
+		defer r.Body.Close()
+
+		var data struct{
+			SessionKey string `json:"sessionKey"`
+		}
+		err = decoder.Decode(&data)
+		if err != nil {
+			return "", fmt.Errorf("No session key found")
+		}else{
+			return data.SessionKey, nil
+		}
 	}
 	str := session.String()
 	return str[5:len(str)], nil

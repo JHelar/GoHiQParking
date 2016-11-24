@@ -36,7 +36,7 @@ func get(w http.ResponseWriter, r *http.Request, user *user.User){
 	var s spot.Spot
 	hiqjson.Parse(r.Body, &s)
 	if ok := spot.Get(db, &s); ok {
-		fmt.Fprintf(w, hiqjson.AsJson(s))
+		fmt.Fprintf(w, hiqjson.AsJson(spotToJResponse(s)))
 	}else {
 		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG))
 	}
@@ -90,7 +90,6 @@ func spotToJResponse(s spot.Spot) hiqjson.JSpot{
 		Name: s.Name,
 		IsParked: s.IsParked,
 		CanModify:false,
-		JResponse: hiqjson.JResponse{Error:false},
 	}
 	if s.IsParked{
 		usr := user.User{ID:&s.ParkedBy}
