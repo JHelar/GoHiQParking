@@ -10,6 +10,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"encoding/json"
+	"io/ioutil"
+	"bytes"
 )
 
 const saltSymols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZåäöÅÄÖ!#¤%&/()=?"
@@ -60,9 +62,15 @@ func GetSessionKeyFromRequest(r *http.Request)  (string, error) {
 	session, err := r.Cookie("skey")
 	if err != nil {
 		//Try get the sessionkey from json.
-		decoder := json.NewDecoder(r.Body)
-		defer r.Body.Close()
+		//We need to read and copy the bytes in the readcloser.
+		var bufferBytes []byte
+		bufferBytes, _ = ioutil.ReadAll(r.Body)
+		r.Body = ioutil.NopCloser(bytes.NewBuffer(bufferBytes))
 
+		bodyCpy := ioutil.NopCloser(bytes.NewBuffer(bufferBytes))
+		defer bodyCpy.Close()
+
+		decoder := json.NewDecoder(bodyCpy)
 		var data struct{
 			SessionKey string `json:"sessionKey"`
 		}

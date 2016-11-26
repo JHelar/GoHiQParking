@@ -23,13 +23,12 @@ class Spot extends React.Component{
     handleToggle(){
         this.props.onToggle(this.props.spot)
     }
-
     render(){
         var btnClasses = this.props.spot.canmodify ? "btn btn-primary btn-block btn-lg" : "btn btn-primary btn-block btn-lg disabled";
         var time = timeDifference(new Date(this.props.spot.parkedtime));
         var bodyStr = this.props.spot.isparked ? (<span>Parked: <strong>{time}</strong><br/>Parked by: <strong>{this.props.spot.parkedby}</strong></span>):("Ledig");
         return (
-            <div className="col-md-6 col-sm-6 col-xs-6">
+            <div className="col-md-6 col-sm-6 col-xs-12">
                 <div className={this.props.spot.isparked ? "panel panel-danger" : "panel panel-success"}>
                     <div className="panel-heading">{this.props.spot.name}</div>
                     <div className="panel-body">
@@ -54,10 +53,22 @@ class App extends React.Component {
         this.handleSpotToggle = this.handleSpotToggle.bind(this);
 
     }
+    componentWillMount(){
+        var stream = new EventSource("/event/spot")
+        stream.addEventListener("spots", this.handleStream, false);
+    }
+    handleStream(e){
+        var data = JSON.parse(e.data);
+        this.setState({
+            error:data.error,
+            message:data.message,
+            spots:data.data
+        });
+    }
     handleSpotToggle(spot){
         var _this = this;
         $.post('/api/spot/toggle', JSON.stringify({id:spot.id}), function (e) {
-            if(!e.data.error){
+            if(!e.error){
                 _this.setState({
                     spots:e.data,
                     error:false
@@ -65,7 +76,7 @@ class App extends React.Component {
             }else{
                 _this.setState({
                     error: true,
-                    message: e.data.message
+                    message: e.message
                 });
             }
         }, 'json');

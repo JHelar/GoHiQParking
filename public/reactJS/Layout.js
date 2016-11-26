@@ -17,7 +17,7 @@ class Navbar extends React.Component {
         e.preventDefault();
         //var _this = this;
         $.post('api/user/logout',null, function (e) {
-            if(!e.data.error){
+            if(!e.error){
                 /*_this.setState({
                     isLogged:false,
                     user:null,
@@ -45,7 +45,7 @@ class Navbar extends React.Component {
 }
 
 $.post('api/user/get', null, function (e) {
-    if(!e.data.error){
+    if(!e.error){
         ReactDOM.render(
             <Navbar isLogged={true} user={e.data}/>,
             document.getElementById('myNavbar')

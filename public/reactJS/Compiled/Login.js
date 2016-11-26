@@ -20775,105 +20775,161 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by johnla on 2016-11-21.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by johnla on 2016-11-24.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
-var Navbar = function (_React$Component) {
-    _inherits(Navbar, _React$Component);
+var Warning = function (_React$Component) {
+    _inherits(Warning, _React$Component);
 
-    function Navbar(props) {
-        _classCallCheck(this, Navbar);
+    function Warning() {
+        _classCallCheck(this, Warning);
 
-        var _this = _possibleConstructorReturn(this, (Navbar.__proto__ || Object.getPrototypeOf(Navbar)).call(this, props));
-
-        _this.state = {
-            isLogged: props.isLogged,
-            user: props.user
-        };
-        _this.handleLogout = _this.handleLogout.bind(_this);
-        return _this;
+        return _possibleConstructorReturn(this, (Warning.__proto__ || Object.getPrototypeOf(Warning)).apply(this, arguments));
     }
 
-    _createClass(Navbar, [{
-        key: 'handleLogout',
-        value: function handleLogout(e) {
+    _createClass(Warning, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'alert alert-danger fade in' },
+                _react2.default.createElement(
+                    'strong',
+                    null,
+                    'Error:'
+                ),
+                ' ',
+                this.props.message
+            );
+        }
+    }]);
+
+    return Warning;
+}(_react2.default.Component);
+
+var Form = function (_React$Component2) {
+    _inherits(Form, _React$Component2);
+
+    function Form(props) {
+        _classCallCheck(this, Form);
+
+        var _this3 = _possibleConstructorReturn(this, (Form.__proto__ || Object.getPrototypeOf(Form)).call(this, props));
+
+        _this3.handleClick = _this3.handleClick.bind(_this3);
+        return _this3;
+    }
+
+    _createClass(Form, [{
+        key: 'handleClick',
+        value: function handleClick(e) {
             e.preventDefault();
-            //var _this = this;
-            $.post('api/user/logout', null, function (e) {
+            this.props.onSubmit({
+                usernameemail: this.refs.useremail.value,
+                password: this.refs.pwd.value
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'form',
+                { className: 'form-horizontal' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    _react2.default.createElement(
+                        'label',
+                        { className: 'control-label col-sm-2', htmlFor: 'useremail' },
+                        'Username or Email:'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'col-sm-10' },
+                        _react2.default.createElement('input', { ref: 'useremail', type: 'text', className: 'form-control', id: 'useremail', placeholder: 'Enter username or email' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    _react2.default.createElement(
+                        'label',
+                        { className: 'control-label col-sm-2', htmlFor: 'pwd' },
+                        'Password:'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'col-sm-10' },
+                        _react2.default.createElement('input', { ref: 'pwd', type: 'password', className: 'form-control', id: 'pwd', placeholder: 'Enter password' })
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'form-group' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'col-sm-offset-2 col-sm-10' },
+                        _react2.default.createElement(
+                            'button',
+                            { type: 'submit', className: 'btn btn-default', onClick: this.handleClick },
+                            'Submit'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Form;
+}(_react2.default.Component);
+
+var Login = function (_React$Component3) {
+    _inherits(Login, _React$Component3);
+
+    function Login(props) {
+        _classCallCheck(this, Login);
+
+        var _this4 = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+
+        _this4.state = {
+            error: false,
+            msg: ""
+        };
+        _this4.handleSubmit = _this4.handleSubmit.bind(_this4);
+        return _this4;
+    }
+
+    _createClass(Login, [{
+        key: 'handleSubmit',
+        value: function handleSubmit(data) {
+            var _this = this;
+            $.post('api/user/login', JSON.stringify(data), function (e) {
                 if (!e.error) {
-                    /*_this.setState({
-                        isLogged:false,
-                        user:null,
-                    });*/
+                    createCookie("skey", e.data.sessionkey, 365);
                     window.location.href = '/';
+                } else {
+                    _this.setState({
+                        error: true,
+                        msg: e.message
+                    });
                 }
             }, 'json');
         }
     }, {
         key: 'render',
         value: function render() {
-            var rows = [];
-            if (this.state.isLogged) {
-                rows.push(_react2.default.createElement(
-                    'li',
-                    { key: "username" },
-                    _react2.default.createElement(
-                        'p',
-                        { className: 'navbar-text' },
-                        ' ',
-                        this.state.user.username
-                    )
-                ));
-                rows.push(_react2.default.createElement(
-                    'li',
-                    { key: "logout" },
-                    _react2.default.createElement(
-                        'a',
-                        { href: '/', onClick: this.handleLogout },
-                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
-                        ' Logout'
-                    )
-                ));
-            } else {
-                rows.push(_react2.default.createElement(
-                    'li',
-                    { key: "register" },
-                    _react2.default.createElement(
-                        'a',
-                        { href: '/register' },
-                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-user' }),
-                        ' Register'
-                    )
-                ));
-                rows.push(_react2.default.createElement(
-                    'li',
-                    { key: "login" },
-                    _react2.default.createElement(
-                        'a',
-                        { href: '/login' },
-                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-in' }),
-                        ' Login'
-                    )
-                ));
-            }
             return _react2.default.createElement(
-                'ul',
-                { className: 'nav navbar-nav navbar-right' },
-                rows
+                'div',
+                { className: 'row' },
+                this.state.error && _react2.default.createElement(Warning, { message: this.state.msg }),
+                _react2.default.createElement(Form, { onSubmit: this.handleSubmit })
             );
         }
     }]);
 
-    return Navbar;
+    return Login;
 }(_react2.default.Component);
 
-$.post('api/user/get', null, function (e) {
-    if (!e.error) {
-        _reactDom2.default.render(_react2.default.createElement(Navbar, { isLogged: true, user: e.data }), document.getElementById('myNavbar'));
-    } else {
-        _reactDom2.default.render(_react2.default.createElement(Navbar, { isLogged: false, user: null }), document.getElementById('myNavbar'));
-    }
-}, 'json');
+_reactDom2.default.render(_react2.default.createElement(Login, null), document.getElementById('login'));
 
 },{"react":171,"react-dom":2}]},{},[172]);

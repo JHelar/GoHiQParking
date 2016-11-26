@@ -10,8 +10,11 @@ import (
 	"hiqapi"
 	"hiqdb/user"
 	"time"
+	"hiqeventstream"
 )
 var db *hiqdb.HiQDb
+var broker *hiqeventstream.Broker
+
 const FLARE = "HiQSpotApi:"
 
 func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
@@ -29,7 +32,9 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 
 		jspots = append(jspots, jspot)
 	}
-	fmt.Fprintf(w, hiqjson.AsJson(jspots))
+	jsonResp := hiqjson.AsJson(jspots)
+	broker.Notifier <- []byte(jsonResp)
+	fmt.Fprintf(w, jsonResp)
 }
 
 func get(w http.ResponseWriter, r *http.Request, user *user.User){
@@ -104,10 +109,13 @@ func spotToJResponse(s spot.Spot) hiqjson.JSpot{
 }
 
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
+	broker = hiqeventstream.NewServer()
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)
 	master.Register("spot/getAll", getAll)
 	master.Register("spot/get", get)
 	master.Register("spot/toggle", toggle)
+
+	master.RegisterEventStream("spot", broker.ServeHTTP)
 	log.Printf("%v Registred.",FLARE)
 }

@@ -14,6 +14,7 @@ import (
 
 type ApiMaster struct {
 	childHandlers map[string]func(http.ResponseWriter, *http.Request, *user.User)
+	eventStreams map[string]func(http.ResponseWriter, *http.Request)
 }
 
 var master *ApiMaster
@@ -21,6 +22,10 @@ var db *hiqdb.HiQDb
 
 func (master *ApiMaster) Register(pattern string, handler func(http.ResponseWriter, *http.Request, *user.User)){
 	master.childHandlers[pattern] = handler
+}
+
+func (master *ApiMaster) RegisterEventStream(pattern string, handler func(http.ResponseWriter, *http.Request)){
+	master.eventStreams[pattern] = handler
 }
 
 func (master *ApiMaster) RetrieveUser(r *http.Request) (*user.User, error){
@@ -42,6 +47,14 @@ func (master *ApiMaster) RetrieveUser(r *http.Request) (*user.User, error){
 }
 
 const FLARE = "HiQApi"
+
+func streamHandler(w http.ResponseWriter, r *http.Request){
+	streamPath := strings.TrimPrefix(r.URL.Path, "/event/")
+	if val, ok := master.eventStreams[streamPath]; ok {
+		val(w, r)
+		return
+	}
+}
 
 func apiHandler(w http.ResponseWriter, r *http.Request){
 
@@ -67,7 +80,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request){
 }
 
 func init()  {
-	master = &ApiMaster{childHandlers:make(map[string]func(http.ResponseWriter, *http.Request, *user.User))}
+	master = &ApiMaster{childHandlers:make(map[string]func(http.ResponseWriter, *http.Request, *user.User)),eventStreams:make(map[string]func(http.ResponseWriter, *http.Request))}
 }
 
 func Start(hiqdb *hiqdb.HiQDb, mux *http.ServeMux) *ApiMaster{
@@ -75,5 +88,6 @@ func Start(hiqdb *hiqdb.HiQDb, mux *http.ServeMux) *ApiMaster{
 
 	log.Printf("%v Setting api listeners...", FLARE)
 	mux.HandleFunc("/api/", apiHandler)
+	mux.HandleFunc("/event/", streamHandler)
 	return master
 }

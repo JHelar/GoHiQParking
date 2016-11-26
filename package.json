@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "buildApp": "browserify -t [ babelify --presets [ react ] ] public/reactJS/App.js -o public/reactJS/Compiled/App.js",
-    "buildLayout": "browserify -t [ babelify --presets [ react ] ] public/reactJS/Layout.js -o public/reactJS/Compiled/Layout.js"
+    "buildLayout": "browserify -t [ babelify --presets [ react ] ] public/reactJS/Layout.js -o public/reactJS/Compiled/Layout.js",
+    "buildLogin": "browserify -t [ babelify --presets [ react ] ] public/reactJS/Login.js -o public/reactJS/Compiled/Login.js"
   },
   "repository": {
     "type": "git",

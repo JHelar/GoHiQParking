@@ -20852,7 +20852,7 @@ var Spot = function (_React$Component2) {
             ) : "Ledig";
             return _react2.default.createElement(
                 'div',
-                { className: 'col-md-6 col-sm-6 col-xs-6' },
+                { className: 'col-md-6 col-sm-6 col-xs-12' },
                 _react2.default.createElement(
                     'div',
                     { className: this.props.spot.isparked ? "panel panel-danger" : "panel panel-success" },
@@ -20901,11 +20901,27 @@ var App = function (_React$Component3) {
     }
 
     _createClass(App, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var stream = new EventSource("/event/spot");
+            stream.addEventListener("spots", this.handleStream, false);
+        }
+    }, {
+        key: 'handleStream',
+        value: function handleStream(e) {
+            var data = JSON.parse(e.data);
+            this.setState({
+                error: data.error,
+                message: data.message,
+                spots: data.data
+            });
+        }
+    }, {
         key: 'handleSpotToggle',
         value: function handleSpotToggle(spot) {
             var _this = this;
             $.post('/api/spot/toggle', JSON.stringify({ id: spot.id }), function (e) {
-                if (!e.data.error) {
+                if (!e.error) {
                     _this.setState({
                         spots: e.data,
                         error: false
@@ -20913,7 +20929,7 @@ var App = function (_React$Component3) {
                 } else {
                     _this.setState({
                         error: true,
-                        message: e.data.message
+                        message: e.message
                     });
                 }
             }, 'json');

@@ -50,7 +50,6 @@ var GENERAL_ERROR_MSG = JResponse{
 	Message:"Something went wrong, try again later!",
 }
 
-
 func AsJson(data interface{}) string {
 	dataVal := reflect.ValueOf(data)
 
