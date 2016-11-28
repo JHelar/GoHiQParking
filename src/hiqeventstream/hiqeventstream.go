@@ -74,7 +74,6 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 		select{
 		case msg := <- messageChan:
 			//Do not send events to same client.
-			log.Printf("Sedning to: %v from client: %v", clientOrign, msg.ClientOrigin)
 			if(msg.ClientOrigin != clientOrign){
 				fmt.Fprintf(rw, "event:%s\ndata:%s\n\n", msg.EventType, msg.Message)
 			}
@@ -90,10 +89,10 @@ func (broker *Broker) listen()  {
 		select {
 		case s := <- broker.newClients:
 			broker.clients[s] = true
-			log.Printf("Client added. %d registered clients", len(broker.clients))
+			log.Printf("Client added. Currently %d registered client(s)", len(broker.clients))
 		case s := <- broker.closingClients:
 			delete(broker.clients, s)
-			log.Printf("Removed client. %d registered clients", len(broker.clients))
+			log.Printf("Removed client. %d registered client(s)", len(broker.clients))
 		case event := <- broker.Notifier:
 		//Send new event
 			for clientMessageChan, _ := range broker.clients{

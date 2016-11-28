@@ -46,10 +46,12 @@ jspm_packages
 out
 gen
 
+
 #golang files.
 pkg
 src/github.com
 src/golang.org
+bin/
 
 public/bootstrap
 public/jQuery

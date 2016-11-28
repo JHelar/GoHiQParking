@@ -40,7 +40,6 @@ func getDataInfo(table interface{}, includeNil bool) (string, []member) {
 
 func setTableValues(table interface{}, values [][]byte){
 	t := reflect.ValueOf(table).Elem()
-	log.Print(t.String())
 	setReflectValues(t, values)
 }
 
@@ -64,7 +63,6 @@ func setReflectValues(t reflect.Value, values [][]byte){
 				field.SetBool(b)
 				break
 			case reflect.Struct:
-				//structName := reflect.TypeOf(field.Interface()).Name()
 				switch field.Interface().(type){
 				case time.Time:
 					t,err := time.Parse(time.RFC3339Nano, val)
@@ -79,7 +77,6 @@ func setReflectValues(t reflect.Value, values [][]byte){
 				}
 				break
 			case reflect.Ptr:
-				log.Printf("Pointer, kind: %v", field.Type().String())
 				if field.Type().String() == "*int"{
 					x, _ := strconv.Atoi(val)
 					field.Set(reflect.ValueOf(&x))
@@ -169,7 +166,6 @@ func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue inte
 	err := row.Scan(values...)
 	switch {
 	case err == sql.ErrNoRows:
-		log.Print("No rows found.")
 		return false
 	case err != nil:
 		log.Print("Something went wrong in crud Read")
@@ -211,7 +207,6 @@ func ReadAll(db *sql.DB, dataType interface{}, selectName interface{}, selectVal
 		err := rows.Scan(values...)
 		switch {
 		case err == sql.ErrNoRows:
-			log.Print("No rows found!")
 			return nil, false
 		case err != nil:
 			log.Print(err)
@@ -239,8 +234,6 @@ func Update(db *sql.DB, data interface{}) bool {
 	values = append(values, members[0].Value.Interface())
 
 	stmtStr := fmt.Sprintf("UPDATE %v SET %v = ? WHERE %v = ?", tableName, strings.Join(names, " = ?, "), members[0].Name)
-
-	log.Print(stmtStr)
 
 	stmt,err := db.Prepare(stmtStr)
 	if err != nil {

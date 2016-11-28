@@ -26,7 +26,7 @@ export default class EventController extends React.Component {
         }
     }
     componentDidMount(){
-        this.state.stream = new EventSource("/event/spot/update");
+        this.state.stream = new EventSource("/event/spot");
         this.state.stream.addEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message', this.handleStream, false);
     }
     componentWillUnmount(){

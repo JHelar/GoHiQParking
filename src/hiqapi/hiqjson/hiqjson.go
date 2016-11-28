@@ -59,6 +59,12 @@ var NO_SPOTS_MSG,_ = json.Marshal(JResponse{
 	Error:false,
 	Message:"No spots are currently free.",
 })
+
+var FREE_SPOT_MSG,_ = json.Marshal(JResponse{
+	Error:false,
+	Message:"A spot just opened up.",
+})
+
 func AsJson(data interface{}, asIndented bool) string {
 	dataVal := reflect.ValueOf(data)
 
