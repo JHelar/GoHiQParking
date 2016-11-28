@@ -62,7 +62,7 @@ func GetSessionKeyFromRequest(r *http.Request)  (string, error) {
 	session, err := r.Cookie("skey")
 	if err != nil {
 		//Try get the sessionkey from json.
-		//We need to read and copy the bytes in the readcloser.
+		//We need to read and copy the bytes in the readcloser. In order to put the read head back to the start.
 		var bufferBytes []byte
 		bufferBytes, _ = ioutil.ReadAll(r.Body)
 		r.Body = ioutil.NopCloser(bytes.NewBuffer(bufferBytes))

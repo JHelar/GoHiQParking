@@ -23,9 +23,9 @@ func register(w http.ResponseWriter, r *http.Request, nope *user.User){
 	hiqjson.Parse(r.Body,&data)
 	if user, err := user.Create(db, data.Email, data.Username, data.Password); err == nil {
 		ses, _ := session.NewUserSession(db, *user.ID)
-		fmt.Fprintf(w, hiqjson.AsJson(*ses))
+		fmt.Fprintf(w, hiqjson.AsJson(*ses, true))
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(err))
+		fmt.Fprintf(w, hiqjson.AsJson(err, true))
 	}
 }
 
@@ -38,9 +38,9 @@ func login(w http.ResponseWriter, r *http.Request, nope *user.User)  {
 
 	if user, err := user.GetByLogin(db, data.UsernameEmail, data.Password); err == nil {
 		ses,_:= session.NewUserSession(db, *user.ID)
-		fmt.Fprint(w, hiqjson.AsJson(*ses))
+		fmt.Fprint(w, hiqjson.AsJson(*ses, true))
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(err))
+		fmt.Fprintf(w, hiqjson.AsJson(err, true))
 	}
 }
 
@@ -49,21 +49,21 @@ func logout(w http.ResponseWriter, r *http.Request, myUser *user.User){
 		ses, err := session.GetByUserID(db, *myUser.ID)
 		if err == nil {
 			if err = session.Delete(db, ses); err == nil {
-				fmt.Fprintf(w, hiqjson.AsJson("Succsess."))
+				fmt.Fprintf(w, hiqjson.AsJson("Succsess.", true))
 				return
 			}
 		}
-		fmt.Fprintf(w, hiqjson.AsJson(err))
+		fmt.Fprintf(w, hiqjson.AsJson(err, true))
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG, true))
 	}
 }
 
 func get(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	if(myUser != nil){
-		fmt.Fprintf(w, hiqjson.AsJson(*myUser))
+		fmt.Fprintf(w, hiqjson.AsJson(*myUser, false))
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG, true))
 	}
 }
 

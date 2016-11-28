@@ -13,7 +13,9 @@ import (
 	"hiqeventstream"
 )
 var db *hiqdb.HiQDb
-var broker *hiqeventstream.Broker
+//General event stream for view updates
+var spotBroker *hiqeventstream.Broker
+var checkSpots chan bool
 
 const FLARE = "HiQSpotApi:"
 
@@ -32,8 +34,7 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 
 		jspots = append(jspots, jspot)
 	}
-	jsonResp := hiqjson.AsJson(jspots)
-	broker.Notifier <- []byte(jsonResp)
+	jsonResp := hiqjson.AsJson(jspots, true)
 	fmt.Fprintf(w, jsonResp)
 }
 
@@ -41,9 +42,9 @@ func get(w http.ResponseWriter, r *http.Request, user *user.User){
 	var s spot.Spot
 	hiqjson.Parse(r.Body, &s)
 	if ok := spot.Get(db, &s); ok {
-		fmt.Fprintf(w, hiqjson.AsJson(spotToJResponse(s)))
+		fmt.Fprintf(w, hiqjson.AsJson(spotToJResponse(s), true))
 	}else {
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
 	}
 
 
@@ -62,9 +63,12 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.ParkedBy = 0
 					ok = spot.Update(db, s)
 					getAll(w, r, myUser)
-					return
+					//Send a spot check flag, and event update.
+					checkSpots <- true
+					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
+
 				}else{
-					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."}))
+					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."},true))
 				}
 			}else{
 				_, err := spot.GetByUserID(db, *myUser.ID)
@@ -75,18 +79,22 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.ParkedTime = time.Now()
 					ok = spot.Update(db, s)
 					getAll(w, r, myUser)
-					return
+					//Send a spot check flag, and event update.
+					checkSpots <- true
+					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
+
 				}else{
-					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}))
+					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}, true))
 				}
 			}
 		}else{
-			fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG))
+			fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
 		}
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG, true))
 	}
 
+	return
 }
 
 func spotToJResponse(s spot.Spot) hiqjson.JSpot{
@@ -108,14 +116,32 @@ func spotToJResponse(s spot.Spot) hiqjson.JSpot{
 	return jspot
 }
 
+func pushListener(){
+	go func(){
+		for {
+			select {
+			case <- checkSpots:
+				//Check if we need to push a notification.
+				if spots := spot.GetFreeSpots(db);len(spots) <= 0 {
+					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.NO_SPOTS_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION}
+				}
+			}
+		}
+	}()
+}
+
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
-	broker = hiqeventstream.NewServer()
+	spotBroker = hiqeventstream.NewServer()
+	checkSpots = make(chan bool)
+
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)
 	master.Register("spot/getAll", getAll)
 	master.Register("spot/get", get)
 	master.Register("spot/toggle", toggle)
 
-	master.RegisterEventStream("spot", broker.ServeHTTP)
+	master.RegisterEventStream("spot/update", spotBroker.ServeHTTP)
+
+	pushListener()
 	log.Printf("%v Registred.",FLARE)
 }

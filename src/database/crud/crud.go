@@ -181,14 +181,21 @@ func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue inte
 	return true
 }
 
-func ReadAll(db *sql.DB, dataType interface{}) ([]interface{},bool) {
+func ReadAll(db *sql.DB, dataType interface{}, selectName interface{}, selectValue interface{}) ([]interface{},bool) {
 
 	tableName, members := getDataInfo(dataType, true)
 	tableName += "s"
 
-	queryStr := fmt.Sprintf("SELECT * FROM %v", tableName)
-
-	rows,err := db.Query(queryStr)
+	var queryStr string
+	var rows *sql.Rows
+	var err error
+	if(selectName == nil || selectValue == nil) {
+		queryStr = fmt.Sprintf("SELECT * FROM %v", tableName)
+		rows, err = db.Query(queryStr, members[0].Value.Interface())
+	}else{
+		queryStr = fmt.Sprintf("SELECT * FROM %v WHERE %v = ?", tableName, selectName)
+		rows, err = db.Query(queryStr, selectValue)
+	}
 	if err != nil {
 		log.Print(err)
 		return nil, false

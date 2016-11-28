@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import EventController from './EventController';
 
 class Warning extends React.Component {
     render(){
@@ -48,22 +49,24 @@ class App extends React.Component {
         this.state = {
             spots: props.spots,
             error: false,
-            message:"",
+            message:""
         };
         this.handleSpotToggle = this.handleSpotToggle.bind(this);
-
+        this.handleStream = this.handleStream.bind(this);
+        this._updateSpots = this._updateSpots.bind(this);
     }
-    componentWillMount(){
-        var stream = new EventSource("/event/spot")
-        stream.addEventListener("spots", this.handleStream, false);
+    _updateSpots() {
+        let _this = this;
+        $.post('/api/spot/getAll', null, function (e) {
+            _this.setState({
+                spots:e.data
+            });
+        }, 'json');
     }
-    handleStream(e){
-        var data = JSON.parse(e.data);
-        this.setState({
-            error:data.error,
-            message:data.message,
-            spots:data.data
-        });
+    handleStream(data){
+        if(data.message === 'UPDATE'){
+            this._updateSpots();
+        }
     }
     handleSpotToggle(spot){
         var _this = this;
@@ -96,6 +99,7 @@ class App extends React.Component {
                 <div className="row">
                     {spots}
                 </div>
+                <EventController onEvent={this.handleStream} eventType={"update"}/>
             </div>
         );
     }

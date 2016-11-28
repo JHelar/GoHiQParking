@@ -73,7 +73,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request){
 		}
 		return
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG))
+		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
 		return
 	}
 

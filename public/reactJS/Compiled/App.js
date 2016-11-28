@@ -20768,6 +20768,10 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _EventController = require('./EventController');
+
+var _EventController2 = _interopRequireDefault(_EventController);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20896,25 +20900,27 @@ var App = function (_React$Component3) {
             message: ""
         };
         _this4.handleSpotToggle = _this4.handleSpotToggle.bind(_this4);
-
+        _this4.handleStream = _this4.handleStream.bind(_this4);
+        _this4._updateSpots = _this4._updateSpots.bind(_this4);
         return _this4;
     }
 
     _createClass(App, [{
-        key: 'componentWillMount',
-        value: function componentWillMount() {
-            var stream = new EventSource("/event/spot");
-            stream.addEventListener("spots", this.handleStream, false);
+        key: '_updateSpots',
+        value: function _updateSpots() {
+            var _this = this;
+            $.post('/api/spot/getAll', null, function (e) {
+                _this.setState({
+                    spots: e.data
+                });
+            }, 'json');
         }
     }, {
         key: 'handleStream',
-        value: function handleStream(e) {
-            var data = JSON.parse(e.data);
-            this.setState({
-                error: data.error,
-                message: data.message,
-                spots: data.data
-            });
+        value: function handleStream(data) {
+            if (data.message === 'UPDATE') {
+                this._updateSpots();
+            }
         }
     }, {
         key: 'handleSpotToggle',
@@ -20954,7 +20960,8 @@ var App = function (_React$Component3) {
                     'div',
                     { className: 'row' },
                     spots
-                )
+                ),
+                _react2.default.createElement(_EventController2.default, { onEvent: this.handleStream, eventType: "update" })
             );
         }
     }]);
@@ -20966,4 +20973,83 @@ $.post('/api/spot/getAll', null, function (e) {
     _reactDom2.default.render(_react2.default.createElement(App, { spots: e.data }), document.getElementById("spots"));
 }, 'json');
 
-},{"react":171,"react-dom":2}]},{},[172]);
+},{"./EventController":173,"react":171,"react-dom":2}],173:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by johnla on 2016-11-28.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+var EventController = function (_React$Component) {
+    _inherits(EventController, _React$Component);
+
+    function EventController(props) {
+        _classCallCheck(this, EventController);
+
+        var _this = _possibleConstructorReturn(this, (EventController.__proto__ || Object.getPrototypeOf(EventController)).call(this, props));
+
+        _this.state = {
+            stream: null
+        };
+        _this.handleStream = _this.handleStream.bind(_this);
+        return _this;
+    }
+
+    _createClass(EventController, [{
+        key: "handleStream",
+        value: function handleStream(e) {
+            /*console.log('-----------GOT DATA----------');
+            console.log(e.data);
+            console.log('-----------END---------------');*/
+            var data = JSON.parse(e.data);
+
+            if (!data.error) {
+                //Send to app.
+                console.log(data.error);
+                this.props.onEvent(data);
+            } else {
+                console.log("Event error: " + data.message);
+            }
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.state.stream = new EventSource("/event/spot/update");
+            this.state.stream.addEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message', this.handleStream, false);
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            this.state.stream.removeAllListeners();
+            this.state.stream.close();
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return null;
+        }
+    }]);
+
+    return EventController;
+}(_react2.default.Component);
+
+exports.default = EventController;
+
+},{"react":171}]},{},[172]);

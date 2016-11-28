@@ -16,7 +16,19 @@ type Spot struct {
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {
-	if spotsI, ok := crud.ReadAll(db.DB, &Spot{}); ok {
+	if spotsI, ok := crud.ReadAll(db.DB, &Spot{},nil,nil); ok {
+		spots := make([]Spot, len(spotsI))
+		for i,_ := range spotsI {
+			spots[i] = spotsI[i].(Spot)
+		}
+		return spots
+	}else{
+		return nil
+	}
+}
+
+func GetFreeSpots(db *hiqdb.HiQDb) []Spot {
+	if spotsI, ok := crud.ReadAll(db.DB, &Spot{},"IsParked",0); ok {
 		spots := make([]Spot, len(spotsI))
 		for i,_ := range spotsI {
 			spots[i] = spotsI[i].(Spot)

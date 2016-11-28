@@ -5,25 +5,35 @@ import (
 	"net/http"
 )
 
+const EVENT_TYPE_UPDATE = "update"
+const EVENT_TYPE_PUSH_NOTIFICATION = "notification"
+const EVENT_TYPE_MESSAGE = ""
+
+type Message struct {
+	ClientOrigin string
+	Message []byte
+	EventType string
+}
+
 type Broker struct {
-	Notifier chan []byte
+	Notifier chan Message
 
 	//New Client connections
-	newClients chan chan []byte
+	newClients chan chan Message
 
 	//Closed client connections
-	closingClients chan chan []byte
+	closingClients chan chan Message
 
 	//Client connections registry
-	clients map[chan []byte]bool
+	clients map[chan Message]bool
 }
 
 func NewServer()(broker *Broker) {
 	broker = &Broker{
-		Notifier: make(chan []byte, 1),
-		newClients: make(chan chan []byte),
-		closingClients: make(chan chan []byte),
-		clients: make(map[chan []byte]bool),
+		Notifier: make(chan Message, 1),
+		newClients: make(chan chan Message),
+		closingClients: make(chan chan Message),
+		clients: make(map[chan Message]bool),
 	}
 
 	//Set the broker running
@@ -45,7 +55,8 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 	rw.Header().Set("Connection", "keep-alive")
 	rw.Header().Set("Access-Control-Allow-Origin", "*")
 
-	messageChan := make(chan []byte)
+	messageChan := make(chan Message)
+	clientOrign := req.RemoteAddr
 
 	broker.newClients <- messageChan
 	defer func() {
@@ -60,8 +71,16 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 	}()
 
 	for {
-		fmt.Fprintf(rw, "data: %s\n\n", <- messageChan)
-		flusher.Flush()
+		select{
+		case msg := <- messageChan:
+			//Do not send events to same client.
+			log.Printf("Sedning to: %v from client: %v", clientOrign, msg.ClientOrigin)
+			if(msg.ClientOrigin != clientOrign){
+				fmt.Fprintf(rw, "event:%s\ndata:%s\n\n", msg.EventType, msg.Message)
+			}
+			flusher.Flush()
+		}
+
 	}
 
 }

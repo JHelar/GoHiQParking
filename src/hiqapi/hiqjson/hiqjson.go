@@ -50,7 +50,16 @@ var GENERAL_ERROR_MSG = JResponse{
 	Message:"Something went wrong, try again later!",
 }
 
-func AsJson(data interface{}) string {
+var GENERAL_UPDATE_MSG,_ = json.Marshal(JResponse{
+	Error:false,
+	Message:"UPDATE",
+})
+
+var NO_SPOTS_MSG,_ = json.Marshal(JResponse{
+	Error:false,
+	Message:"No spots are currently free.",
+})
+func AsJson(data interface{}, asIndented bool) string {
 	dataVal := reflect.ValueOf(data)
 
 	switch dataVal.Kind() {
@@ -59,28 +68,28 @@ func AsJson(data interface{}) string {
 		for i := 0; i < dataVal.Len(); i++ {
 			dArr[i] = asJson(dataVal.Index(i).Interface())
 		}
-		return toJson(dArr)
+		return toJson(dArr, asIndented)
 	case reflect.Struct:
 		d := asJson(data)
-		return toJson(d)
+		return toJson(d, asIndented)
 	case reflect.String:
-		return toJson(JResponse{Error:false, Message:data.(string)})
+		return toJson(JResponse{Error:false, Message:data.(string)}, asIndented)
 	case reflect.Interface:
 		d := asJson(data)
-		return toJson(d)
+		return toJson(d, asIndented)
 	case reflect.Ptr:
 		switch data.(type) {
 		case error:
 			d := asJson(data)
-			return toJson(d)
+			return toJson(d, asIndented)
 		default:
 			err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
-			return toJson(JResponse{Error:true,Message:err.Error()})
+			return toJson(JResponse{Error:true,Message:err.Error()}, asIndented)
 		}
 	default:
 		err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
 
-		return toJson(JResponse{Error:true,Message:err.Error()})
+		return toJson(JResponse{Error:true,Message:err.Error()}, asIndented)
 	}
 }
 
@@ -115,7 +124,7 @@ func asJson(data interface{}) interface{}{
 	}
 }
 
-func toJson(data interface{}) string {
+func toJson(data interface{}, asIndented bool) string {
 	var resp JResponse
 	switch t := data.(type) {
 	case JResponse:
@@ -123,7 +132,12 @@ func toJson(data interface{}) string {
 	default:
 		resp = JResponse{Error:false, Data:t}
 	}
-	j, _ := json.MarshalIndent(resp, "", "")
+	var j []byte
+	if(asIndented){
+		j, _ = json.MarshalIndent(resp, "", "")
+	}else{
+		j,_ = json.Marshal(resp)
+	}
 	return string(j)
 }
 func sessionToJSession(session session.UserSession) JSession {
