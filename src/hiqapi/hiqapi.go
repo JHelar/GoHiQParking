@@ -17,6 +17,10 @@ type ApiMaster struct {
 	eventStreams map[string]func(http.ResponseWriter, *http.Request)
 }
 
+type ApiChild struct {
+	Register func(*ApiMaster, *hiqdb.HiQDb)
+}
+
 var master *ApiMaster
 var db *hiqdb.HiQDb
 
@@ -73,7 +77,7 @@ func apiHandler(w http.ResponseWriter, r *http.Request){
 		}
 		return
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
+		fmt.Fprint(w, hiqjson.GENERAL_ERROR_MSG)
 		return
 	}
 

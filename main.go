@@ -8,6 +8,7 @@ import (
 	"hiqapi"
 	"hiqapi/apispot"
 	"hiqapi/apiuser"
+	"hiqapi/apilot"
 )
 
 func index(w http.ResponseWriter, r *http.Request){
@@ -57,10 +58,13 @@ func main(){
 
 	//apispot.Start(db, mux)
 	api = hiqapi.Start(db, mux)
+	lotApi := apilot.New()
+	lotApi.Register(api, db)
+
 	apispot.Register(db, api)
 	apiuser.Register(db, api)
 
 	mux.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
-	http.ListenAndServe("0.0.0.0:8080", mux)
+	http.ListenAndServe("localhost:8080", mux)
 
 }

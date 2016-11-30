@@ -32,11 +32,8 @@
                 </div>
             </nav>
         </header>
-        <main class="cover-image" style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|Fabriksgatan 20,Örebro&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s');">
-            <div class="cover-white flex center-center">
-                {{block "main" .}}{{end}}
-            </div>
-        </main>
+        {{block "main" .}}
+        {{end}}
         <footer class="wrapper">
             <div class="container">
                 {{block "footer" .}}{{end}}

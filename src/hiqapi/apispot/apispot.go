@@ -20,6 +20,8 @@ var checkSpots chan bool
 const FLARE = "HiQSpotApi:"
 
 func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
+	//ToDo: Refactor this.
+
 	var jspots = make([]hiqjson.JSpot, 0)
 	var userSpot *spot.Spot
 
@@ -27,14 +29,14 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
 	}
 	for _,s := range spot.GetAll(db){
-		jspot := spotToJResponse(s)
+		jspot := SpotToJResponse(s)
 		if myUser != nil{
 			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
 		}
 
 		jspots = append(jspots, jspot)
 	}
-	jsonResp := hiqjson.AsJson(jspots, true)
+	jsonResp := hiqjson.AsJson(jspots)
 	fmt.Fprintf(w, jsonResp)
 }
 
@@ -42,9 +44,9 @@ func get(w http.ResponseWriter, r *http.Request, user *user.User){
 	var s spot.Spot
 	hiqjson.Parse(r.Body, &s)
 	if ok := spot.Get(db, &s); ok {
-		fmt.Fprintf(w, hiqjson.AsJson(spotToJResponse(s), true))
+		fmt.Fprintf(w, hiqjson.AsJson(s))
 	}else {
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
+		fmt.Fprint(w, hiqjson.GENERAL_ERROR_MSG)
 	}
 
 
@@ -68,7 +70,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
 
 				}else{
-					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."},true))
+					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."}))
 				}
 			}else{
 				_, err := spot.GetByUserID(db, *myUser.ID)
@@ -84,20 +86,20 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
 
 				}else{
-					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}, true))
+					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}))
 				}
 			}
 		}else{
-			fmt.Fprintf(w, hiqjson.AsJson(hiqjson.GENERAL_ERROR_MSG, true))
+			fmt.Fprint(w, hiqjson.GENERAL_ERROR_MSG)
 		}
 	}else{
-		fmt.Fprintf(w, hiqjson.AsJson(hiqjson.LOGIN_ERROR_MSG, true))
+		fmt.Fprint(w, hiqjson.LOGIN_ERROR_MSG)
 	}
 
 	return
 }
 
-func spotToJResponse(s spot.Spot) hiqjson.JSpot{
+func SpotToJResponse(s spot.Spot) hiqjson.JSpot{
 	jspot := hiqjson.JSpot{
 		ID:s.ID,
 		Name: s.Name,

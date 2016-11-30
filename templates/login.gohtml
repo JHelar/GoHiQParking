@@ -5,12 +5,16 @@
 {{end}}
 {{define "title"}}HiQParking | Login {{end}}
 {{define "main"}}
-<div class="container">
-    <div class="row page-header">
-        <h1 class="text-center">Login</h1>
+<main class="cover-image" style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|Fabriksgatan 20,Örebro&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s');">
+    <div class="cover-white flex center-center">
+        <div class="container">
+            <div class="row page-header">
+                <h1 class="text-center">Login</h1>
+            </div>
+            <div id="login"></div>
+        </div>
     </div>
-    <div id="login"></div>
-</div>
+</main>
 {{end}}
 
 {{define "scripts"}}

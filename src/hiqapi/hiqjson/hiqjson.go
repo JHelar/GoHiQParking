@@ -2,7 +2,6 @@ package hiqjson
 
 import (
 	"reflect"
-	"hiqdb/spot"
 	"log"
 	"encoding/json"
 	"fmt"
@@ -35,20 +34,21 @@ type JResponse struct {
 	Data interface{} `json:"data"`
 }
 
-var MAIL_IN_USE_MSG = JResponse{
+var MAIL_IN_USE_MSG = jsonMust(json.MarshalIndent(JResponse{
 	Error:true,
 	Message:"Email allready in use!",
-}
+},"",""))
 
-var LOGIN_ERROR_MSG = JResponse{
+
+var LOGIN_ERROR_MSG = jsonMust(json.MarshalIndent(JResponse{
 	Error:true,
 	Message:"You need to be logged in.",
-}
+},"",""))
 
-var GENERAL_ERROR_MSG = JResponse{
+var GENERAL_ERROR_MSG = jsonMust(json.MarshalIndent(JResponse{
 	Error:true,
 	Message:"Something went wrong, try again later!",
-}
+},"",""))
 
 var GENERAL_UPDATE_MSG,_ = json.Marshal(JResponse{
 	Error:false,
@@ -65,7 +65,7 @@ var FREE_SPOT_MSG,_ = json.Marshal(JResponse{
 	Message:"A spot just opened up.",
 })
 
-func AsJson(data interface{}, asIndented bool) string {
+func AsJson(data interface{}) string {
 	dataVal := reflect.ValueOf(data)
 
 	switch dataVal.Kind() {
@@ -74,28 +74,28 @@ func AsJson(data interface{}, asIndented bool) string {
 		for i := 0; i < dataVal.Len(); i++ {
 			dArr[i] = asJson(dataVal.Index(i).Interface())
 		}
-		return toJson(dArr, asIndented)
+		return toJson(dArr)
 	case reflect.Struct:
 		d := asJson(data)
-		return toJson(d, asIndented)
+		return toJson(d)
 	case reflect.String:
-		return toJson(JResponse{Error:false, Message:data.(string)}, asIndented)
+		return toJson(JResponse{Error:false, Message:data.(string)})
 	case reflect.Interface:
 		d := asJson(data)
-		return toJson(d, asIndented)
+		return toJson(d)
 	case reflect.Ptr:
 		switch data.(type) {
 		case error:
 			d := asJson(data)
-			return toJson(d, asIndented)
+			return toJson(d)
 		default:
 			err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
-			return toJson(JResponse{Error:true,Message:err.Error()}, asIndented)
+			return toJson(JResponse{Error:true,Message:err.Error()})
 		}
 	default:
 		err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
 
-		return toJson(JResponse{Error:true,Message:err.Error()}, asIndented)
+		return toJson(JResponse{Error:true,Message:err.Error()})
 	}
 }
 
@@ -111,10 +111,8 @@ func Parse(body io.ReadCloser, receiver interface{}){
 
 func asJson(data interface{}) interface{}{
 	switch t := data.(type) {
-	case spot.Spot:
-		return spotToJSpot(data.(spot.Spot))
 	case session.UserSession:
-		return sessionToJSession(data.(session.UserSession))
+		return JSession{Key:data.(session.UserSession).SessionKey}
 	case user.User:
 		return JUser{UserName:data.(user.User).Username}
 	case JResponse:
@@ -124,13 +122,18 @@ func asJson(data interface{}) interface{}{
 	case error:
 		return JResponse{Error:true, Message:data.(error).Error()}
 	default:
-		err := fmt.Sprintf("HiQJson: Unsupported datatype '%v'", t)
-		log.Print(err)
-		return fmt.Sprintf("Bad kind of data: %v", err)
+		//If nested slice, pass it again.
+		if reflect.Slice == reflect.ValueOf(data).Kind(){
+			return AsJson(data)
+		}else {
+			err := fmt.Sprintf("HiQJson: Unsupported datatype '%v' sending as is.", t)
+			log.Print(err)
+			return data
+		}
 	}
 }
 
-func toJson(data interface{}, asIndented bool) string {
+func toJson(data interface{}) string {
 	var resp JResponse
 	switch t := data.(type) {
 	case JResponse:
@@ -138,22 +141,13 @@ func toJson(data interface{}, asIndented bool) string {
 	default:
 		resp = JResponse{Error:false, Data:t}
 	}
-	var j []byte
-	if(asIndented){
-		j, _ = json.MarshalIndent(resp, "", "")
-	}else{
-		j,_ = json.Marshal(resp)
-	}
+	j,_ := json.MarshalIndent(resp,"","")
 	return string(j)
 }
-func sessionToJSession(session session.UserSession) JSession {
-	return JSession{Key:session.SessionKey}
-}
-func spotToJSpot(spot spot.Spot) JSpot {
-	js := JSpot{
-		Name:spot.Name,
-		IsParked:spot.IsParked,
 
+func jsonMust(data []byte, err error) string{
+	if err != nil {
+		log.Panic(err)
 	}
-	return js
+	return string(data)
 }

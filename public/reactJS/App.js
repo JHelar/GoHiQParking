@@ -4,16 +4,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import EventController from './EventController';
+import Warning from './Warning';
+import Parkinglots from './Parkinglots';
 
-class Warning extends React.Component {
-    render(){
-        return(
-            <div className="alert alert-danger fade in">
-                <strong>Error:</strong> {this.props.message}
-            </div>
-        );
-    }
-}
 
 //ToDo: Fix datetime show.
 class Spot extends React.Component{
@@ -87,27 +80,22 @@ class App extends React.Component {
     render(){
         var spots = [];
         var _this = this;
-        this.state.spots.forEach(function(spot){
+        /*this.state.spots.forEach(function(spot){
             spots.push(<Spot spot={spot} onToggle={_this.handleSpotToggle} key={spot.id + spot.isparked.toString()}/>);
-        });
+        });*/
         return (
-            <div className="clearfix">
-                {this.state.error &&
-                <div className="row container">
-                    <Warning message={this.state.message}/>
-                </div>}
-                <div className="row">
-                    {spots}
+            <div className="cover-white flex center-center">
+                <div className="container">
+                    <Parkinglots lots={this.props.lots}/>
                 </div>
-                <EventController onEvent={this.handleStream} eventType={"update"}/>
             </div>
         );
     }
 }
 
-$.post('/api/spot/getAll', null, function(e){
+$.post('/api/lot/getAll', null, function(e){
     ReactDOM.render(
-        <App spots={e.data}/>,
+        <App lots={e.data}/>,
         document.getElementById("spots")
     );
 },'json');

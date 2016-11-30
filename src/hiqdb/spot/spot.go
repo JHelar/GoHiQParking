@@ -13,6 +13,8 @@ type Spot struct {
 	IsParked bool `json:"isparked,omitempty"`
 	ParkedBy int `json:"parkedby, omitempty"`
 	ParkedTime time.Time `json:"parkedtime, omitempty"`
+	ParkingLot int `json:"parkinglot"`
+	CanModify bool `crud:"ignore",json:"canmodify"`
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {

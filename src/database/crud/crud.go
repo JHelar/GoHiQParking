@@ -15,6 +15,9 @@ import (
 	"time"
 )
 
+const CRUD_TAG_IGNORE = "ignore"
+
+
 type member struct {
 	Name string
 	Value reflect.Value
@@ -30,7 +33,9 @@ func getDataInfo(table interface{}, includeNil bool) (string, []member) {
 
 	for i := 0; i < v.NumField(); i++{
 		valueField := v.Field(i)
-		if valueField.Interface() != nil || includeNil {
+		typeField := t.Field(i)
+
+		if (valueField.Interface() != nil || includeNil) && typeField.Tag.Get("crud") != CRUD_TAG_IGNORE{
 			typeField := v.Type().Field(i)
 			members = append(members, member{Name:typeField.Name, Value:valueField})
 		}
@@ -39,54 +44,69 @@ func getDataInfo(table interface{}, includeNil bool) (string, []member) {
 }
 
 func setTableValues(table interface{}, values [][]byte){
-	t := reflect.ValueOf(table).Elem()
-	setReflectValues(t, values)
+
+	switch table.(type) {
+	case reflect.Value:
+		v := table.(reflect.Value)
+
+		t := reflect.TypeOf(v.Interface())
+		setReflectValues(t, v, values)
+	default:
+
+		t := reflect.TypeOf(table).Elem()
+		v := reflect.ValueOf(table).Elem()
+		setReflectValues(t, v, values)
+	}
 }
 
-func setReflectValues(t reflect.Value, values [][]byte){
+func setReflectValues(t reflect.Type, v reflect.Value, values [][]byte){
 	for i := 0; i < t.NumField(); i++{
+		tfield := t.Field(i)
 
-		field := t.Field(i)
-		val := string(values[i])
-		if field.CanSet() {
-			switch field.Kind(){
-			case reflect.Int:
-				x, _ := strconv.Atoi(val)
+		if tfield.Tag.Get("crud") != CRUD_TAG_IGNORE {
 
-				field.SetInt(int64(x))
-				break
-			case reflect.String:
-				field.SetString(val)
-				break
-			case reflect.Bool:
-				b, _ := strconv.ParseBool(val)
-				field.SetBool(b)
-				break
-			case reflect.Struct:
-				switch field.Interface().(type){
-				case time.Time:
-					t,err := time.Parse(time.RFC3339Nano, val)
-					if err != nil {
-						log.Print(err)
-					}else{
-						field.Set(reflect.ValueOf(t))
-					}
-
-				default:
-
-				}
-				break
-			case reflect.Ptr:
-				if field.Type().String() == "*int"{
+			field := v.Field(i)
+			val := string(values[i])
+			if field.CanSet() {
+				switch field.Kind(){
+				case reflect.Int:
 					x, _ := strconv.Atoi(val)
-					field.Set(reflect.ValueOf(&x))
+
+					field.SetInt(int64(x))
+					break
+				case reflect.String:
+					field.SetString(val)
+					break
+				case reflect.Bool:
+					b, _ := strconv.ParseBool(val)
+					field.SetBool(b)
+					break
+				case reflect.Struct:
+					switch field.Interface().(type){
+					case time.Time:
+						t, err := time.Parse(time.RFC3339Nano, val)
+						if err != nil {
+							log.Printf("In crud set time: %v", err)
+						} else {
+							field.Set(reflect.ValueOf(t))
+						}
+
+					default:
+
+					}
+					break
+				case reflect.Ptr:
+					if field.Type().String() == "*int" {
+						x, _ := strconv.Atoi(val)
+						field.Set(reflect.ValueOf(&x))
+					}
+				default:
+					//field.Set(reflect.Zero(reflect.TypeOf(nil)))
+					log.Printf("Could not determine value type: %v", field.Kind())
 				}
-			default:
-				//field.Set(reflect.Zero(reflect.TypeOf(nil)))
-				log.Printf("Could not determine value type: %v", field.Kind())
+			} else {
+				log.Printf("Could not address field: %v into %v", val, field.Kind())
 			}
-		}else{
-			log.Printf("Could not address field: %v into %v", val, field.Kind())
 		}
 	}
 }
@@ -213,7 +233,7 @@ func ReadAll(db *sql.DB, dataType interface{}, selectName interface{}, selectVal
 			return nil, false
 		default:
 			t := reflect.New(reflect.TypeOf(dataType).Elem()).Elem()
-			setReflectValues(t, bytes)
+			setTableValues(t, bytes)
 			datas = append(datas, t.Interface())
 		}
 	}
