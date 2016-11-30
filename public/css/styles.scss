@@ -25,6 +25,19 @@
   padding: 0;
 }
 
+//Parkinglots
+.lot{
+  height:100%;
+  flex:1;
+}
+.lot-name {
+  font-size: 30px;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  height: 100%;
+}
+
 //General rules
 .flex {
   display:flex;
