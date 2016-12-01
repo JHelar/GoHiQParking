@@ -40,6 +40,25 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	fmt.Fprintf(w, jsonResp)
 }
 
+func getAllFromLot(w http.ResponseWriter, r *http.Request, myUser *user.User, lotID int){
+	var jspots = make([]hiqjson.JSpot, 0)
+	var userSpot *spot.Spot
+
+	if myUser != nil {
+		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
+	}
+	for _,s := range spot.GetAllByLotID(db, lotID){
+		jspot := SpotToJResponse(s)
+		if myUser != nil{
+			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
+		}
+
+		jspots = append(jspots, jspot)
+	}
+	jsonResp := hiqjson.AsJson(jspots)
+	fmt.Fprintf(w, jsonResp)
+}
+
 func get(w http.ResponseWriter, r *http.Request, user *user.User){
 	var s spot.Spot
 	hiqjson.Parse(r.Body, &s)
@@ -64,7 +83,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.IsParked = false
 					s.ParkedBy = 0
 					ok = spot.Update(db, s)
-					getAll(w, r, myUser)
+					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
 					checkSpots <- true
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
@@ -80,7 +99,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					s.ParkedBy = *myUser.ID
 					s.ParkedTime = time.Now()
 					ok = spot.Update(db, s)
-					getAll(w, r, myUser)
+					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
 					checkSpots <- true
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}

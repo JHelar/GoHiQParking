@@ -34,6 +34,7 @@ func fill(w http.ResponseWriter, r *http.Request, myUser *user.User){
 		}
 		for i,_ := range lot.Spots{
 			lot.Spots[i].CanModify = ((!lot.Spots[i].IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == lot.Spots[i].ID) && myUser != nil)
+
 		}
 
 		fmt.Fprintf(w, hiqjson.AsJson(lot))

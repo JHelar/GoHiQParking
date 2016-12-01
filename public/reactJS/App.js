@@ -35,12 +35,30 @@ class Spot extends React.Component{
     }
 }
 
+class Spots extends React.Component {
+    render(){
+        let _this = this;
+        let spots = [];
+        this.props.spots.forEach(function(spot){
+            spots.push(<Spot spot={spot} onToggle={_this.props.onToggle} key={spot.id + spot.isparked.toString()}/>);
+        });
+        return(
+            <div className="cover-white flex center-center">
+                <div className="container">
+                    {spots}
+                </div>
+            </div>
+        );
+    }
+}
+
 //ToDO: Fix the spot toggle.
 class App extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            spots: props.spots,
+            spots: null,
+            lot:null,
             error: false,
             message:""
         };
@@ -48,12 +66,20 @@ class App extends React.Component {
         this.handleStream = this.handleStream.bind(this);
         this._updateSpots = this._updateSpots.bind(this);
     }
-    _updateSpots() {
+    _updateSpots(lot) {
         let _this = this;
-        $.post('/api/spot/getAll', null, function (e) {
-            _this.setState({
-                spots:e.data
-            });
+        let data = null;
+        if(lot !== null && lot !== undefined){
+            data = JSON.stringify(lot);
+        }else{
+            data = JSON.stringify(this.state.lot);
+        }
+        $.post('/api/lot/fill', data, function (e) {
+            if(!e.error) {
+                _this.setState({
+                    lot: e.data
+                });
+            }
         }, 'json');
     }
     handleStream(data){
@@ -62,11 +88,13 @@ class App extends React.Component {
         }
     }
     handleSpotToggle(spot){
-        var _this = this;
+        let _this = this;
         $.post('/api/spot/toggle', JSON.stringify({id:spot.id}), function (e) {
             if(!e.error){
+                let lot = _this.state.lot;
+                lot.spots = e.data;
                 _this.setState({
-                    spots:e.data,
+                    lot:lot,
                     error:false
                 });
             }else{
@@ -78,21 +106,17 @@ class App extends React.Component {
         }, 'json');
     }
     render(){
-        var spots = [];
-        var _this = this;
-        /*this.state.spots.forEach(function(spot){
-            spots.push(<Spot spot={spot} onToggle={_this.handleSpotToggle} key={spot.id + spot.isparked.toString()}/>);
-        });*/
+        let showLots = this.state.lot === null || this.state.lot === undefined;
         return (
-            <div className="cover-white flex center-center">
-                <div className="container">
-                    <Parkinglots lots={this.props.lots}/>
-                </div>
+            <div>
+                {this.state.error && <Warning message={this.state.message}/>}
+                {showLots && <Parkinglots lots={this.props.lots} onClick={this._updateSpots}/>}
+                {!showLots && <Spots spots={this.state.lot.spots} onToggle={this.handleSpotToggle}/>}
             </div>
+
         );
     }
 }
-
 $.post('/api/lot/getAll', null, function(e){
     ReactDOM.render(
         <App lots={e.data}/>,

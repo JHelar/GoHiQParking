@@ -11,7 +11,7 @@ type ParkingLot struct {
 	ID int `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 	Location string `json:"location,omitempty"`
-	Spots []spot.Spot `crud:"ignore",json:"spots,omitempty"`
+	Spots []spot.Spot `crud:"ignore" json:"spots,omitempty"`
 }
 
 func Create(db *hiqdb.HiQDb, name, location string) (*ParkingLot, bool) {

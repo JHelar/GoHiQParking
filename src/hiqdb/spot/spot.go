@@ -10,15 +10,27 @@ import (
 type Spot struct {
 	ID int `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
-	IsParked bool `json:"isparked,omitempty"`
+	IsParked bool `json:"isparked"`
 	ParkedBy int `json:"parkedby, omitempty"`
 	ParkedTime time.Time `json:"parkedtime, omitempty"`
 	ParkingLot int `json:"parkinglot"`
-	CanModify bool `crud:"ignore",json:"canmodify"`
+	CanModify bool `crud:"ignore" json:"canmodify"`
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {
 	if spotsI, ok := crud.ReadAll(db.DB, &Spot{},nil,nil); ok {
+		spots := make([]Spot, len(spotsI))
+		for i,_ := range spotsI {
+			spots[i] = spotsI[i].(Spot)
+		}
+		return spots
+	}else{
+		return nil
+	}
+}
+
+func GetAllByLotID(db *hiqdb.HiQDb, id int) []Spot{
+	if spotsI, ok := crud.ReadAll(db.DB, &Spot{},"ParkingLot",id); ok {
 		spots := make([]Spot, len(spotsI))
 		for i,_ := range spotsI {
 			spots[i] = spotsI[i].(Spot)

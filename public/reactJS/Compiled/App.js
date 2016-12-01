@@ -20552,36 +20552,77 @@ var Spot = function (_React$Component) {
     return Spot;
 }(_react2.default.Component);
 
+var Spots = function (_React$Component2) {
+    _inherits(Spots, _React$Component2);
+
+    function Spots() {
+        _classCallCheck(this, Spots);
+
+        return _possibleConstructorReturn(this, (Spots.__proto__ || Object.getPrototypeOf(Spots)).apply(this, arguments));
+    }
+
+    _createClass(Spots, [{
+        key: 'render',
+        value: function render() {
+            var _this = this;
+            var spots = [];
+            this.props.spots.forEach(function (spot) {
+                spots.push(_react2.default.createElement(Spot, { spot: spot, onToggle: _this.props.onToggle, key: spot.id + spot.isparked.toString() }));
+            });
+            return _react2.default.createElement(
+                'div',
+                { className: 'cover-white flex center-center' },
+                _react2.default.createElement(
+                    'div',
+                    { className: 'container' },
+                    spots
+                )
+            );
+        }
+    }]);
+
+    return Spots;
+}(_react2.default.Component);
+
 //ToDO: Fix the spot toggle.
 
 
-var App = function (_React$Component2) {
-    _inherits(App, _React$Component2);
+var App = function (_React$Component3) {
+    _inherits(App, _React$Component3);
 
     function App(props) {
         _classCallCheck(this, App);
 
-        var _this3 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+        var _this4 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-        _this3.state = {
-            spots: props.spots,
+        _this4.state = {
+            spots: null,
+            lot: null,
             error: false,
             message: ""
         };
-        _this3.handleSpotToggle = _this3.handleSpotToggle.bind(_this3);
-        _this3.handleStream = _this3.handleStream.bind(_this3);
-        _this3._updateSpots = _this3._updateSpots.bind(_this3);
-        return _this3;
+        _this4.handleSpotToggle = _this4.handleSpotToggle.bind(_this4);
+        _this4.handleStream = _this4.handleStream.bind(_this4);
+        _this4._updateSpots = _this4._updateSpots.bind(_this4);
+        return _this4;
     }
 
     _createClass(App, [{
         key: '_updateSpots',
-        value: function _updateSpots() {
+        value: function _updateSpots(lot) {
             var _this = this;
-            $.post('/api/spot/getAll', null, function (e) {
-                _this.setState({
-                    spots: e.data
-                });
+            var data = null;
+            if (lot !== null && lot !== undefined) {
+                data = JSON.stringify(lot);
+            } else {
+                data = JSON.stringify(this.state.lot);
+            }
+            $.post('/api/lot/fill', data, function (e) {
+                if (!e.error) {
+                    _this.setState({
+                        lot: e.data
+                    });
+                }
             }, 'json');
         }
     }, {
@@ -20597,8 +20638,10 @@ var App = function (_React$Component2) {
             var _this = this;
             $.post('/api/spot/toggle', JSON.stringify({ id: spot.id }), function (e) {
                 if (!e.error) {
+                    var lot = _this.state.lot;
+                    lot.spots = e.data;
                     _this.setState({
-                        spots: e.data,
+                        lot: lot,
                         error: false
                     });
                 } else {
@@ -20612,19 +20655,13 @@ var App = function (_React$Component2) {
     }, {
         key: 'render',
         value: function render() {
-            var spots = [];
-            var _this = this;
-            /*this.state.spots.forEach(function(spot){
-                spots.push(<Spot spot={spot} onToggle={_this.handleSpotToggle} key={spot.id + spot.isparked.toString()}/>);
-            });*/
+            var showLots = this.state.lot === null || this.state.lot === undefined;
             return _react2.default.createElement(
                 'div',
-                { className: 'cover-white flex center-center' },
-                _react2.default.createElement(
-                    'div',
-                    { className: 'container' },
-                    _react2.default.createElement(_Parkinglots2.default, { lots: this.props.lots })
-                )
+                null,
+                this.state.error && _react2.default.createElement(_Warning2.default, { message: this.state.message }),
+                showLots && _react2.default.createElement(_Parkinglots2.default, { lots: this.props.lots, onClick: this._updateSpots }),
+                !showLots && _react2.default.createElement(Spots, { spots: this.state.lot.spots, onToggle: this.handleSpotToggle })
             );
         }
     }]);
@@ -20751,15 +20788,15 @@ var ParkingLot = function (_React$Component) {
     _createClass(ParkingLot, [{
         key: "render",
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|" + encodeURIComponent(this.props.lot.location) + "&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
             console.log(mapUrl);
             return _react2.default.createElement(
                 "section",
                 { style: { backgroundImage: 'url(' + mapUrl + ')' }, onClick: function onClick() {
-                        _this2.props.onClick(_this2.props.lot);
-                    }, className: "col-md-6 col-sm-6 col-xs-12 lot" },
+                        _this3.props.onClick(_this3.props.lot);
+                    }, className: "lot" },
                 _react2.default.createElement(
                     "span",
                     { className: "lot-name" },
@@ -20789,13 +20826,13 @@ var Parkinglots = function (_React$Component2) {
         key: "render",
         value: function render() {
             var lots = [];
+            var _this = this;
             this.props.lots.forEach(function (lot) {
-                lots.push(_react2.default.createElement(ParkingLot, { lot: lot, key: lot.id + lot.name }));
+                lots.push(_react2.default.createElement(ParkingLot, { lot: lot, key: lot.id + lot.name, onClick: _this.props.onClick }));
             });
             return _react2.default.createElement(
                 "div",
                 { className: "row no-gutter lots" },
-                lots,
                 lots
             );
         }
