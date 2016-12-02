@@ -37,7 +37,7 @@ func fill(w http.ResponseWriter, r *http.Request, myUser *user.User){
 
 		}
 
-		fmt.Fprintf(w, hiqjson.AsJson(lot))
+		fmt.Fprintf(w, hiqjson.AsJson(lot.AsJson(db)))
 	}else{
 		fmt.Fprintf(w, hiqjson.AsJson(err))
 	}

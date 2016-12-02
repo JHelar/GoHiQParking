@@ -11,6 +11,7 @@ import (
 	"hiqdb/user"
 	"time"
 	"hiqeventstream"
+	"reflect"
 )
 var db *hiqdb.HiQDb
 //General event stream for view updates
@@ -22,16 +23,16 @@ const FLARE = "HiQSpotApi:"
 func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	//ToDo: Refactor this.
 
-	var jspots = make([]hiqjson.JSpot, 0)
+	var jspots = make([]interface{}, 0)
 	var userSpot *spot.Spot
 
 	if myUser != nil {
 		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
 	}
 	for _,s := range spot.GetAll(db){
-		jspot := SpotToJResponse(s)
+		jspot := s.AsJson(db)
 		if myUser != nil{
-			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
+			reflect.ValueOf(jspot).FieldByName("CanModify").SetBool((!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID))
 		}
 
 		jspots = append(jspots, jspot)
@@ -41,16 +42,16 @@ func getAll(w http.ResponseWriter, r *http.Request, myUser *user.User){
 }
 
 func getAllFromLot(w http.ResponseWriter, r *http.Request, myUser *user.User, lotID int){
-	var jspots = make([]hiqjson.JSpot, 0)
+	var jspots = make([]interface{}, 0)
 	var userSpot *spot.Spot
 
 	if myUser != nil {
 		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
 	}
 	for _,s := range spot.GetAllByLotID(db, lotID){
-		jspot := SpotToJResponse(s)
+		jspot := s.AsJson(db)
 		if myUser != nil{
-			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
+			reflect.ValueOf(jspot).FieldByName("CanModify").SetBool((!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID))
 		}
 
 		jspots = append(jspots, jspot)
@@ -116,25 +117,6 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	}
 
 	return
-}
-
-func SpotToJResponse(s spot.Spot) hiqjson.JSpot{
-	jspot := hiqjson.JSpot{
-		ID:s.ID,
-		Name: s.Name,
-		IsParked: s.IsParked,
-		CanModify:false,
-	}
-	if s.IsParked{
-		usr := user.User{ID:&s.ParkedBy}
-		if err := user.Get(db, &usr); err == nil {
-			jspot.ParkedBy = usr.Username
-			jspot.ParkedTime = s.ParkedTime
-		}else{
-			log.Printf("%v %v", FLARE, err)
-		}
-	}
-	return jspot
 }
 
 func pushListener(){

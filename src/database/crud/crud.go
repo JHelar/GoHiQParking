@@ -60,13 +60,16 @@ func setTableValues(table interface{}, values [][]byte){
 }
 
 func setReflectValues(t reflect.Type, v reflect.Value, values [][]byte){
+	j := 0
 	for i := 0; i < t.NumField(); i++{
 		tfield := t.Field(i)
 
 		if tfield.Tag.Get("crud") != CRUD_TAG_IGNORE {
 
 			field := v.Field(i)
-			val := string(values[i])
+			val := string(values[j])
+			j += 1
+
 			if field.CanSet() {
 				switch field.Kind(){
 				case reflect.Int:

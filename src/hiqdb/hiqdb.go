@@ -12,6 +12,10 @@ type HiQDb struct {
 	*sql.DB
 }
 
+type HiQTable struct {
+	AsJson func(*HiQDb) interface{}
+}
+
 func flareLog(args ...interface{}){
 	log.Printf("%v%+v",FLARE, args)
 }

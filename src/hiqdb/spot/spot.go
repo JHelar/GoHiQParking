@@ -5,9 +5,12 @@ import (
 	"database/crud"
 	"fmt"
 	"time"
+	"log"
+	"hiqdb/user"
 )
 
 type Spot struct {
+	hiqdb.HiQTable `crud:"ignore" json:"-"`
 	ID int `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 	IsParked bool `json:"isparked"`
@@ -15,6 +18,27 @@ type Spot struct {
 	ParkedTime time.Time `json:"parkedtime, omitempty"`
 	ParkingLot int `json:"parkinglot"`
 	CanModify bool `crud:"ignore" json:"canmodify"`
+}
+
+func (s *Spot) AsJson(db *hiqdb.HiQDb) interface{}{
+	data := struct{
+		ID int `json:"id"`
+		Name string `json:"name"`
+		IsParked bool `json:"isparked"`
+		ParkedBy string `json:"parkedby"`
+		ParkedTime time.Time `json:"parkedtime"`
+		CanModify bool `json:"canmodify"`
+	}{ID:s.ID, Name:s.Name, IsParked:s.IsParked,CanModify:s.CanModify}
+	if s.IsParked{
+		usr := user.User{ID:&s.ParkedBy}
+		if err := user.Get(db, &usr); err == nil {
+			data.ParkedBy = usr.Username
+			data.ParkedTime = s.ParkedTime
+		}else{
+			log.Printf("%v", err)
+		}
+	}
+	return data
 }
 
 func GetAll(db *hiqdb.HiQDb) []Spot {

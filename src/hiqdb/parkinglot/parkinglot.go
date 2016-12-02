@@ -8,10 +8,25 @@ import (
 )
 
 type ParkingLot struct {
+	hiqdb.HiQTable `crud:"ignore" json:"-"`
 	ID int `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 	Location string `json:"location,omitempty"`
 	Spots []spot.Spot `crud:"ignore" json:"spots,omitempty"`
+}
+
+func (lot *ParkingLot) AsJson(db *hiqdb.HiQDb) interface{}{
+	data := struct{
+		ID int `json:"id"`
+		Name string `json:"name"`
+		Location string `json:"location"`
+		Spots []interface{} `json:"spots"`
+	}{ID:lot.ID, Name:lot.Name, Location:lot.Location, Spots:make([]interface{}, len(lot.Spots))}
+
+	for i,s := range lot.Spots {
+		data.Spots[i] = s.AsJson(db)
+	}
+	return data
 }
 
 func Create(db *hiqdb.HiQDb, name, location string) (*ParkingLot, bool) {
