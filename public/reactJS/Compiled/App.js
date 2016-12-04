@@ -20623,6 +20623,7 @@ var App = function (_React$Component3) {
                 data = JSON.stringify(lot);
                 createCookie("lotDefault", btoa(data), 14);
             } else {
+                this.state.lot.spots = null;
                 data = JSON.stringify(this.state.lot);
             }
             $.post('/api/lot/fill', data, function (e) {
@@ -20679,7 +20680,8 @@ var App = function (_React$Component3) {
                             _this5.setState({ showLots: true });
                         } }),
                     this.state.error && _react2.default.createElement(_Warning2.default, { message: this.state.message })
-                )
+                ),
+                this.state.lot !== null & !this.state.showLots && _react2.default.createElement(_EventController2.default, { eventType: 'update' + this.state.lot.id, onEvent: this.handleStream })
             );
         }
     }]);
@@ -20768,7 +20770,7 @@ var EventController = function (_React$Component) {
     }, {
         key: "componentWillUnmount",
         value: function componentWillUnmount() {
-            this.state.stream.removeAllListeners();
+            this.state.stream.removeEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message');
             this.state.stream.close();
         }
     }, {
@@ -20891,10 +20893,10 @@ var Parkinglots = function (_React$Component3) {
             });
             return _react2.default.createElement(
                 "div",
-                { className: "container no-gutter" },
+                { className: "no-gutter lots-wrapper " + (this.props.show ? "" : "hide") },
                 _react2.default.createElement(
                     "div",
-                    { className: "lots " + (this.props.show ? "" : "hide-dem") },
+                    { className: "container lots " + (this.props.show ? "" : "hide-dem") },
                     lots
                 )
             );

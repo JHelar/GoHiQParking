@@ -30,7 +30,7 @@ export default class EventController extends React.Component {
         this.state.stream.addEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message', this.handleStream, false);
     }
     componentWillUnmount(){
-        this.state.stream.removeAllListeners();
+        this.state.stream.removeEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message');
         this.state.stream.close();
     }
     render(){

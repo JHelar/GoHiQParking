@@ -13,6 +13,7 @@ type Message struct {
 	ClientOrigin string
 	Message []byte
 	EventType string
+	EventChannel string
 }
 
 type Broker struct {
@@ -75,7 +76,7 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 		case msg := <- messageChan:
 			//Do not send events to same client.
 			if(msg.ClientOrigin != clientOrign){
-				fmt.Fprintf(rw, "event:%s\ndata:%s\n\n", msg.EventType, msg.Message)
+				fmt.Fprintf(rw, "event:%s%s\ndata:%s\n\n", msg.EventType, msg.EventChannel, msg.Message)
 			}
 			flusher.Flush()
 		}

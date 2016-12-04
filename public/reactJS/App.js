@@ -80,6 +80,7 @@ class App extends React.Component {
             data = JSON.stringify(lot);
             createCookie("lotDefault", btoa(data), 14);
         }else{
+            this.state.lot.spots = null;
             data = JSON.stringify(this.state.lot);
         }
         $.post('/api/lot/fill', data, function (e) {
@@ -124,7 +125,7 @@ class App extends React.Component {
                     <LotChooseButton onToggle={()=>{this.setState({showLots:true})}}/>
                     {this.state.error && <Warning message={this.state.message}/>}
                 </Spots>
-
+                {this.state.lot !== null & !this.state.showLots && <EventController eventType={'update' + this.state.lot.id} onEvent={this.handleStream}/>}
             </div>
 
         );

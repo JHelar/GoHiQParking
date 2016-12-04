@@ -75,7 +75,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
 					checkSpots <- true
-					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
+					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
 					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to modify this spot."}))
@@ -91,7 +91,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
 					checkSpots <- true
-					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE}
+					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
 					fmt.Fprintf(w, hiqjson.AsJson(hiqjson.JResponse{Error:true, Message:"You are not allowed to park in two spots."}))

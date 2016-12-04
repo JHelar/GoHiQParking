@@ -39,8 +39,8 @@ export default class Parkinglots extends React.Component{
             lots.push(<ParkingLot lot={lot} key={lot.id + lot.name} onClick={_this.props.onClick}/>)
         });
         return(
-            <div className="container no-gutter">
-                <div className={"lots " + (this.props.show ? "" : "hide-dem")}>
+            <div className={"no-gutter lots-wrapper " + (this.props.show? "" : "hide")}>
+                <div className={"container lots " + (this.props.show ? "" : "hide-dem")}>
                 {lots}
                 </div>
             </div>

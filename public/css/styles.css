@@ -30,6 +30,8 @@ header {
   display: flex;
   justify-content: center;
   height: 100%;
+  align-items: center;
+  align-content: center;
 }
 .cover-image.map-show {
   transition: all 0.5s ease-in;
@@ -78,6 +80,12 @@ header {
 }
 .lot-choose-btn > button {
   width: 350px;
+}
+.lots-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  flex: 1;
 }
 .lots {
   display: flex;
@@ -130,8 +138,6 @@ header {
 }
 .spots {
   height: 100%;
-  position: absolute;
-  top: 0;
   flex-wrap: wrap;
   align-content: center;
 }
