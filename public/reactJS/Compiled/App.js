@@ -20770,7 +20770,7 @@ var EventController = function (_React$Component) {
     }, {
         key: "componentWillUnmount",
         value: function componentWillUnmount() {
-            this.state.stream.removeEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message');
+            this.state.stream.removeEventListener(this.props.eventType !== null && this.props.eventType !== undefined ? this.props.eventType : 'message', this.handleStream, false);
             this.state.stream.close();
         }
     }, {
