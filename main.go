@@ -65,6 +65,6 @@ func main(){
 	apiuser.Register(db, api)
 
 	mux.Handle("/public/", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
-	http.ListenAndServe("localhost:8080", mux)
+	http.ListenAndServe("0.0.0.0:8080", mux)
 
 }

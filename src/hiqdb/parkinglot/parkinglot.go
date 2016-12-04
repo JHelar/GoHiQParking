@@ -15,13 +15,15 @@ type ParkingLot struct {
 	Spots []spot.Spot `crud:"ignore" json:"spots,omitempty"`
 }
 
+type JParkingLot struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	Location string `json:"location"`
+	Spots []interface{} `json:"spots"`
+}
+
 func (lot *ParkingLot) AsJson(db *hiqdb.HiQDb) interface{}{
-	data := struct{
-		ID int `json:"id"`
-		Name string `json:"name"`
-		Location string `json:"location"`
-		Spots []interface{} `json:"spots"`
-	}{ID:lot.ID, Name:lot.Name, Location:lot.Location, Spots:make([]interface{}, len(lot.Spots))}
+	data := JParkingLot{ID:lot.ID, Name:lot.Name, Location:lot.Location, Spots:make([]interface{}, len(lot.Spots))}
 
 	for i,s := range lot.Spots {
 		data.Spots[i] = s.AsJson(db)

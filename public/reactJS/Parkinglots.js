@@ -3,9 +3,20 @@
  */
 import React from 'react';
 
+
+export class LotChooseButton extends React.Component {
+    render(){
+        return(
+            <div className="lot-choose-btn">
+                <button onClick={this.props.onToggle} className={"btn btn-primary btn-block btn-lg"}>Choose parking lot</button>
+            </div>
+        );
+    }
+}
+
 class ParkingLot extends React.Component {
     render(){
-        let mapUrl = "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|" + encodeURIComponent(this.props.lot.location) + "&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
+        let mapUrl = getGoogleStaticMap(this.props.lot.location);
         console.log(mapUrl);
         return(
             <section style={{backgroundImage:'url(' + mapUrl + ')'}} onClick={()=>{this.props.onClick(this.props.lot)}} className={"lot"} >
@@ -28,8 +39,10 @@ export default class Parkinglots extends React.Component{
             lots.push(<ParkingLot lot={lot} key={lot.id + lot.name} onClick={_this.props.onClick}/>)
         });
         return(
-            <div className="row no-gutter lots">
+            <div className="container no-gutter">
+                <div className={"lots " + (this.props.show ? "" : "hide-dem")}>
                 {lots}
+                </div>
             </div>
         );
     }

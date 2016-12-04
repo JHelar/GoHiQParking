@@ -17,18 +17,19 @@ type Spot struct {
 	ParkedBy int `json:"parkedby, omitempty"`
 	ParkedTime time.Time `json:"parkedtime, omitempty"`
 	ParkingLot int `json:"parkinglot"`
-	CanModify bool `crud:"ignore" json:"canmodify"`
+}
+
+type JSpot struct {
+	ID int `json:"id"`
+	Name string `json:"name"`
+	IsParked bool `json:"isparked"`
+	ParkedBy string `json:"parkedby"`
+	ParkedTime time.Time `json:"parkedtime"`
+	CanModify bool `json:"canmodify"`
 }
 
 func (s *Spot) AsJson(db *hiqdb.HiQDb) interface{}{
-	data := struct{
-		ID int `json:"id"`
-		Name string `json:"name"`
-		IsParked bool `json:"isparked"`
-		ParkedBy string `json:"parkedby"`
-		ParkedTime time.Time `json:"parkedtime"`
-		CanModify bool `json:"canmodify"`
-	}{ID:s.ID, Name:s.Name, IsParked:s.IsParked,CanModify:s.CanModify}
+	data := JSpot{ID:s.ID, Name:s.Name, IsParked:s.IsParked,CanModify:false}
 	if s.IsParked{
 		usr := user.User{ID:&s.ParkedBy}
 		if err := user.Get(db, &usr); err == nil {

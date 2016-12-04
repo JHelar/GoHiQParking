@@ -10,19 +10,18 @@ function validateEmail(email) {
 }
 
 function createCookie(name,value,days) {
-    var prevCookie = getCookie(name);
-    if(prevCookie !== null){
-        deleteCookie(name);
-    }
     if (days) {
         var date = new Date();
         date.setTime(date.getTime()+(days*24*60*60*1000));
         var expires = "; expires="+date.toGMTString();
     }
     else var expires = "";
-    document.cookie = name+"="+value+expires+"; path=/api/";
+
+    let cookieStr = name+"="+value+expires+";"; //path=/api/
+    document.cookie = cookieStr;
 }
-function getCookie(name) {
+/*function getCookie(name) {
+
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
     for(var i=0;i < ca.length;i++) {
@@ -31,9 +30,28 @@ function getCookie(name) {
         if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
     }
     return null;
+}*/
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length,c.length);
+        }
+    }
+    return null;
 }
+
 function deleteCookie(name) {
     createCookie(name,"",-1);
+}
+
+function getGoogleStaticMap(location){
+    return "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|" + encodeURIComponent(location) + "&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
 }
 
 function timeDifference(previous) {

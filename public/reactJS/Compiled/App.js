@@ -20528,7 +20528,7 @@ var Spot = function (_React$Component) {
                 { className: 'col-md-6 col-sm-6 col-xs-12' },
                 _react2.default.createElement(
                     'div',
-                    { className: this.props.spot.isparked ? "panel panel-danger" : "panel panel-success" },
+                    { className: "panel spot " + (this.props.spot.isparked ? "panel-danger" : "panel-success") },
                     _react2.default.createElement(
                         'div',
                         { className: 'panel-heading' },
@@ -20566,15 +20566,19 @@ var Spots = function (_React$Component2) {
         value: function render() {
             var _this = this;
             var spots = [];
-            this.props.spots.forEach(function (spot) {
-                spots.push(_react2.default.createElement(Spot, { spot: spot, onToggle: _this.props.onToggle, key: spot.id + spot.isparked.toString() }));
-            });
+            if (this.props.lot !== null) {
+                this.props.lot.spots.forEach(function (spot) {
+                    spots.push(_react2.default.createElement(Spot, { spot: spot, onToggle: _this.props.onToggle,
+                        key: spot.id + spot.isparked.toString() }));
+                });
+            }
             return _react2.default.createElement(
                 'div',
-                { className: 'cover-white flex center-center' },
+                { className: 'spots container flex center-center' },
+                this.props.children,
                 _react2.default.createElement(
                     'div',
-                    { className: 'container' },
+                    { className: 'row', style: { width: '100%' } },
                     spots
                 )
             );
@@ -20597,10 +20601,12 @@ var App = function (_React$Component3) {
 
         _this4.state = {
             spots: null,
-            lot: null,
+            lot: props.lot,
             error: false,
-            message: ""
+            message: "",
+            showLots: props.showLots
         };
+
         _this4.handleSpotToggle = _this4.handleSpotToggle.bind(_this4);
         _this4.handleStream = _this4.handleStream.bind(_this4);
         _this4._updateSpots = _this4._updateSpots.bind(_this4);
@@ -20610,17 +20616,20 @@ var App = function (_React$Component3) {
     _createClass(App, [{
         key: '_updateSpots',
         value: function _updateSpots(lot) {
+            console.log("PRINT");
             var _this = this;
             var data = null;
             if (lot !== null && lot !== undefined) {
                 data = JSON.stringify(lot);
+                createCookie("lotDefault", btoa(data), 14);
             } else {
                 data = JSON.stringify(this.state.lot);
             }
             $.post('/api/lot/fill', data, function (e) {
                 if (!e.error) {
                     _this.setState({
-                        lot: e.data
+                        lot: e.data,
+                        showLots: false
                     });
                 }
             }, 'json');
@@ -20655,13 +20664,22 @@ var App = function (_React$Component3) {
     }, {
         key: 'render',
         value: function render() {
-            var showLots = this.state.lot === null || this.state.lot === undefined;
+            var _this5 = this;
+
+            //let showLots = this.state.lot === null || this.state.lot === undefined;
+            var bgImg = this.state.lot !== null ? 'url(' + getGoogleStaticMap(this.state.lot.location) + ')' : 'none';
             return _react2.default.createElement(
                 'div',
-                null,
-                this.state.error && _react2.default.createElement(_Warning2.default, { message: this.state.message }),
-                showLots && _react2.default.createElement(_Parkinglots2.default, { lots: this.props.lots, onClick: this._updateSpots }),
-                !showLots && _react2.default.createElement(Spots, { spots: this.state.lot.spots, onToggle: this.handleSpotToggle })
+                { className: "cover-image " + (this.state.showLots ? "" : "map-show"), style: { backgroundImage: bgImg } },
+                _react2.default.createElement(_Parkinglots2.default, { lots: this.props.lots, show: this.state.showLots, onClick: this._updateSpots }),
+                _react2.default.createElement(
+                    Spots,
+                    { lot: this.state.lot, onToggle: this.handleSpotToggle },
+                    _react2.default.createElement(_Parkinglots.LotChooseButton, { onToggle: function onToggle() {
+                            _this5.setState({ showLots: true });
+                        } }),
+                    this.state.error && _react2.default.createElement(_Warning2.default, { message: this.state.message })
+                )
             );
         }
     }]);
@@ -20669,8 +20687,21 @@ var App = function (_React$Component3) {
     return App;
 }(_react2.default.Component);
 
-$.post('/api/lot/getAll', null, function (e) {
-    _reactDom2.default.render(_react2.default.createElement(App, { lots: e.data }), document.getElementById("spots"));
+$.post('/api/lot/getAll', null, function (lots) {
+    var defaultLot64 = getCookie("lotDefault");
+    if (defaultLot64 !== null) {
+        //Load default lot, decode string.
+        var defaultLotJson = atob(defaultLot64);
+        $.post('/api/lot/fill', defaultLotJson, function (lot) {
+            if (!lot.error) {
+                _reactDom2.default.render(_react2.default.createElement(App, { lots: lots.data, lot: lot.data, showLots: false }), document.getElementById("spots"));
+            } else {
+                _reactDom2.default.render(_react2.default.createElement(App, { lots: lots.data, lot: null, showLots: true }), document.getElementById("spots"));
+            }
+        }, 'json');
+    } else {
+        _reactDom2.default.render(_react2.default.createElement(App, { lots: lots.data, lot: null, showLots: true }), document.getElementById("spots"));
+    }
 }, 'json');
 
 },{"./EventController":179,"./Parkinglots":180,"./Warning":181,"react":177,"react-dom":26}],179:[function(require,module,exports){
@@ -20758,6 +20789,7 @@ exports.default = EventController;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.LotChooseButton = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -20776,8 +20808,35 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
-var ParkingLot = function (_React$Component) {
-    _inherits(ParkingLot, _React$Component);
+var LotChooseButton = exports.LotChooseButton = function (_React$Component) {
+    _inherits(LotChooseButton, _React$Component);
+
+    function LotChooseButton() {
+        _classCallCheck(this, LotChooseButton);
+
+        return _possibleConstructorReturn(this, (LotChooseButton.__proto__ || Object.getPrototypeOf(LotChooseButton)).apply(this, arguments));
+    }
+
+    _createClass(LotChooseButton, [{
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                { className: "lot-choose-btn" },
+                _react2.default.createElement(
+                    "button",
+                    { onClick: this.props.onToggle, className: "btn btn-primary btn-block btn-lg" },
+                    "Choose parking lot"
+                )
+            );
+        }
+    }]);
+
+    return LotChooseButton;
+}(_react2.default.Component);
+
+var ParkingLot = function (_React$Component2) {
+    _inherits(ParkingLot, _React$Component2);
 
     function ParkingLot() {
         _classCallCheck(this, ParkingLot);
@@ -20788,14 +20847,14 @@ var ParkingLot = function (_React$Component) {
     _createClass(ParkingLot, [{
         key: "render",
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
-            var mapUrl = "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|" + encodeURIComponent(this.props.lot.location) + "&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
+            var mapUrl = getGoogleStaticMap(this.props.lot.location);
             console.log(mapUrl);
             return _react2.default.createElement(
                 "section",
                 { style: { backgroundImage: 'url(' + mapUrl + ')' }, onClick: function onClick() {
-                        _this3.props.onClick(_this3.props.lot);
+                        _this4.props.onClick(_this4.props.lot);
                     }, className: "lot" },
                 _react2.default.createElement(
                     "span",
@@ -20813,8 +20872,8 @@ var ParkingLot = function (_React$Component) {
     return ParkingLot;
 }(_react2.default.Component);
 
-var Parkinglots = function (_React$Component2) {
-    _inherits(Parkinglots, _React$Component2);
+var Parkinglots = function (_React$Component3) {
+    _inherits(Parkinglots, _React$Component3);
 
     function Parkinglots(props) {
         _classCallCheck(this, Parkinglots);
@@ -20832,8 +20891,12 @@ var Parkinglots = function (_React$Component2) {
             });
             return _react2.default.createElement(
                 "div",
-                { className: "row no-gutter lots" },
-                lots
+                { className: "container no-gutter" },
+                _react2.default.createElement(
+                    "div",
+                    { className: "lots " + (this.props.show ? "" : "hide-dem") },
+                    lots
+                )
             );
         }
     }]);
@@ -20881,7 +20944,7 @@ var Warning = function (_React$Component) {
         value: function render() {
             return _react2.default.createElement(
                 "div",
-                { className: "alert alert-danger fade in" },
+                { className: "alert alert-danger fade in box-pop-shadow" },
                 _react2.default.createElement(
                     "strong",
                     null,

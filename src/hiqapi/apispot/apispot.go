@@ -49,27 +49,15 @@ func getAllFromLot(w http.ResponseWriter, r *http.Request, myUser *user.User, lo
 		userSpot, _ = spot.GetByUserID(db, *myUser.ID)
 	}
 	for _,s := range spot.GetAllByLotID(db, lotID){
-		jspot := s.AsJson(db)
+		jspot := s.AsJson(db).(spot.JSpot)
 		if myUser != nil{
-			reflect.ValueOf(jspot).FieldByName("CanModify").SetBool((!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID))
+			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
 		}
 
 		jspots = append(jspots, jspot)
 	}
 	jsonResp := hiqjson.AsJson(jspots)
 	fmt.Fprintf(w, jsonResp)
-}
-
-func get(w http.ResponseWriter, r *http.Request, user *user.User){
-	var s spot.Spot
-	hiqjson.Parse(r.Body, &s)
-	if ok := spot.Get(db, &s); ok {
-		fmt.Fprintf(w, hiqjson.AsJson(s))
-	}else {
-		fmt.Fprint(w, hiqjson.GENERAL_ERROR_MSG)
-	}
-
-
 }
 
 func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
@@ -142,7 +130,6 @@ func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)
 	master.Register("spot/getAll", getAll)
-	master.Register("spot/get", get)
 	master.Register("spot/toggle", toggle)
 
 	master.RegisterEventStream("spot", spotBroker.ServeHTTP)

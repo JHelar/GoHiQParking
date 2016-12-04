@@ -29,15 +29,18 @@ func fill(w http.ResponseWriter, r *http.Request, myUser *user.User){
 	if err := parkinglot.SetSpots(db, &lot); err == nil {
 		var userSpot *spot.Spot
 
+		jlot := lot.AsJson(db).(parkinglot.JParkingLot)
+
 		if myUser != nil {
 			userSpot, _ = spot.GetByUserID(db, *myUser.ID)
+			for i,_ := range jlot.Spots{
+				jspot := jlot.Spots[i].(spot.JSpot)
+				jspot.CanModify = ((!jspot.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == jspot.ID) && myUser != nil)
+				jlot.Spots[i] = jspot
+			}
 		}
-		for i,_ := range lot.Spots{
-			lot.Spots[i].CanModify = ((!lot.Spots[i].IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == lot.Spots[i].ID) && myUser != nil)
 
-		}
-
-		fmt.Fprintf(w, hiqjson.AsJson(lot.AsJson(db)))
+		fmt.Fprintf(w, hiqjson.AsJson(jlot))
 	}else{
 		fmt.Fprintf(w, hiqjson.AsJson(err))
 	}
