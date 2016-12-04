@@ -16,7 +16,7 @@ import (
 var db *hiqdb.HiQDb
 //General event stream for view updates
 var spotBroker *hiqeventstream.Broker
-var checkSpots chan bool
+var checkSpots chan int
 
 const FLARE = "HiQSpotApi:"
 
@@ -74,7 +74,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					ok = spot.Update(db, s)
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
-					checkSpots <- true
+					checkSpots <- s.ParkingLot
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
@@ -90,7 +90,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					ok = spot.Update(db, s)
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
-					checkSpots <- true
+					checkSpots <- s.ParkingLot
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
@@ -111,12 +111,12 @@ func pushListener(){
 	go func(){
 		for {
 			select {
-			case <- checkSpots:
+			case parkingLot := <- checkSpots:
 				//Check if we need to push a notification.
-				if spots := spot.GetFreeSpots(db);len(spots) <= 0 {
-					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.NO_SPOTS_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION}
+				if spots := spot.GetFreeSpots(db, parkingLot);len(spots) <= 0 {
+					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.NO_SPOTS_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION, EventChannel:fmt.Sprintf("%d", parkingLot)}
 				}else{
-					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.FREE_SPOT_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION}
+					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.FREE_SPOT_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION, EventChannel:fmt.Sprintf("%d", parkingLot)}
 				}
 			}
 		}
@@ -125,7 +125,7 @@ func pushListener(){
 
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 	spotBroker = hiqeventstream.NewServer()
-	checkSpots = make(chan bool)
+	checkSpots = make(chan int)
 
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)

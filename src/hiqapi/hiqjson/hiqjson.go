@@ -94,7 +94,6 @@ func AsJson(data interface{}) string {
 		}
 	default:
 		err := fmt.Errorf("HiQJson: Unsupported datatype '%v', data: %+v", dataVal.Kind(), data)
-
 		return toJson(JResponse{Error:true,Message:err.Error()})
 	}
 }
@@ -110,7 +109,7 @@ func Parse(body io.ReadCloser, receiver interface{}){
 }
 
 func asJson(data interface{}) interface{}{
-	switch t := data.(type) {
+	switch data.(type) {
 	case session.UserSession:
 		return JSession{Key:data.(session.UserSession).SessionKey}
 	case user.User:
@@ -126,8 +125,6 @@ func asJson(data interface{}) interface{}{
 		if reflect.Slice == reflect.ValueOf(data).Kind(){
 			return AsJson(data)
 		}else {
-			err := fmt.Sprintf("HiQJson: Unsupported datatype '%v' sending as is.", t)
-			log.Print(err)
 			return data
 		}
 	}

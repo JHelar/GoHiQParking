@@ -66,11 +66,14 @@ func GetAllByLotID(db *hiqdb.HiQDb, id int) []Spot{
 	}
 }
 
-func GetFreeSpots(db *hiqdb.HiQDb) []Spot {
+func GetFreeSpots(db *hiqdb.HiQDb, parkingLot int) []Spot {
 	if spotsI, ok := crud.ReadAll(db.DB, &Spot{},"IsParked",0); ok {
-		spots := make([]Spot, len(spotsI))
+		spots := make([]Spot, 0)
 		for i,_ := range spotsI {
-			spots[i] = spotsI[i].(Spot)
+			s := spotsI[i].(Spot)
+			if s.ParkingLot == parkingLot{
+				spots = append(spots, spotsI[i].(Spot))
+			}
 		}
 		return spots
 	}else{
