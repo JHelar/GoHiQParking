@@ -1,0 +1,51 @@
+@font-face {
+  font-family: 'HiQIcons';
+  src: url("../font/HiQ-Icons.eot");
+  src: url("../font/HiQ-Icons.eot?#iefix") format("embedded-opentype"), url("../font/HiQ-Icons.woff") format("woff"), url("../font/HiQ-Icons.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal; }
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'HiQIcons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+.icon-arrow_small_left:before {
+  content: "\e900"; }
+
+.icon-arrow_small_right:before {
+  content: "\e901"; }
+
+.icon-arrow_white:before {
+  content: "\e902"; }
+
+.icon-bullet .path1:before {
+  content: "\e903";
+  color: #b39e00; }
+
+.icon-bullet .path2:before {
+  content: "\e904";
+  margin-left: -0.9228515625em;
+  color: #ffe400; }
+
+.icon-map_icon .path1:before {
+  content: "\e905";
+  color: white; }
+
+.icon-map_icon .path2:before {
+  content: "\e906";
+  margin-left: -1.0234375em;
+  color: white; }
+
+.icon-map_icon .path3:before {
+  content: "\e907";
+  margin-left: -1.0234375em;
+  color: #e42980; }
+
+/*# sourceMappingURL=font-hiq.css.map */
