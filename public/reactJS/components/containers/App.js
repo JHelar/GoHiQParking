@@ -18,10 +18,11 @@ class App extends Component {
     }
 
     render(){
+        // ToDo: Add event stream!!
         return(
             <section>
                 <Header />
-                <SceneSwapper/>
+                <SceneSwapper />
             </section>
         );
     }

@@ -3,9 +3,9 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { changeScene, fetchUser } from '../redux/actions';
+import { changeScene, fetchUser, receiveLogin, fetchLogout } from '../redux/actions';
 import { SCENE } from '../redux/constants';
-import LoginButton from '../presentational/LoginButton';
+import { LoginButton, RegisterButton, HomeButton, LogoutButton } from '../presentational/HeaderButtons';
 import Error from '../presentational/Error';
 
 class Header extends Component {
@@ -15,25 +15,30 @@ class Header extends Component {
     }
     componentDidMount(){
         const { dispatch } = this.props;
-        dispatch(fetchUser());
+        dispatch(fetchUser(receiveLogin));
     }
     onChangeScene(scene){
         const { dispatch } = this.props;
         dispatch(changeScene(scene));
     }
     render(){
-        const { isLogged, userName, error } = this.props;
+        const { isLogged, userName, error, dispatch } = this.props;
         return(
             <header>
                 {error.status &&
                     <Error {...error}/>
                 }
+                <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
                 {!isLogged &&
                     <LoginButton onClick={() => this.onChangeScene(SCENE.SHOW_LOGIN)}/>
                 }
                 {isLogged &&
-                    <h1>{ userName }</h1>
+                    <span>
+                        <h1>{ userName }</h1>
+                        <LogoutButton onClick={() => dispatch(fetchLogout()) } />
+                    </span>
                 }
+                <RegisterButton onClick={() => this.onChangeScene(SCENE.SHOW_REGISTER)}/>
             </header>
         );
     }

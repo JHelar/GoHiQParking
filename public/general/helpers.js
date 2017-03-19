@@ -46,7 +46,7 @@ export function getCookie(cname) {
     return null;
 }
 
-function deleteCookie(name) {
+export function deleteCookie(name) {
     createCookie(name,"",-1);
 }
 

@@ -10,7 +10,7 @@ let Login = ({ dispatch }) => {
     let inputPassword;
 
     return(
-        <section>
+        <main>
             <h1>Login</h1>
             <form onSubmit={e => {
                 e.preventDefault();
@@ -24,7 +24,7 @@ let Login = ({ dispatch }) => {
                 }} type="password"/>
                 <button type="submit" >Login</button>
             </form>
-        </section>
+        </main>
     );
 };
 

@@ -5,7 +5,7 @@ import Lot from './Lot';
 import React, { PropTypes } from 'react';
 
 const LotList = ({scene, lots, onLotClick, onSpotClick}) => (
-    <section>
+    <main>
         {lots.map(lot =>
             <Lot
                 key={ lot.id }
@@ -15,7 +15,7 @@ const LotList = ({scene, lots, onLotClick, onSpotClick}) => (
                 onSpotClick={ onSpotClick }
             />
         )}
-    </section>
+    </main>
 );
 
 LotList.propTypes = {

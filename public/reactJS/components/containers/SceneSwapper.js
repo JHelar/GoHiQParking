@@ -4,6 +4,7 @@
 import { SCENE } from '../redux/constants';
 import LotsContainer from './LotsContainer';
 import Login from './Login';
+import Register from './Register';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
@@ -22,6 +23,10 @@ class SceneSwapper extends Component {
             case SCENE.SHOW_LOGIN:
                 return (
                     <Login />
+                );
+            case SCENE.SHOW_REGISTER:
+                return (
+                    <Register />
                 );
             default:
                 return (

@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { createCookie, getCookie } from '../../../general/helpers';
+import { createCookie, getCookie, deleteCookie } from '../../../general/helpers';
 import { SCENE } from './constants';
 
 // API ACTIONS
@@ -19,6 +19,14 @@ export const FETCH_TOGGLE_SPOT_ERROR = 'FETCH_TOGGLE_SPOT_ERROR';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
+
+export const REGISTER_REQUEST = 'REGISTER_REQUEST';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const REGISTER_ERROR = 'REGISTER_ERROR';
+
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_ERROR = 'LOGOUT_ERROR';
 
 export const SHOW_PARKING_LOTS = 'SHOW_PARKING_LOTS';
 export const SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
@@ -121,7 +129,7 @@ export function requestToggleSpot(spot) {
 export function receiveToggleSpot(spot, json){
 	return {
 		type: FETCH_TOGGLE_SPOT_SUCCESS,
-		spot: json.data.filter(s => s.id === spot)[0],
+		spots: json.data,
 		received_at: Date.now()
 	}
 }
@@ -165,21 +173,21 @@ export function requestLogin() {
     }
 }
 
-export function reciveLogin(json) {
+export function receiveLogin(json) {
     return {
         type: LOGIN_SUCCESS,
         user: json.data
     }
 }
 
-export function reciveLoginError(json) {
+export function receiveLoginError(json) {
     return {
         type: LOGIN_ERROR,
         error_msg: json.message
     }
 }
 
-export function fetchUser() {
+export function fetchUser(dispatchCallback) {
     return dispatch => {
         return fetch('api/user/get', {
                 method:'POST',
@@ -189,14 +197,14 @@ export function fetchUser() {
             })
             .then(response => response.json())
             .then(json => {
-                if(json.error) dispatch(reciveLoginError(json));
+                if(json.error) dispatch(receiveLoginError(json));
                 else {
-                    dispatch(reciveLogin(json));
+                    dispatch(dispatchCallback(json));
                     dispatch(changeScene(SCENE.SHOW_PARKING_LOTS));
                 }
             })
             .catch(function (ex) {
-                dispatch(reciveLoginError({message: "fetchUser: " + ex}));
+                dispatch(receiveLoginError({message: "fetchUser: " + ex}));
             })
     };
 }
@@ -216,14 +224,110 @@ export function fetchLogin(usernameemail, password) {
             })
             .then(response => response.json())
             .then(json => {
-                if(json.error) dispatch(reciveLoginError(json));
+                if(json.error) dispatch(receiveLoginError(json));
                 else {
                     createCookie("skey", json.data.sessionkey, 360);
-                    dispatch(fetchUser());
+                    dispatch(fetchUser(receiveLogin));
                 }
             })
             .catch(function(ex) {
-                dispatch(reciveLoginError({ message: "fetchLogin: " + ex }));
+                dispatch(receiveLoginError({ message: "fetchLogin: " + ex }));
+            });
+
+    };
+}
+
+// POST Register
+export function requestRegister() {
+    return {
+        type: REGISTER_REQUEST
+    };
+}
+
+export function receiveRegister(json) {
+    return {
+        type: REGISTER_SUCCESS,
+        user: json.data
+    }
+}
+
+export function receiveRegisterError(json) {
+    return {
+        type: REGISTER_ERROR,
+        error_msg: json.message
+    }
+}
+export function fetchRegister(username, email, password) {
+    return dispatch => {
+        dispatch(requestRegister());
+        return fetch('api/user/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(json => {
+                if(json.error) dispatch(receiveRegisterError(json));
+                else {
+                    createCookie("skey", json.data.sessionkey, 360);
+                    dispatch(fetchUser(receiveRegister));
+                }
+            })
+            .catch(function(ex) {
+                dispatch(receiveRegisterError({ message: "fetchRegister: " + ex }));
+            });
+
+    };
+}
+// POST Logout
+export function requestLogout() {
+    return {
+        type: LOGOUT_REQUEST
+    };
+}
+
+export function receiveLogout(json) {
+    return {
+        type: LOGOUT_SUCCESS
+    }
+}
+
+export function receiveLogoutError(json) {
+    return {
+        type: LOGOUT_ERROR,
+        error_msg: json.message
+    }
+}
+
+export function fetchLogout() {
+    return dispatch => {
+        dispatch(requestLogout());
+        return fetch('api/user/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sessionKey: getCookie("skey")
+                })
+            })
+            .then(response => response.json())
+            .then(json => {
+                if(json.error) dispatch(receiveLogoutError(json));
+                else {
+                    deleteCookie("skey");
+                    dispatch(receiveLogout(json));
+                    dispatch(changeScene(SCENE.SHOW_PARKING_LOTS));
+                }
+            })
+            .catch(function(ex) {
+                dispatch(receiveLogoutError({ message: "fetchLogout: " + ex }));
             });
 
     };

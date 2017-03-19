@@ -13,6 +13,12 @@ import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_ERROR,
+    REGISTER_REQUEST,
+    REGISTER_SUCCESS,
+    REGISTER_ERROR,
+    LOGOUT_REQUEST,
+    LOGOUT_SUCCESS,
+    LOGOUT_ERROR,
 	SHOW_PARKING_LOTS,
 	SELECT_PARKING_LOT,
 	TOGGLE_SPOT,
@@ -64,10 +70,7 @@ function lot(state = {
 				isFetching: false,
 				didInvalidate: false,
                 spots: state.spots.map((spot, _) => {
-				    if(spot.id === action.spot.id){
-				        return Object.assign({}, spot, action.spot);
-                    }
-                    return spot
+                    return Object.assign({}, spot, action.spots.filter(s => s.id === spot.id)[0]);
                 }),
 				lastUpdate: action.received_at
 			});
@@ -186,21 +189,31 @@ function user(state = {
     isLogged: false
 }, action) {
     switch(action.type){
+        case REGISTER_REQUEST:
         case LOGIN_REQUEST:
+        case LOGOUT_REQUEST:
             return Object.assign({}, state, {
                 isFetching: true,
                 isLogged: false
             });
+        case REGISTER_SUCCESS:
         case LOGIN_SUCCESS:
             return Object.assign({}, state, {
                 isFetching: false,
                 isLogged: true,
                 name: action.user.username
             });
+        case REGISTER_ERROR:
         case LOGIN_ERROR:
+        case LOGOUT_SUCCESS:
             return Object.assign({}, state, {
                 isFetching: false,
                 isLogged: false
+            });
+        case LOGOUT_ERROR:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: true
             });
         default:
             return state;
@@ -214,7 +227,9 @@ function error(state = {
         case FETCH_PARKING_LOTS_ERROR:
         case FETCH_SPOTS_ERROR:
         case FETCH_TOGGLE_SPOT_ERROR:
+        case REGISTER_ERROR:
         case LOGIN_ERROR:
+        case LOGOUT_ERROR:
             return Object.assign({}, state, {
                 status: true,
                 message: action.error_msg,

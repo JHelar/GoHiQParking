@@ -30757,6 +30757,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.createCookie = createCookie;
 exports.getCookie = getCookie;
+exports.deleteCookie = deleteCookie;
 exports.getGoogleStaticMap = getGoogleStaticMap;
 exports.timeDifference = timeDifference;
 /**
@@ -30913,7 +30914,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":533,"./Header":522,"./SceneSwapper":526,"react":501,"react-redux":471}],522:[function(require,module,exports){
+},{"../redux/actions":534,"./Header":522,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30932,9 +30933,7 @@ var _actions = require('../redux/actions');
 
 var _constants = require('../redux/constants');
 
-var _LoginButton = require('../presentational/LoginButton');
-
-var _LoginButton2 = _interopRequireDefault(_LoginButton);
+var _HeaderButtons = require('../presentational/HeaderButtons');
 
 var _Error = require('../presentational/Error');
 
@@ -30968,7 +30967,7 @@ var Header = function (_Component) {
         value: function componentDidMount() {
             var dispatch = this.props.dispatch;
 
-            dispatch((0, _actions.fetchUser)());
+            dispatch((0, _actions.fetchUser)(_actions.receiveLogin));
         }
     }, {
         key: 'onChangeScene',
@@ -30985,20 +30984,34 @@ var Header = function (_Component) {
             var _props = this.props,
                 isLogged = _props.isLogged,
                 userName = _props.userName,
-                error = _props.error;
+                error = _props.error,
+                dispatch = _props.dispatch;
 
             return _react2.default.createElement(
                 'header',
                 null,
                 error.status && _react2.default.createElement(_Error2.default, error),
-                !isLogged && _react2.default.createElement(_LoginButton2.default, { onClick: function onClick() {
+                _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
+                        return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
+                    } }),
+                !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
                         return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
                     } }),
                 isLogged && _react2.default.createElement(
-                    'h1',
+                    'span',
                     null,
-                    userName
-                )
+                    _react2.default.createElement(
+                        'h1',
+                        null,
+                        userName
+                    ),
+                    _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
+                            return dispatch((0, _actions.fetchLogout)());
+                        } })
+                ),
+                _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
+                        return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
+                    } })
             );
         }
     }]);
@@ -31027,7 +31040,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":528,"../presentational/LoginButton":529,"../redux/actions":533,"../redux/constants":535,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../presentational/Error":529,"../presentational/HeaderButtons":530,"../redux/actions":534,"../redux/constants":536,"react":501,"react-redux":471}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31051,7 +31064,7 @@ var Login = function Login(_ref) {
     var inputPassword = void 0;
 
     return _react2.default.createElement(
-        'section',
+        'main',
         null,
         _react2.default.createElement(
             'h1',
@@ -31082,7 +31095,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":533,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../redux/actions":534,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31137,7 +31150,69 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":531,"../redux/actions":533,"../redux/constants":535,"react-redux":471}],525:[function(require,module,exports){
+},{"../presentational/LotList":532,"../redux/actions":534,"../redux/constants":536,"react-redux":471}],525:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _actions = require('../redux/actions');
+
+var _reactRedux = require('react-redux');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Register = function Register(_ref) {
+    var dispatch = _ref.dispatch;
+
+    var inputUserName = void 0;
+    var inputEmail = void 0;
+    var inputPassword = void 0;
+
+    return _react2.default.createElement(
+        'main',
+        null,
+        _react2.default.createElement(
+            'h1',
+            null,
+            'Register'
+        ),
+        _react2.default.createElement(
+            'form',
+            { onSubmit: function onSubmit(e) {
+                    e.preventDefault();
+                    dispatch((0, _actions.fetchRegister)(inputUserName.value, inputEmail.value, inputPassword.value));
+                } },
+            _react2.default.createElement('input', { ref: function ref(node) {
+                    inputUserName = node;
+                }, type: 'text', placeholder: 'Username' }),
+            _react2.default.createElement('input', { ref: function ref(node) {
+                    inputPassword = node;
+                }, type: 'password', placeholder: 'password' }),
+            _react2.default.createElement('input', { ref: function ref(node) {
+                    inputEmail = node;
+                }, type: 'email', placeholder: 'email' }),
+            _react2.default.createElement(
+                'button',
+                { type: 'submit' },
+                'Register'
+            )
+        )
+    );
+}; /**
+    * Created by Johnh on 2017-03-19.
+    */
+/**
+ * Created by Johnh on 2017-03-19.
+ */
+exports.default = (0, _reactRedux.connect)()(Register);
+
+},{"../redux/actions":534,"react":501,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31198,7 +31273,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":534,"./App":521,"react":501,"react-redux":471}],526:[function(require,module,exports){
+},{"../redux/configureStore":535,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31216,6 +31291,10 @@ var _LotsContainer2 = _interopRequireDefault(_LotsContainer);
 var _Login = require('./Login');
 
 var _Login2 = _interopRequireDefault(_Login);
+
+var _Register = require('./Register');
+
+var _Register2 = _interopRequireDefault(_Register);
 
 var _react = require('react');
 
@@ -31254,6 +31333,8 @@ var SceneSwapper = function (_Component) {
                     return _react2.default.createElement(_LotsContainer2.default, null);
                 case _constants.SCENE.SHOW_LOGIN:
                     return _react2.default.createElement(_Login2.default, null);
+                case _constants.SCENE.SHOW_REGISTER:
+                    return _react2.default.createElement(_Register2.default, null);
                 default:
                     return _react2.default.createElement(_LotsContainer2.default, null);
             }
@@ -31275,7 +31356,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":535,"./Login":523,"./LotsContainer":524,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/constants":536,"./Login":523,"./LotsContainer":524,"./Register":525,"react":501,"react-redux":471}],528:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31297,7 +31378,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
-},{"./containers/Root":525,"babel-polyfill":1,"react":501,"react-dom":335}],528:[function(require,module,exports){
+},{"./containers/Root":526,"babel-polyfill":1,"react":501,"react-dom":335}],529:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31341,12 +31422,13 @@ Error.propTypes = {
 
 exports.default = Error;
 
-},{"react":501}],529:[function(require,module,exports){
+},{"react":501}],530:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.LogoutButton = exports.HomeButton = exports.RegisterButton = exports.LoginButton = undefined;
 
 var _react = require('react');
 
@@ -31354,7 +31436,8 @@ var _react2 = _interopRequireDefault(_react);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var LoginButton = function LoginButton(_ref) {
+// Login
+var LoginButton = exports.LoginButton = function LoginButton(_ref) {
     var onClick = _ref.onClick;
 
     return _react2.default.createElement(
@@ -31370,9 +31453,53 @@ var LoginButton = function LoginButton(_ref) {
 LoginButton.propTypes = {
     onClick: _react.PropTypes.func
 };
-exports.default = LoginButton;
 
-},{"react":501}],530:[function(require,module,exports){
+// Register
+var RegisterButton = exports.RegisterButton = function RegisterButton(_ref2) {
+    var onClick = _ref2.onClick;
+
+    return _react2.default.createElement(
+        'a',
+        { onClick: onClick },
+        'Register'
+    );
+};
+
+RegisterButton.propTypes = {
+    onClick: _react.PropTypes.func
+};
+
+// Home
+var HomeButton = exports.HomeButton = function HomeButton(_ref3) {
+    var onClick = _ref3.onClick;
+
+    return _react2.default.createElement(
+        'a',
+        { onClick: onClick },
+        'HiQParking'
+    );
+};
+
+HomeButton.propTypes = {
+    onClick: _react.PropTypes.func
+};
+
+// Logout
+var LogoutButton = exports.LogoutButton = function LogoutButton(_ref4) {
+    var onClick = _ref4.onClick;
+
+    return _react2.default.createElement(
+        'a',
+        { onClick: onClick },
+        'Logout'
+    );
+};
+
+LogoutButton.propTypes = {
+    onClick: _react.PropTypes.func
+};
+
+},{"react":501}],531:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31466,7 +31593,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../redux/constants":535,"./Spot":532,"react":501}],531:[function(require,module,exports){
+},{"../redux/constants":536,"./Spot":533,"react":501}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31494,7 +31621,7 @@ var LotList = function LotList(_ref) {
         onLotClick = _ref.onLotClick,
         onSpotClick = _ref.onSpotClick;
     return _react2.default.createElement(
-        'section',
+        'main',
         null,
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
@@ -31532,7 +31659,7 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":530,"react":501}],532:[function(require,module,exports){
+},{"./Lot":531,"react":501}],533:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31595,13 +31722,13 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/helpers":520,"react":501}],533:[function(require,module,exports){
+},{"../../../general/helpers":520,"react":501}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
-exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
+exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
 exports.requestParkingLots = requestParkingLots;
 exports.receiveParkingLots = receiveParkingLots;
 exports.receiveParkingLotsError = receiveParkingLotsError;
@@ -31615,10 +31742,18 @@ exports.receiveToggleSpot = receiveToggleSpot;
 exports.receiveToggleSpotError = receiveToggleSpotError;
 exports.fetchToggleSpot = fetchToggleSpot;
 exports.requestLogin = requestLogin;
-exports.reciveLogin = reciveLogin;
-exports.reciveLoginError = reciveLoginError;
+exports.receiveLogin = receiveLogin;
+exports.receiveLoginError = receiveLoginError;
 exports.fetchUser = fetchUser;
 exports.fetchLogin = fetchLogin;
+exports.requestRegister = requestRegister;
+exports.receiveRegister = receiveRegister;
+exports.receiveRegisterError = receiveRegisterError;
+exports.fetchRegister = fetchRegister;
+exports.requestLogout = requestLogout;
+exports.receiveLogout = receiveLogout;
+exports.receiveLogoutError = receiveLogoutError;
+exports.fetchLogout = fetchLogout;
 exports.showParkingLots = showParkingLots;
 exports.selectParkingLot = selectParkingLot;
 exports.toggleSpot = toggleSpot;
@@ -31652,234 +31787,330 @@ var LOGIN_REQUEST = exports.LOGIN_REQUEST = 'LOGIN_REQUEST';
 var LOGIN_SUCCESS = exports.LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 var LOGIN_ERROR = exports.LOGIN_ERROR = 'LOGIN_ERROR';
 
+var REGISTER_REQUEST = exports.REGISTER_REQUEST = 'REGISTER_REQUEST';
+var REGISTER_SUCCESS = exports.REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+var REGISTER_ERROR = exports.REGISTER_ERROR = 'REGISTER_ERROR';
+
+var LOGOUT_REQUEST = exports.LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+var LOGOUT_SUCCESS = exports.LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+var LOGOUT_ERROR = exports.LOGOUT_ERROR = 'LOGOUT_ERROR';
+
 var SHOW_PARKING_LOTS = exports.SHOW_PARKING_LOTS = 'SHOW_PARKING_LOTS';
 var SELECT_PARKING_LOT = exports.SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 var TOGGLE_SPOT = exports.TOGGLE_SPOT = 'TOGGLE_SPOT';
 var CHANGE_SCENE = exports.CHANGE_SCENE = 'CHANGE_SCENE';
 
 function requestParkingLots() {
-	return {
-		type: FETCH_PARKING_LOTS_REQUEST
-	};
+    return {
+        type: FETCH_PARKING_LOTS_REQUEST
+    };
 }
 
 function receiveParkingLots(json) {
-	return {
-		type: FETCH_PARKING_LOTS_SUCCESS,
-		parking_lots: json.data,
-		received_at: Date.now()
-	};
+    return {
+        type: FETCH_PARKING_LOTS_SUCCESS,
+        parking_lots: json.data,
+        received_at: Date.now()
+    };
 }
 
 function receiveParkingLotsError(json) {
-	return {
-		type: FETCH_PARKING_LOTS_ERROR,
-		error_msg: json.message
-	};
+    return {
+        type: FETCH_PARKING_LOTS_ERROR,
+        error_msg: json.message
+    };
 }
 
 function fetchParkingLots() {
-	return function (dispatch) {
-		dispatch(requestParkingLots());
-		return (0, _isomorphicFetch2.default)('api/lot/getAll').then(function (response) {
-			return response.json();
-		}).then(function (json) {
-			if (json.error) dispatch(receiveParkingLotsError(json));else dispatch(receiveParkingLots(json));
-		}).catch(function (ex) {
-			dispatch(receiveParkingLotsError({ message: "Exception: " + ex }));
-		});
-	};
+    return function (dispatch) {
+        dispatch(requestParkingLots());
+        return (0, _isomorphicFetch2.default)('api/lot/getAll').then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveParkingLotsError(json));else dispatch(receiveParkingLots(json));
+        }).catch(function (ex) {
+            dispatch(receiveParkingLotsError({ message: "Exception: " + ex }));
+        });
+    };
 }
 
 // Get spots
 function requestSpots(parkingLot) {
-	return {
-		type: FETCH_SPOTS_REQUEST,
-		parkingLot: parkingLot
-	};
+    return {
+        type: FETCH_SPOTS_REQUEST,
+        parkingLot: parkingLot
+    };
 }
 
 function receiveSpots(parkingLot, json) {
-	return {
-		type: FETCH_SPOTS_SUCCESS,
-		spots: json.data.spots,
-		received_at: Date.now(),
-		parkingLot: parkingLot
-	};
+    return {
+        type: FETCH_SPOTS_SUCCESS,
+        spots: json.data.spots,
+        received_at: Date.now(),
+        parkingLot: parkingLot
+    };
 }
 
 function receiveSpotsError(parkingLot, json) {
-	return {
-		type: FETCH_SPOTS_ERROR,
-		error_msg: json.message,
-		parkingLot: parkingLot
-	};
+    return {
+        type: FETCH_SPOTS_ERROR,
+        error_msg: json.message,
+        parkingLot: parkingLot
+    };
 }
 
 function fetchSpots(parkingLot) {
-	return function (dispatch) {
-		dispatch(requestSpots(parkingLot));
-		return (0, _isomorphicFetch2.default)('api/lot/fill', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ id: parkingLot, sessionKey: (0, _helpers.getCookie)("skey") })
-		}).then(function (response) {
-			return response.json();
-		}).then(function (json) {
-			if (json.error) dispatch(receiveSpotsError(parkingLot, json));else {
-				dispatch(receiveSpots(parkingLot, json));
-				dispatch(changeScene(_constants.SCENE.SHOW_SPOTS));
-			}
-		}).catch(function (ex) {
-			dispatch(receiveSpotsError(parkingLot, { message: "Exception: " + ex }));
-		});
-	};
+    return function (dispatch) {
+        dispatch(requestSpots(parkingLot));
+        return (0, _isomorphicFetch2.default)('api/lot/fill', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: parkingLot, sessionKey: (0, _helpers.getCookie)("skey") })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveSpotsError(parkingLot, json));else {
+                dispatch(receiveSpots(parkingLot, json));
+                dispatch(changeScene(_constants.SCENE.SHOW_SPOTS));
+            }
+        }).catch(function (ex) {
+            dispatch(receiveSpotsError(parkingLot, { message: "Exception: " + ex }));
+        });
+    };
 }
 
 // POST Toggle
 function requestToggleSpot(spot) {
-	return {
-		type: FETCH_TOGGLE_SPOT_REQUEST,
-		spot: spot
-	};
+    return {
+        type: FETCH_TOGGLE_SPOT_REQUEST,
+        spot: spot
+    };
 }
 
 function receiveToggleSpot(spot, json) {
-	return {
-		type: FETCH_TOGGLE_SPOT_SUCCESS,
-		spot: json.data.filter(function (s) {
-			return s.id === spot;
-		})[0],
-		received_at: Date.now()
-	};
+    return {
+        type: FETCH_TOGGLE_SPOT_SUCCESS,
+        spots: json.data,
+        received_at: Date.now()
+    };
 }
 
 function receiveToggleSpotError(spot, json) {
-	return {
-		type: FETCH_TOGGLE_SPOT_ERROR,
-		spot: spot,
-		error_msg: json.message
-	};
+    return {
+        type: FETCH_TOGGLE_SPOT_ERROR,
+        spot: spot,
+        error_msg: json.message
+    };
 }
 
 function fetchToggleSpot(spot) {
-	return function (dispatch) {
-		dispatch(requestToggleSpot(spot));
-		return (0, _isomorphicFetch2.default)('api/spot/toggle', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				sessionKey: (0, _helpers.getCookie)("skey"),
-				id: spot
-			})
-		}).then(function (response) {
-			return response.json();
-		}).then(function (json) {
-			if (json.error) dispatch(receiveToggleSpotError(spot, json));else dispatch(receiveToggleSpot(spot, json));
-		}).catch(function (ex) {
-			dispatch(receiveParkingLotsError({ message: "Exception: " + ex }));
-		});
-	};
+    return function (dispatch) {
+        dispatch(requestToggleSpot(spot));
+        return (0, _isomorphicFetch2.default)('api/spot/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sessionKey: (0, _helpers.getCookie)("skey"),
+                id: spot
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveToggleSpotError(spot, json));else dispatch(receiveToggleSpot(spot, json));
+        }).catch(function (ex) {
+            dispatch(receiveParkingLotsError({ message: "Exception: " + ex }));
+        });
+    };
 }
 
 // POST Login
 function requestLogin() {
-	return {
-		type: LOGIN_REQUEST
-	};
+    return {
+        type: LOGIN_REQUEST
+    };
 }
 
-function reciveLogin(json) {
-	return {
-		type: LOGIN_SUCCESS,
-		user: json.data
-	};
+function receiveLogin(json) {
+    return {
+        type: LOGIN_SUCCESS,
+        user: json.data
+    };
 }
 
-function reciveLoginError(json) {
-	return {
-		type: LOGIN_ERROR,
-		error_msg: json.message
-	};
+function receiveLoginError(json) {
+    return {
+        type: LOGIN_ERROR,
+        error_msg: json.message
+    };
 }
 
-function fetchUser() {
-	return function (dispatch) {
-		return (0, _isomorphicFetch2.default)('api/user/get', {
-			method: 'POST',
-			body: JSON.stringify({
-				sessionKey: (0, _helpers.getCookie)("skey")
-			})
-		}).then(function (response) {
-			return response.json();
-		}).then(function (json) {
-			if (json.error) dispatch(reciveLoginError(json));else {
-				dispatch(reciveLogin(json));
-				dispatch(changeScene(_constants.SCENE.SHOW_PARKING_LOTS));
-			}
-		}).catch(function (ex) {
-			dispatch(reciveLoginError({ message: "fetchUser: " + ex }));
-		});
-	};
+function fetchUser(dispatchCallback) {
+    return function (dispatch) {
+        return (0, _isomorphicFetch2.default)('api/user/get', {
+            method: 'POST',
+            body: JSON.stringify({
+                sessionKey: (0, _helpers.getCookie)("skey")
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveLoginError(json));else {
+                dispatch(dispatchCallback(json));
+                dispatch(changeScene(_constants.SCENE.SHOW_PARKING_LOTS));
+            }
+        }).catch(function (ex) {
+            dispatch(receiveLoginError({ message: "fetchUser: " + ex }));
+        });
+    };
 }
 
 function fetchLogin(usernameemail, password) {
-	return function (dispatch) {
-		dispatch(requestLogin());
-		return (0, _isomorphicFetch2.default)('api/user/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				usernameemail: usernameemail,
-				password: password
-			})
-		}).then(function (response) {
-			return response.json();
-		}).then(function (json) {
-			if (json.error) dispatch(reciveLoginError(json));else {
-				(0, _helpers.createCookie)("skey", json.data.sessionkey, 360);
-				dispatch(fetchUser());
-			}
-		}).catch(function (ex) {
-			dispatch(reciveLoginError({ message: "fetchLogin: " + ex }));
-		});
-	};
+    return function (dispatch) {
+        dispatch(requestLogin());
+        return (0, _isomorphicFetch2.default)('api/user/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                usernameemail: usernameemail,
+                password: password
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveLoginError(json));else {
+                (0, _helpers.createCookie)("skey", json.data.sessionkey, 360);
+                dispatch(fetchUser(receiveLogin));
+            }
+        }).catch(function (ex) {
+            dispatch(receiveLoginError({ message: "fetchLogin: " + ex }));
+        });
+    };
+}
+
+// POST Register
+function requestRegister() {
+    return {
+        type: REGISTER_REQUEST
+    };
+}
+
+function receiveRegister(json) {
+    return {
+        type: REGISTER_SUCCESS,
+        user: json.data
+    };
+}
+
+function receiveRegisterError(json) {
+    return {
+        type: REGISTER_ERROR,
+        error_msg: json.message
+    };
+}
+function fetchRegister(username, email, password) {
+    return function (dispatch) {
+        dispatch(requestRegister());
+        return (0, _isomorphicFetch2.default)('api/user/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveRegisterError(json));else {
+                (0, _helpers.createCookie)("skey", json.data.sessionkey, 360);
+                dispatch(fetchUser(receiveRegister));
+            }
+        }).catch(function (ex) {
+            dispatch(receiveRegisterError({ message: "fetchRegister: " + ex }));
+        });
+    };
+}
+// POST Logout
+function requestLogout() {
+    return {
+        type: LOGOUT_REQUEST
+    };
+}
+
+function receiveLogout(json) {
+    return {
+        type: LOGOUT_SUCCESS
+    };
+}
+
+function receiveLogoutError(json) {
+    return {
+        type: LOGOUT_ERROR,
+        error_msg: json.message
+    };
+}
+
+function fetchLogout() {
+    return function (dispatch) {
+        dispatch(requestLogout());
+        return (0, _isomorphicFetch2.default)('api/user/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                sessionKey: (0, _helpers.getCookie)("skey")
+            })
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveLogoutError(json));else {
+                (0, _helpers.deleteCookie)("skey");
+                dispatch(receiveLogout(json));
+                dispatch(changeScene(_constants.SCENE.SHOW_PARKING_LOTS));
+            }
+        }).catch(function (ex) {
+            dispatch(receiveLogoutError({ message: "fetchLogout: " + ex }));
+        });
+    };
 }
 // USER ACTIONS
 function showParkingLots() {
-	return {
-		type: SHOW_PARKING_LOTS
-	};
+    return {
+        type: SHOW_PARKING_LOTS
+    };
 }
 
 function selectParkingLot(parkingLot) {
-	return {
-		type: SELECT_PARKING_LOT,
-		parkingLot: parkingLot
-	};
+    return {
+        type: SELECT_PARKING_LOT,
+        parkingLot: parkingLot
+    };
 }
 
 function toggleSpot(spot) {
-	return {
-		type: TOGGLE_SPOT,
-		spot: spot
-	};
+    return {
+        type: TOGGLE_SPOT,
+        spot: spot
+    };
 }
 
 function changeScene(scene) {
-	return {
-		type: CHANGE_SCENE,
-		scene: scene
-	};
+    return {
+        type: CHANGE_SCENE,
+        scene: scene
+    };
 }
 
-},{"../../../general/helpers":520,"./constants":535,"isomorphic-fetch":322}],534:[function(require,module,exports){
+},{"../../../general/helpers":520,"./constants":536,"isomorphic-fetch":322}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31913,7 +32144,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":536,"redux":513,"redux-logger":506,"redux-thunk":507}],535:[function(require,module,exports){
+},{"./reducers":537,"redux":513,"redux-logger":506,"redux-thunk":507}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31929,7 +32160,7 @@ var SCENE = exports.SCENE = {
     SHOW_REGISTER: 'SHOW_REGISTER'
 };
 
-},{}],536:[function(require,module,exports){
+},{}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31988,10 +32219,9 @@ function lot() {
 				isFetching: false,
 				didInvalidate: false,
 				spots: state.spots.map(function (spot, _) {
-					if (spot.id === action.spot.id) {
-						return Object.assign({}, spot, action.spot);
-					}
-					return spot;
+					return Object.assign({}, spot, action.spots.filter(function (s) {
+						return s.id === spot.id;
+					})[0]);
 				}),
 				lastUpdate: action.received_at
 			});
@@ -32119,21 +32349,31 @@ function user() {
 	var action = arguments[1];
 
 	switch (action.type) {
+		case _actions.REGISTER_REQUEST:
 		case _actions.LOGIN_REQUEST:
+		case _actions.LOGOUT_REQUEST:
 			return Object.assign({}, state, {
 				isFetching: true,
 				isLogged: false
 			});
+		case _actions.REGISTER_SUCCESS:
 		case _actions.LOGIN_SUCCESS:
 			return Object.assign({}, state, {
 				isFetching: false,
 				isLogged: true,
 				name: action.user.username
 			});
+		case _actions.REGISTER_ERROR:
 		case _actions.LOGIN_ERROR:
+		case _actions.LOGOUT_SUCCESS:
 			return Object.assign({}, state, {
 				isFetching: false,
 				isLogged: false
+			});
+		case _actions.LOGOUT_ERROR:
+			return Object.assign({}, state, {
+				isFetching: false,
+				isLogged: true
 			});
 		default:
 			return state;
@@ -32150,7 +32390,9 @@ function error() {
 		case _actions.FETCH_PARKING_LOTS_ERROR:
 		case _actions.FETCH_SPOTS_ERROR:
 		case _actions.FETCH_TOGGLE_SPOT_ERROR:
+		case _actions.REGISTER_ERROR:
 		case _actions.LOGIN_ERROR:
+		case _actions.LOGOUT_ERROR:
 			return Object.assign({}, state, {
 				status: true,
 				message: action.error_msg,
@@ -32172,4 +32414,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":533,"./constants":535,"redux":513}]},{},[527]);
+},{"./actions":534,"./constants":536,"redux":513}]},{},[528]);
