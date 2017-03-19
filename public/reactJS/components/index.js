@@ -1,24 +1,13 @@
-import 'babel-polyfill'
-import thunkMiddleware from 'redux-thunk'
-import createLogger from 'redux-logger'
-import { createStore, applyMiddleware } from 'redux'
+/**
+ * Created by Johnh on 2017-03-19.
+ */
+import 'babel-polyfill';
 
-import rootReducer from './reducers'
-import fetchParkingLots from './actions'
+import React from 'react';
+import { render } from 'react-dom';
+import Root from './containers/Root';
 
-const loggerMiddleware = createLogger();
-const store = createStore(
-	rootReducer,
-	applyMiddleware(
-		thunkMiddleware,
-		loggerMiddleware
-	)
+render(
+    <Root />,
+    document.getElementById('root')
 );
-
-let unsubLogger = store.subscribe(() => {
-   console.log(store.getState());
-});
-
-store.dispatch(fetchParkingLots()).then(() => {
-	console.log(store.getState());
-});

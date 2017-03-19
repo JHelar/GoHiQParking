@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { SCENE } from 'constants';
+import { SCENE } from './constants';
 import {
     FETCH_PARKING_LOTS_REQUEST,
 	FETCH_PARKING_LOTS_SUCCESS,
@@ -10,22 +10,19 @@ import {
 	FETCH_TOGGLE_SPOT_REQUEST,
 	FETCH_TOGGLE_SPOT_SUCCESS,
 	FETCH_TOGGLE_SPOT_ERROR,
+    LOGIN_REQUEST,
+    LOGIN_SUCCESS,
+    LOGIN_ERROR,
 	SHOW_PARKING_LOTS,
 	SELECT_PARKING_LOT,
 	TOGGLE_SPOT,
 	CHANGE_SCENE
-} from 'actions';
+} from './actions';
 
 
 
 // Reducers
-function lots(state = [], action, selectedLot){
-    return state.map((lot_state, _) => {
-        if(lot_sate.id === selectedLot){
-            return lot(lot_state, action);
-        }
-    })
-}
+
 function lot(state = {
     id: 0,
     name: "",
@@ -66,7 +63,12 @@ function lot(state = {
 			return Object.assign({}, state, {
 				isFetching: false,
 				didInvalidate: false,
-				spots: action.spots,
+                spots: state.spots.map((spot, _) => {
+				    if(spot.id === action.spot.id){
+				        return Object.assign({}, spot, action.spot);
+                    }
+                    return spot
+                }),
 				lastUpdate: action.received_at
 			});
 		case FETCH_TOGGLE_SPOT_ERROR:
@@ -88,55 +90,59 @@ function parkingLots(state = {
 		case SELECT_PARKING_LOT:
 			return Object.assign({}, state, {
 				didInvalidate: false,
-                error: { status: false },
 				selectedParkingLot: action.parkingLot
 			});
 		case SHOW_PARKING_LOTS:
 			return Object.assign({}, state, {
-				didInvalidate: true,
-                error: { status: false }
+				didInvalidate: true
 			});
 		case FETCH_PARKING_LOTS_REQUEST:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: true,
-				error: { status: false }
 			});
 		case FETCH_PARKING_LOTS_SUCCESS:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-                error: { status: false },
 				lots: action.parking_lots,
 				lastUpdate: action.received_at
 			});
 		case FETCH_PARKING_LOTS_ERROR:
 			return Object.assign({}, state, {
 				didInvalidate: false,
-				isFetching: false,
-                error: { status: false, message: action.error_msg }
+				isFetching: false
 			});
 		case FETCH_SPOTS_REQUEST:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-                error: { status: false },
 				selectedParkingLot: action.parkingLot,
-				lots: lots(state.lots, action, action.parkingLot)
+				lots: state.lots.map((lot_state, _) => {
+				    if(lot_state.id === action.parkingLot){
+				        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+				})
 			});
         case FETCH_SPOTS_SUCCESS:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-				error: { status : false },
-				lots: lots(state.lots, action, action.parkingLot)
+                lots: state.lots.map((lot_state, _) => {
+                    return Object.assign({}, lot_state, lot(lot_state, action));
+                })
 			});
 		case FETCH_SPOTS_ERROR:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-				error: { state: true, message: action.error_msg },
-                lots: lots(state.lots, action, action.parkingLot)
+                lots: state.lots.map((lot_state, _) => {
+                    if(lot_state.id === action.parkingLot){
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
 			});
 		case TOGGLE_SPOT:
 		case FETCH_TOGGLE_SPOT_REQUEST:
@@ -144,14 +150,23 @@ function parkingLots(state = {
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-				lots: lots(state.lots, action, action.selectedParkingLot)
+                lots: state.lots.map((lot_state, _) => {
+                    if(lot_state.id === state.selectedParkingLot){
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
 			});
 		case FETCH_TOGGLE_SPOT_ERROR:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
-				error: { state: true, message: action.error_msg },
-                lots: lots(state.lots, action, action.selectedParkingLot)
+                lots: state.lots.map((lot_state, _) => {
+                    if(lot_state.id === state.selectedParkingLot){
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
 			});
 		default:
 			return state;
@@ -167,7 +182,54 @@ function currentScene(state = SCENE.SHOW_PARKING_LOTS, action){
 	}
 }
 
+function user(state = {
+    isLogged: false
+}, action) {
+    switch(action.type){
+        case LOGIN_REQUEST:
+            return Object.assign({}, state, {
+                isFetching: true,
+                isLogged: false
+            });
+        case LOGIN_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: true,
+                name: action.user.username
+            });
+        case LOGIN_ERROR:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: false
+            });
+        default:
+            return state;
+    }
+}
+
+function error(state = {
+    status: false
+}, action) {
+    switch(action.type){
+        case FETCH_PARKING_LOTS_ERROR:
+        case FETCH_SPOTS_ERROR:
+        case FETCH_TOGGLE_SPOT_ERROR:
+        case LOGIN_ERROR:
+            return Object.assign({}, state, {
+                status: true,
+                message: action.error_msg,
+                type: action.type
+            });
+        default:
+            return Object.assign({}, state, {
+                status: false
+            });
+    }
+}
+
 const rootReducer = combineReducers({
+    error,
+    user,
 	currentScene,
 	parkingLots
 });

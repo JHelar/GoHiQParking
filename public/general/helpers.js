@@ -9,7 +9,7 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-function createCookie(name,value,days) {
+export function createCookie(name,value,days) {
     if (days) {
         var date = new Date();
         date.setTime(date.getTime()+(days*24*60*60*1000));
@@ -31,7 +31,7 @@ function createCookie(name,value,days) {
     }
     return null;
 }*/
-function getCookie(cname) {
+export function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
     for(var i = 0; i <ca.length; i++) {
@@ -50,11 +50,11 @@ function deleteCookie(name) {
     createCookie(name,"",-1);
 }
 
-function getGoogleStaticMap(location){
+export function getGoogleStaticMap(location){
     return "https://maps.googleapis.com/maps/api/staticmap?zoom=13&size=640x640&scale=2&markers=color:blue%7Clabel:S|" + encodeURIComponent(location) + "&key=AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
 }
 
-function timeDifference(previous) {
+export function timeDifference(previous) {
     var current = Date.now()
 
     var msPerMinute = 60 * 1000;
