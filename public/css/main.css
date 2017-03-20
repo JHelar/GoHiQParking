@@ -3836,7 +3836,7 @@ h1,
   -o-transition: font-size 0.2s ease-out;
   transition: font-size 0.2s ease-out;
   font-size: 2rem;
-  font-family: "RobotoLight", sans-serif;
+  font-family: "RobotoBold", sans-serif;
   font-weight: 400;
   line-height: inherit;
   color: #000000; }
@@ -3844,7 +3844,7 @@ h1,
     h1,
     .header-1 {
       font-size: 4rem;
-      font-family: "RobotoLight", sans-serif;
+      font-family: "RobotoBold", sans-serif;
       font-weight: 400;
       line-height: inherit;
       color: #000000; } }
@@ -3852,7 +3852,7 @@ h1,
     h1,
     .header-1 {
       font-size: 6rem;
-      font-family: "RobotoLight", sans-serif;
+      font-family: "RobotoBold", sans-serif;
       font-weight: 400;
       line-height: inherit;
       color: #000000; } }
@@ -4001,5 +4001,107 @@ h6,
       font-weight: 400;
       line-height: inherit;
       color: #000000; } }
+
+#main-header {
+  background: url("../image/bg-top-mob.png") no-repeat center;
+  -webkit-background-size: cover;
+  background-size: cover;
+  height: 80px; }
+  #main-header a > span {
+    display: inline-block;
+    padding: 1rem; }
+  #main-header .home-button {
+    color: #ffffff;
+    font-family: "HiQ", sans-serif;
+    font-size: 2rem;
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -ms-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out; }
+    #main-header .home-button span {
+      position: relative; }
+      #main-header .home-button span .flavor {
+        position: absolute;
+        color: #fe0070;
+        font-family: "Reenie Beanie";
+        font-size: 1rem;
+        font-weight: 700;
+        bottom: 15px;
+        right: 5px;
+        -webkit-transform: rotate(-15deg);
+        -moz-transform: rotate(-15deg);
+        -ms-transform: rotate(-15deg);
+        -o-transform: rotate(-15deg);
+        transform: rotate(-15deg); }
+  #main-header .menu-button .text {
+    display: inline-block;
+    color: #ffe50d;
+    font-family: "Reenie Beanie";
+    font-size: 1.5rem;
+    -webkit-transition: color 0.2s ease-out;
+    -moz-transition: color 0.2s ease-out;
+    -ms-transition: color 0.2s ease-out;
+    -o-transition: color 0.2s ease-out;
+    transition: color 0.2s ease-out; }
+  #main-header .menu-button .hamburger {
+    display: inline-block;
+    width: 20px;
+    background: #ffffff;
+    height: 2px;
+    position: relative;
+    -webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+    -webkit-transform: translateY(-7px);
+    -moz-transform: translateY(-7px);
+    -ms-transform: translateY(-7px);
+    -o-transform: translateY(-7px);
+    transform: translateY(-7px); }
+    #main-header .menu-button .hamburger:before {
+      width: 20px;
+      height: 2px;
+      content: '';
+      display: block;
+      background: #ffffff;
+      -webkit-transform: translateY(9px);
+      -moz-transform: translateY(9px);
+      -ms-transform: translateY(9px);
+      -o-transform: translateY(9px);
+      transform: translateY(9px);
+      -webkit-transition: all 0.2s ease-out;
+      -moz-transition: all 0.2s ease-out;
+      -ms-transition: all 0.2s ease-out;
+      -o-transition: all 0.2s ease-out;
+      transition: all 0.2s ease-out; }
+    #main-header .menu-button .hamburger:after {
+      width: 20px;
+      height: 2px;
+      content: '';
+      display: block;
+      background: #ffffff;
+      -webkit-transform: translateY(-10px);
+      -moz-transform: translateY(-10px);
+      -ms-transform: translateY(-10px);
+      -o-transform: translateY(-10px);
+      transform: translateY(-10px);
+      -webkit-transition: all 0.2s ease-out;
+      -moz-transition: all 0.2s ease-out;
+      -ms-transition: all 0.2s ease-out;
+      -o-transition: all 0.2s ease-out;
+      transition: all 0.2s ease-out; }
+  #main-header .menu-button:hover .text {
+    color: #c09d04; }
+  #main-header .menu-button:hover .hamburger {
+    background-color: #c09d04; }
+    #main-header .menu-button:hover .hamburger:after, #main-header .menu-button:hover .hamburger:before {
+      background-color: #c09d04; }
+
+.arrow-left {
+  background: url("../image/arrow-left-yellow.png") no-repeat center;
+  -webkit-background-size: cover;
+  background-size: cover; }
 
 /*# sourceMappingURL=main.css.map */

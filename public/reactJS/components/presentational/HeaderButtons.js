@@ -28,7 +28,9 @@ RegisterButton.propTypes = {
 // Home
 export const HomeButton = ({ onClick }) => {
     return (
-        <a onClick={onClick}>HiQParking</a>
+        <a className="columns home-button" onClick={onClick}>
+            <span>HiQ<i className="flavor">Parking</i></span>
+        </a>
     );
 };
 

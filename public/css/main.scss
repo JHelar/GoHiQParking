@@ -24,13 +24,13 @@ h1,
 .header-1 {
   @include transition(font-size);
   @include breakpoint(small){
-    @include font($font-size-2, $font-family-robotolight);
+    @include font($font-size-2, $font-family-robotobold);
   }
   @include breakpoint(medium){
-    @include font($font-size-4, $font-family-robotolight);
+    @include font($font-size-4, $font-family-robotobold);
   }
   @include breakpoint(large) {
-    @include font($font-size-6, $font-family-robotolight);
+    @include font($font-size-6, $font-family-robotobold);
   }
 }
 h2,
@@ -97,4 +97,99 @@ h6,
   @include breakpoint(large) {
     @include font($font-size-2, $font-family-robotolight);
   }
+}
+
+// Header
+#main-header {
+  background: url('../image/bg-top-mob.png') no-repeat center;
+  -webkit-background-size: cover;
+  background-size: cover;
+  height: 80px;
+  a {
+    > span {
+      display: inline-block;
+      padding: 1rem;
+    }
+  }
+  .home-button{
+    color: $white;
+    font-family: $font-family-hiq;
+    font-size: $font-size-2;
+    @include transition(color);
+
+    span {
+      position: relative;
+      .flavor {
+        position: absolute;
+        color: $pink;
+        font-family: $font-family-reeniebeanie;
+        font-size: $font-size-1;
+        font-weight: 700;
+        bottom: 15px;
+        right: 5px;
+        @include rotate(-15deg);
+      }
+    }
+  }
+  .menu-button {
+
+    .text {
+      display: inline-block;
+      color: $yellow;
+      font-family: $font-family-reeniebeanie;
+      font-size: $font-size-15;
+      @include transition(color);
+
+    }
+
+    .hamburger {
+      display: inline-block;
+      width: 20px;
+      background: $white;
+      height: 2px;
+      position: relative;
+      @include transition(all, .3s);
+      @include translateY(-7px);
+
+      &:before {
+        width: 20px;
+        height: 2px;
+        content: '';
+        display: block;
+        background: $white;
+        @include translateY(9px);
+        @include transition();
+      }
+
+      &:after {
+        width: 20px;
+        height: 2px;
+        content: '';
+        display: block;
+        background: $white;
+        @include translateY(-10px);
+        @include transition();
+      }
+    }
+
+    &:hover {
+      .text {
+        color: $yellow-dark;
+      }
+      .hamburger {
+        background-color: $yellow-dark;
+        &:after,
+        &:before {
+          background-color: $yellow-dark;
+        }
+      }
+    }
+  }
+}
+
+.arrow-left {
+  background: url("../image/arrow-left-yellow.png") no-repeat center;
+  -webkit-background-size:cover;
+  background-size:cover;
+
 }

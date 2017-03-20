@@ -24,22 +24,32 @@ class Header extends Component {
     render(){
         const { isLogged, userName, error, dispatch } = this.props;
         return(
-            <header>
+            <div className={"small-12"}>
                 {error.status &&
                     <Error {...error}/>
                 }
-                <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
-                {!isLogged &&
+                <header id="main-header" className="row">
+                    <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
+                    <a data-toggle="menu" className="menu-button columns">
+                        <span>
+                            <i className="hamburger"></i>
+                            <span className="text">Menu</span>
+                        </span>
+                    </a>
+                </header>
+                <div id="menu" data-toggler="show">
+                    {!isLogged &&
                     <LoginButton onClick={() => this.onChangeScene(SCENE.SHOW_LOGIN)}/>
-                }
-                {isLogged &&
-                    <span>
-                        <h1>{ userName }</h1>
-                        <LogoutButton onClick={() => dispatch(fetchLogout()) } />
-                    </span>
-                }
-                <RegisterButton onClick={() => this.onChangeScene(SCENE.SHOW_REGISTER)}/>
-            </header>
+                    }
+                    {isLogged &&
+                    <span className="user-name">{ userName }</span>
+                    }
+                    {isLogged &&
+                    <LogoutButton onClick={() => dispatch(fetchLogout()) } />
+                    }
+                    <RegisterButton onClick={() => this.onChangeScene(SCENE.SHOW_REGISTER)}/>
+                </div>
+            </div>
         );
     }
 }

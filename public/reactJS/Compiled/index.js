@@ -30896,6 +30896,7 @@ var App = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            // ToDo: Add event stream!!
             return _react2.default.createElement(
                 'section',
                 null,
@@ -30988,30 +30989,48 @@ var Header = function (_Component) {
                 dispatch = _props.dispatch;
 
             return _react2.default.createElement(
-                'header',
-                null,
+                'div',
+                { className: "small-12" },
                 error.status && _react2.default.createElement(_Error2.default, error),
-                _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
-                        return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
-                    } }),
-                !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
-                        return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
-                    } }),
-                isLogged && _react2.default.createElement(
-                    'span',
-                    null,
+                _react2.default.createElement(
+                    'header',
+                    { id: 'main-header', className: 'row' },
+                    _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
+                            return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
+                        } }),
                     _react2.default.createElement(
-                        'h1',
-                        null,
+                        'a',
+                        { 'data-toggle': 'menu', className: 'menu-button columns' },
+                        _react2.default.createElement(
+                            'span',
+                            null,
+                            _react2.default.createElement('i', { className: 'hamburger' }),
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'text' },
+                                'Menu'
+                            )
+                        )
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { id: 'menu', 'data-toggler': 'show' },
+                    !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
+                            return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
+                        } }),
+                    isLogged && _react2.default.createElement(
+                        'span',
+                        { className: 'user-name' },
                         userName
                     ),
-                    _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
+                    isLogged && _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
                             return dispatch((0, _actions.fetchLogout)());
+                        } }),
+                    _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
+                            return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
                         } })
-                ),
-                _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
-                        return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
-                    } })
+                )
             );
         }
     }]);
@@ -31423,14 +31442,14 @@ Error.propTypes = {
 exports.default = Error;
 
 },{"react":501}],530:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.LogoutButton = exports.HomeButton = exports.RegisterButton = exports.LoginButton = undefined;
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -31441,9 +31460,9 @@ var LoginButton = exports.LoginButton = function LoginButton(_ref) {
     var onClick = _ref.onClick;
 
     return _react2.default.createElement(
-        'a',
+        "a",
         { onClick: onClick },
-        'Login'
+        "Login"
     );
 }; /**
     * Created by Johnh on 2017-03-19.
@@ -31459,9 +31478,9 @@ var RegisterButton = exports.RegisterButton = function RegisterButton(_ref2) {
     var onClick = _ref2.onClick;
 
     return _react2.default.createElement(
-        'a',
+        "a",
         { onClick: onClick },
-        'Register'
+        "Register"
     );
 };
 
@@ -31474,9 +31493,18 @@ var HomeButton = exports.HomeButton = function HomeButton(_ref3) {
     var onClick = _ref3.onClick;
 
     return _react2.default.createElement(
-        'a',
-        { onClick: onClick },
-        'HiQParking'
+        "a",
+        { className: "columns home-button", onClick: onClick },
+        _react2.default.createElement(
+            "span",
+            null,
+            "HiQ",
+            _react2.default.createElement(
+                "i",
+                { className: "flavor" },
+                "Parking"
+            )
+        )
     );
 };
 
@@ -31489,9 +31517,9 @@ var LogoutButton = exports.LogoutButton = function LogoutButton(_ref4) {
     var onClick = _ref4.onClick;
 
     return _react2.default.createElement(
-        'a',
+        "a",
         { onClick: onClick },
-        'Logout'
+        "Logout"
     );
 };
 
