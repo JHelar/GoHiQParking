@@ -30994,28 +30994,15 @@ var Header = function (_Component) {
                 error.status && _react2.default.createElement(_Error2.default, error),
                 _react2.default.createElement(
                     'header',
-                    { id: 'main-header', className: 'row' },
+                    { id: 'main-header', className: ["row align-top"] },
                     _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
                             return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
                         } }),
-                    _react2.default.createElement(
-                        'a',
-                        { 'data-toggle': 'menu', className: 'menu-button columns' },
-                        _react2.default.createElement(
-                            'span',
-                            null,
-                            _react2.default.createElement('i', { className: 'hamburger' }),
-                            _react2.default.createElement(
-                                'span',
-                                { className: 'text' },
-                                'Menu'
-                            )
-                        )
-                    )
+                    _react2.default.createElement(_HeaderButtons.MenuButton, null)
                 ),
                 _react2.default.createElement(
                     'div',
-                    { id: 'menu', 'data-toggler': 'show' },
+                    { id: 'menu', className: ["show"] },
                     !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
                             return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
                         } }),
@@ -31447,7 +31434,7 @@ exports.default = Error;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.LogoutButton = exports.HomeButton = exports.RegisterButton = exports.LoginButton = undefined;
+exports.LogoutButton = exports.MenuButton = exports.HomeButton = exports.RegisterButton = exports.LoginButton = undefined;
 
 var _react = require("react");
 
@@ -31494,22 +31481,32 @@ var HomeButton = exports.HomeButton = function HomeButton(_ref3) {
 
     return _react2.default.createElement(
         "a",
-        { className: "columns home-button", onClick: onClick },
+        { className: "home-button", onClick: onClick },
+        "HiQ",
         _react2.default.createElement(
-            "span",
-            null,
-            "HiQ",
-            _react2.default.createElement(
-                "i",
-                { className: "flavor" },
-                "Parking"
-            )
+            "i",
+            { className: "flavor" },
+            "Parking"
         )
     );
 };
 
 HomeButton.propTypes = {
     onClick: _react.PropTypes.func
+};
+
+// Menubutton
+var MenuButton = exports.MenuButton = function MenuButton() {
+    return _react2.default.createElement(
+        "a",
+        { "data-toggle": "menu", className: "menu-button" },
+        _react2.default.createElement("i", { className: "hamburger" }),
+        _react2.default.createElement(
+            "span",
+            { className: "text" },
+            "Menu"
+        )
+    );
 };
 
 // Logout

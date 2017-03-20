@@ -104,35 +104,30 @@ h6,
   background: url('../image/bg-top-mob.png') no-repeat center;
   -webkit-background-size: cover;
   background-size: cover;
-  height: 80px;
-  a {
-    > span {
-      display: inline-block;
-      padding: 1rem;
-    }
-  }
+  height: 100px;
+  justify-content: space-between;
+  padding: 20px 20px 0 20px;
+
   .home-button{
     color: $white;
     font-family: $font-family-hiq;
     font-size: $font-size-2;
+    line-height: $font-size-15;
     @include transition(color);
+    position: relative;
 
-    span {
-      position: relative;
-      .flavor {
-        position: absolute;
-        color: $pink;
-        font-family: $font-family-reeniebeanie;
-        font-size: $font-size-1;
-        font-weight: 700;
-        bottom: 15px;
-        right: 5px;
-        @include rotate(-15deg);
-      }
+    .flavor {
+      position: absolute;
+      color: $pink;
+      font-family: $font-family-reeniebeanie;
+      font-size: $font-size-1;
+      font-weight: 700;
+      bottom: -15px;
+      right: 5px;
+      @include rotate(-15deg);
     }
   }
   .menu-button {
-
     .text {
       display: inline-block;
       color: $yellow;
@@ -187,6 +182,7 @@ h6,
   }
 }
 #menu {
+  display: none;
   padding-top: 80px;
   position: absolute;
   width: 100%;
@@ -196,13 +192,17 @@ h6,
 
   .user-name,
   a {
-    font-family: $font-family-reeniebeanie;
+    font-family: $font-family-hiqrough;
     font-size: $font-size-2;
     font-weight: 700;
     color: $white;
     text-align: center;
     display: block;
 
+  }
+
+  &.show{
+    display: block;
   }
 }
 .arrow-left {

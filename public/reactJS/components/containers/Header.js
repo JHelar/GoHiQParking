@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { changeScene, fetchUser, receiveLogin, fetchLogout } from '../redux/actions';
 import { SCENE } from '../redux/constants';
-import { LoginButton, RegisterButton, HomeButton, LogoutButton } from '../presentational/HeaderButtons';
+import { LoginButton, RegisterButton, HomeButton, LogoutButton, MenuButton } from '../presentational/HeaderButtons';
 import Error from '../presentational/Error';
 
 class Header extends Component {
@@ -28,16 +28,11 @@ class Header extends Component {
                 {error.status &&
                     <Error {...error}/>
                 }
-                <header id="main-header" className="row">
+                <header id="main-header" className={["row align-top"]}>
                     <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
-                    <a data-toggle="menu" className="menu-button columns">
-                        <span>
-                            <i className="hamburger"></i>
-                            <span className="text">Menu</span>
-                        </span>
-                    </a>
+                    <MenuButton />
                 </header>
-                <div id="menu" data-toggler="show">
+                <div id="menu" className={["show"]}>
                     {!isLogged &&
                     <LoginButton onClick={() => this.onChangeScene(SCENE.SHOW_LOGIN)}/>
                     }

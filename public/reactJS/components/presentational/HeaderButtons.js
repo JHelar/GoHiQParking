@@ -28,14 +28,24 @@ RegisterButton.propTypes = {
 // Home
 export const HomeButton = ({ onClick }) => {
     return (
-        <a className="columns home-button" onClick={onClick}>
-            <span>HiQ<i className="flavor">Parking</i></span>
+        <a className="home-button" onClick={onClick}>
+            HiQ<i className="flavor">Parking</i>
         </a>
     );
 };
 
 HomeButton.propTypes = {
   onClick: PropTypes.func
+};
+
+// Menubutton
+export const MenuButton = () => {
+    return (
+        <a data-toggle="menu" className="menu-button">
+            <i className="hamburger"></i>
+            <span className="text">Menu</span>
+        </a>
+    );
 };
 
 // Logout

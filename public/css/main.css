@@ -4006,34 +4006,33 @@ h6,
   background: url("../image/bg-top-mob.png") no-repeat center;
   -webkit-background-size: cover;
   background-size: cover;
-  height: 80px; }
-  #main-header a > span {
-    display: inline-block;
-    padding: 1rem; }
+  height: 100px;
+  justify-content: space-between;
+  padding: 20px 20px 0 20px; }
   #main-header .home-button {
     color: #ffffff;
     font-family: "HiQ", sans-serif;
     font-size: 2rem;
+    line-height: 1.5rem;
     -webkit-transition: color 0.2s ease-out;
     -moz-transition: color 0.2s ease-out;
     -ms-transition: color 0.2s ease-out;
     -o-transition: color 0.2s ease-out;
-    transition: color 0.2s ease-out; }
-    #main-header .home-button span {
-      position: relative; }
-      #main-header .home-button span .flavor {
-        position: absolute;
-        color: #fe0070;
-        font-family: "Reenie Beanie";
-        font-size: 1rem;
-        font-weight: 700;
-        bottom: 15px;
-        right: 5px;
-        -webkit-transform: rotate(-15deg);
-        -moz-transform: rotate(-15deg);
-        -ms-transform: rotate(-15deg);
-        -o-transform: rotate(-15deg);
-        transform: rotate(-15deg); }
+    transition: color 0.2s ease-out;
+    position: relative; }
+    #main-header .home-button .flavor {
+      position: absolute;
+      color: #fe0070;
+      font-family: "Reenie Beanie";
+      font-size: 1rem;
+      font-weight: 700;
+      bottom: -15px;
+      right: 5px;
+      -webkit-transform: rotate(-15deg);
+      -moz-transform: rotate(-15deg);
+      -ms-transform: rotate(-15deg);
+      -o-transform: rotate(-15deg);
+      transform: rotate(-15deg); }
   #main-header .menu-button .text {
     display: inline-block;
     color: #ffe50d;
@@ -4100,6 +4099,7 @@ h6,
       background-color: #c09d04; }
 
 #menu {
+  display: none;
   padding-top: 80px;
   position: absolute;
   width: 100%;
@@ -4108,11 +4108,13 @@ h6,
   background-color: rgba(0, 0, 0, 0.8); }
   #menu .user-name,
   #menu a {
-    font-family: "Reenie Beanie";
+    font-family: "HiQRough", sans-serif;
     font-size: 2rem;
     font-weight: 700;
     color: #ffffff;
     text-align: center;
+    display: block; }
+  #menu.show {
     display: block; }
 
 .arrow-left {
