@@ -1,0 +1,100 @@
+@import "variables";
+@import "mixins";
+@import '../../node_modules/foundation-sites/scss/util/mixins';
+@import "../../node_modules/foundation-sites/scss/foundation";
+
+@include foundation-everything(true);
+
+body {
+  margin: 0;
+  background: $white;
+  @include box-size();
+  @include font($font-size-1, $font-family-robotolight);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+h1,
+.header-1 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-2, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-4, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-6, $font-family-robotolight);
+  }
+}
+h2,
+.header-2 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-1, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-3, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-5, $font-family-robotolight);
+  }
+}
+h3,
+.header-3 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-1, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-2, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-4, $font-family-robotolight);
+  }
+}
+h4,
+.header-4 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-1, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-2, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-3, $font-family-robotolight);
+  }
+}
+h5,
+.header-5 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-1, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-2, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-2, $font-family-robotolight);
+  }
+}
+h6,
+.header-6 {
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-08, $font-family-robotolight);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-1, $font-family-robotolight);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-2, $font-family-robotolight);
+  }
+}

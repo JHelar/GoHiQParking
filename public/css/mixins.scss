@@ -1,2 +1,26 @@
 @import "variables";
+@import "fonts";
+
+@mixin font($size, $family, $color:$black, $weight:400, $height:inherit){
+  font-size: $size;
+  font-family: $family;
+  font-weight: $weight;
+  line-height: $height;
+  color: $color;
+}
+
+@mixin box-size($type:border-box){
+  -webkit-box-sizing: $type;
+  -moz-box-sizing: $type;
+  box-sizing: $type;
+}
+
+@mixin transition($element:all, $timing:.2s, $easing: ease-out){
+  -webkit-transition: $element $timing $easing;
+  -moz-transition: $element $timing $easing;
+  -ms-transition: $element $timing $easing;
+  -o-transition: $element $timing $easing;
+  transition: $element $timing $easing;
+}
+
 
