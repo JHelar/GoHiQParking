@@ -3810,6 +3810,7 @@ a.thumbnail {
 body {
   margin: 0;
   background: #ffffff;
+  overflow: hidden;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -4002,13 +4003,169 @@ h6,
       line-height: inherit;
       color: #000000; } }
 
+.uppercase {
+  text-transform: uppercase; }
+
+.flavor {
+  position: absolute;
+  font-family: "Reenie Beanie";
+  font-size: 1rem;
+  font-weight: 700;
+  bottom: -15px;
+  right: 5px;
+  -webkit-transform: rotate(-15deg);
+  -moz-transform: rotate(-15deg);
+  -ms-transform: rotate(-15deg);
+  -o-transform: rotate(-15deg);
+  transform: rotate(-15deg); }
+  @media print, screen and (min-width: 64em) {
+    .flavor {
+      bottom: -30px;
+      font-size: 2rem; } }
+  .flavor.pink {
+    color: #fe0070; }
+  .flavor.blue {
+    color: #00a3f2; }
+  .flavor.yellow {
+    color: #ffe50d; }
+  .flavor.green {
+    color: #00c493; }
+
+#root {
+  height: 100%; }
+  #root > section {
+    height: 100%;
+    background-image: url("../image/texture-asphalt.jpg"); }
+
+.hamburger {
+  width: 60px;
+  height: 45px;
+  position: relative;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg);
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+  cursor: pointer; }
+  .hamburger span {
+    display: block;
+    position: absolute;
+    height: 9px;
+    width: 50%;
+    background-color: #ffffff;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+    -ms-transition: all 0.25s ease-in-out;
+    -o-transition: all 0.25s ease-in-out;
+    transition: all 0.25s ease-in-out; }
+    .hamburger span:nth-child(1), .hamburger span:nth-child(2) {
+      top: 0; }
+    .hamburger span:nth-child(3), .hamburger span:nth-child(4) {
+      top: 18px; }
+    .hamburger span:nth-child(5), .hamburger span:nth-child(6) {
+      top: 36px; }
+    .hamburger span:nth-child(odd) {
+      left: 0;
+      border-radius: 9px 0 0 9px; }
+    .hamburger span:nth-child(even) {
+      left: 50%;
+      border-radius: 0 9px 9px 0; }
+  .hamburger:hover span {
+    background-color: #fe0070; }
+  .hamburger.open span {
+    background-color: #fe0070; }
+    .hamburger.open span:nth-child(1) {
+      left: 5px;
+      top: 7px; }
+    .hamburger.open span:nth-child(2) {
+      left: calc(50% - 5px);
+      top: 7px; }
+    .hamburger.open span:nth-child(3) {
+      left: -50%;
+      opacity: 0; }
+    .hamburger.open span:nth-child(4) {
+      left: 100%;
+      opacity: 0; }
+    .hamburger.open span:nth-child(5) {
+      left: 5px;
+      top: 29px; }
+    .hamburger.open span:nth-child(6) {
+      left: calc(50% - 5px);
+      top: 29px; }
+    .hamburger.open span:nth-child(2), .hamburger.open span:nth-child(5) {
+      -webkit-transform: rotate(-45deg);
+      -moz-transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -o-transform: rotate(-45deg);
+      transform: rotate(-45deg); }
+    .hamburger.open span:nth-child(1), .hamburger.open span:nth-child(6) {
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      transform: rotate(45deg); }
+
 #main-header {
-  background: url("../image/bg-top-mob.png") no-repeat center;
-  -webkit-background-size: cover;
-  background-size: cover;
-  height: 100px;
   justify-content: space-between;
-  padding: 20px 20px 0 20px; }
+  padding: 20px 20px 0 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20vh; }
+  @media print, screen and (min-width: 64em) {
+    #main-header {
+      padding: 50px 70px 0 90px; } }
+  #main-header:before {
+    z-index: 1; }
+    @media print, screen and (min-width: 40em) {
+      #main-header:before {
+        background: url("../image/bg-top-left-tab.png") no-repeat center;
+        width: 291px;
+        height: 189px;
+        background-size: cover;
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: inline-block; } }
+  @media print, screen and (min-width: 40em) and (min-width: 64em) {
+    #main-header:before {
+      background: url("../image/bg-top-left-screen.png") no-repeat center;
+      width: 399px;
+      height: 259px; } }
+
+  #main-header:after {
+    background-size: cover;
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+    z-index: 1;
+    background: url("../image/bg-top-mob.png") no-repeat center;
+    width: 100%;
+    height: 183px; }
+    @media print, screen and (min-width: 40em) {
+      #main-header:after {
+        background: url("../image/bg-top-right-tab.png") no-repeat center;
+        width: 402px;
+        height: 104px; } }
+    @media print, screen and (min-width: 64em) {
+      #main-header:after {
+        background: url("../image/bg-top-right-screen.png") no-repeat center;
+        width: 518px;
+        height: 143px; } }
   #main-header .home-button {
     color: #ffffff;
     font-family: "HiQ", sans-serif;
@@ -4019,107 +4176,129 @@ h6,
     -ms-transition: color 0.2s ease-out;
     -o-transition: color 0.2s ease-out;
     transition: color 0.2s ease-out;
-    position: relative; }
-    #main-header .home-button .flavor {
-      position: absolute;
-      color: #fe0070;
-      font-family: "Reenie Beanie";
-      font-size: 1rem;
-      font-weight: 700;
-      bottom: -15px;
-      right: 5px;
-      -webkit-transform: rotate(-15deg);
-      -moz-transform: rotate(-15deg);
-      -ms-transform: rotate(-15deg);
-      -o-transform: rotate(-15deg);
-      transform: rotate(-15deg); }
-  #main-header .menu-button .text {
-    display: inline-block;
-    color: #ffe50d;
-    font-family: "Reenie Beanie";
-    font-size: 1.5rem;
-    -webkit-transition: color 0.2s ease-out;
-    -moz-transition: color 0.2s ease-out;
-    -ms-transition: color 0.2s ease-out;
-    -o-transition: color 0.2s ease-out;
-    transition: color 0.2s ease-out; }
-  #main-header .menu-button .hamburger {
-    display: inline-block;
-    width: 20px;
-    background: #ffffff;
-    height: 2px;
     position: relative;
-    -webkit-transition: all 0.3s ease-out;
-    -moz-transition: all 0.3s ease-out;
-    -ms-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
-    -webkit-transform: translateY(-7px);
-    -moz-transform: translateY(-7px);
-    -ms-transform: translateY(-7px);
-    -o-transform: translateY(-7px);
-    transform: translateY(-7px); }
-    #main-header .menu-button .hamburger:before {
-      width: 20px;
-      height: 2px;
-      content: '';
-      display: block;
-      background: #ffffff;
-      -webkit-transform: translateY(9px);
-      -moz-transform: translateY(9px);
-      -ms-transform: translateY(9px);
-      -o-transform: translateY(9px);
-      transform: translateY(9px);
-      -webkit-transition: all 0.2s ease-out;
-      -moz-transition: all 0.2s ease-out;
-      -ms-transition: all 0.2s ease-out;
-      -o-transition: all 0.2s ease-out;
-      transition: all 0.2s ease-out; }
-    #main-header .menu-button .hamburger:after {
-      width: 20px;
-      height: 2px;
-      content: '';
-      display: block;
-      background: #ffffff;
-      -webkit-transform: translateY(-10px);
-      -moz-transform: translateY(-10px);
-      -ms-transform: translateY(-10px);
-      -o-transform: translateY(-10px);
-      transform: translateY(-10px);
-      -webkit-transition: all 0.2s ease-out;
-      -moz-transition: all 0.2s ease-out;
-      -ms-transition: all 0.2s ease-out;
-      -o-transition: all 0.2s ease-out;
-      transition: all 0.2s ease-out; }
-  #main-header .menu-button:hover .text {
-    color: #c09d04; }
-  #main-header .menu-button:hover .hamburger {
-    background-color: #c09d04; }
-    #main-header .menu-button:hover .hamburger:after, #main-header .menu-button:hover .hamburger:before {
-      background-color: #c09d04; }
+    z-index: 2; }
+    @media print, screen and (min-width: 40em) {
+      #main-header .home-button {
+        font-size: 3rem; } }
+    @media print, screen and (min-width: 64em) {
+      #main-header .home-button {
+        font-size: 5rem;
+        line-height: 16px; } }
+  #main-header .menu-button {
+    z-index: 2; }
+    @media print, screen and (min-width: 64em) {
+      #main-header .menu-button {
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%); } }
+    #main-header .menu-button .hamburger {
+      display: inline-block; }
+      @media print, screen and (min-width: 64em) {
+        #main-header .menu-button .hamburger {
+          margin-right: 1rem; } }
+    #main-header .menu-button .text {
+      display: none;
+      color: #ffe50d;
+      font-family: "Reenie Beanie";
+      font-size: 1.5rem;
+      margin-right: .5rem;
+      -webkit-transform: translateY(-25%);
+      -moz-transform: translateY(-25%);
+      -ms-transform: translateY(-25%);
+      -o-transform: translateY(-25%);
+      transform: translateY(-25%);
+      -webkit-transition: color 0.2s ease-out;
+      -moz-transition: color 0.2s ease-out;
+      -ms-transition: color 0.2s ease-out;
+      -o-transition: color 0.2s ease-out;
+      transition: color 0.2s ease-out; }
+      @media print, screen and (min-width: 64em) {
+        #main-header .menu-button .text {
+          display: inline-block; } }
+      @media print, screen and (min-width: 64em) {
+        #main-header .menu-button .text {
+          font-size: 2.5rem; } }
 
 #menu {
-  display: none;
   padding-top: 80px;
   position: absolute;
   width: 100%;
   height: 100vh;
   top: 0;
-  background-color: rgba(0, 0, 0, 0.8); }
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  -webkit-transform: translateY(-100vh);
+  -moz-transform: translateY(-100vh);
+  -ms-transform: translateY(-100vh);
+  -o-transform: translateY(-100vh);
+  transform: translateY(-100vh);
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -ms-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out; }
   #menu .user-name,
   #menu a {
     font-family: "HiQRough", sans-serif;
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: #ffffff;
     text-align: center;
     display: block; }
+    @media print, screen and (min-width: 40em) {
+      #menu .user-name,
+      #menu a {
+        font-size: 5rem; } }
+  #menu a {
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -ms-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out; }
+    #menu a:hover {
+      color: #fe0070;
+      text-shadow: 3px 3px 0 #ffe50d; }
+    #menu a span {
+      position: relative; }
   #menu.show {
-    display: block; }
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0); }
 
 .arrow-left {
   background: url("../image/arrow-left-yellow.png") no-repeat center;
   -webkit-background-size: cover;
   background-size: cover; }
+
+.lot {
+  box-shadow: 3px 3px #00a3f2;
+  background: url("../image/texture-blue.png") no-repeat center;
+  background-size: cover;
+  padding: 1rem;
+  cursor: pointer; }
+  .lot h2 {
+    color: #ffffff; }
+  .lot:not(:last-child) {
+    margin-right: 1rem;
+    margin-bottom: 1rem; }
+    @media print, screen and (min-width: 40em) {
+      .lot:not(:last-child) {
+        margin-bottom: 0; } }
+
+.lot-focused {
+  text-align: center; }
+  .lot-focused h2 {
+    color: #ffffff; }
+
+.spot {
+  color: #ffffff; }
 
 /*# sourceMappingURL=main.css.map */

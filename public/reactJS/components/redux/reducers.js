@@ -22,7 +22,8 @@ import {
 	SHOW_PARKING_LOTS,
 	SELECT_PARKING_LOT,
 	TOGGLE_SPOT,
-	CHANGE_SCENE
+	CHANGE_SCENE,
+    TOGGLE_MENU
 } from './actions';
 
 
@@ -176,10 +177,17 @@ function parkingLots(state = {
 	}
 }
 
-function currentScene(state = SCENE.SHOW_PARKING_LOTS, action){
+function scene(state = {menuOpen: false, current: SCENE.SHOW_PARKING_LOTS}, action){
 	switch(action.type){
 		case CHANGE_SCENE:
-			return action.scene;
+			return Object.assign({}, state, {
+                current: action.scene,
+                menuOpen: false
+			});
+        case TOGGLE_MENU:
+            return Object.assign({}, state, {
+               menuOpen: !state.menuOpen
+            });
 		default:
 			return state;
 	}
@@ -245,7 +253,7 @@ function error(state = {
 const rootReducer = combineReducers({
     error,
     user,
-	currentScene,
+	scene,
 	parkingLots
 });
 

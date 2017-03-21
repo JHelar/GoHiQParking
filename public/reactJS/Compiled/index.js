@@ -30899,7 +30899,7 @@ var App = function (_Component) {
             // ToDo: Add event stream!!
             return _react2.default.createElement(
                 'section',
-                null,
+                { className: '' },
                 _react2.default.createElement(_Header2.default, null),
                 _react2.default.createElement(_SceneSwapper2.default, null)
             );
@@ -30960,6 +30960,8 @@ var Header = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
         _this.onChangeScene = _this.onChangeScene.bind(_this);
+        _this.onToggleMenu = _this.onToggleMenu.bind(_this);
+
         return _this;
     }
 
@@ -30969,6 +30971,13 @@ var Header = function (_Component) {
             var dispatch = this.props.dispatch;
 
             dispatch((0, _actions.fetchUser)(_actions.receiveLogin));
+        }
+    }, {
+        key: 'onToggleMenu',
+        value: function onToggleMenu() {
+            var dispatch = this.props.dispatch;
+
+            dispatch((0, _actions.toggleMenu)());
         }
     }, {
         key: 'onChangeScene',
@@ -30986,37 +30995,42 @@ var Header = function (_Component) {
                 isLogged = _props.isLogged,
                 userName = _props.userName,
                 error = _props.error,
-                dispatch = _props.dispatch;
+                dispatch = _props.dispatch,
+                menuOpen = _props.menuOpen;
 
+            var menuShow = menuOpen ? "show" : "";
             return _react2.default.createElement(
                 'div',
                 { className: "small-12" },
                 error.status && _react2.default.createElement(_Error2.default, error),
                 _react2.default.createElement(
                     'header',
-                    { id: 'main-header', className: ["row align-top"] },
+                    { id: 'main-header', className: ["align-top"] },
                     _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
                             return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
                         } }),
-                    _react2.default.createElement(_HeaderButtons.MenuButton, null)
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { id: 'menu', className: ["show"] },
-                    !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
-                            return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
-                        } }),
-                    isLogged && _react2.default.createElement(
-                        'span',
-                        { className: 'user-name' },
-                        userName
-                    ),
-                    isLogged && _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
-                            return dispatch((0, _actions.fetchLogout)());
-                        } }),
-                    _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
-                            return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
-                        } })
+                    _react2.default.createElement(_HeaderButtons.MenuButton, { open: menuOpen, onClick: function onClick() {
+                            return _this2.onToggleMenu();
+                        }
+                    }),
+                    _react2.default.createElement(
+                        'div',
+                        { id: 'menu', className: [menuShow] },
+                        !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
+                                return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
+                            } }),
+                        isLogged && _react2.default.createElement(
+                            'span',
+                            { className: 'user-name uppercase' },
+                            userName
+                        ),
+                        isLogged && _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
+                                return dispatch((0, _actions.fetchLogout)());
+                            } }),
+                        _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
+                                return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
+                            } })
+                    )
                 )
             );
         }
@@ -31029,6 +31043,7 @@ Header.propTypes = {
     dispatch: _react.PropTypes.func,
     isLogged: _react.PropTypes.bool.isRequired,
     userName: _react.PropTypes.string,
+    menuOpen: _react.PropTypes.bool.isRequired,
     error: _react.PropTypes.shape({
         type: _react.PropTypes.string,
         message: _react.PropTypes.string,
@@ -31040,7 +31055,9 @@ var mapStateToProps = function mapStateToProps(state) {
     return {
         isLogged: state.user.isLogged,
         userName: state.user.name,
-        error: state.error
+        error: state.error,
+        menuOpen: state.scene.menuOpen,
+        prevScene: state.scene.prev
     };
 };
 
@@ -31071,7 +31088,7 @@ var Login = function Login(_ref) {
 
     return _react2.default.createElement(
         'main',
-        null,
+        { className: 'row' },
         _react2.default.createElement(
             'h1',
             null,
@@ -31125,15 +31142,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        scene: state.currentScene,
+        scene: state.scene.current,
+        isLogged: state.user.isLogged,
         lots: state.parkingLots.lots.filter(function (lot) {
-            switch (state.currentScene) {
+            switch (state.scene.current) {
                 case _constants.SCENE.SHOW_SPOTS:
                     return lot.id === state.parkingLots.selectedParkingLot;
                 case _constants.SCENE.SHOW_PARKING_LOTS:
                     return true;
                 default:
-                    return false;
+                    return true;
             }
         })
     };
@@ -31182,7 +31200,7 @@ var Register = function Register(_ref) {
 
     return _react2.default.createElement(
         'main',
-        null,
+        { className: 'row' },
         _react2.default.createElement(
             'h1',
             null,
@@ -31342,7 +31360,7 @@ var SceneSwapper = function (_Component) {
                 case _constants.SCENE.SHOW_REGISTER:
                     return _react2.default.createElement(_Register2.default, null);
                 default:
-                    return _react2.default.createElement(_LotsContainer2.default, null);
+                    return null;
             }
         }
     }]);
@@ -31356,7 +31374,7 @@ SceneSwapper.propTypes = {
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        scene: state.currentScene
+        scene: state.scene.current
     };
 };
 
@@ -31448,8 +31466,17 @@ var LoginButton = exports.LoginButton = function LoginButton(_ref) {
 
     return _react2.default.createElement(
         "a",
-        { onClick: onClick },
-        "Login"
+        { onClick: onClick, className: "uppercase" },
+        _react2.default.createElement(
+            "span",
+            null,
+            "Login",
+            _react2.default.createElement(
+                "i",
+                { className: "flavor green" },
+                "Welcome back!"
+            )
+        )
     );
 }; /**
     * Created by Johnh on 2017-03-19.
@@ -31466,8 +31493,17 @@ var RegisterButton = exports.RegisterButton = function RegisterButton(_ref2) {
 
     return _react2.default.createElement(
         "a",
-        { onClick: onClick },
-        "Register"
+        { onClick: onClick, className: "uppercase" },
+        _react2.default.createElement(
+            "span",
+            null,
+            "Register",
+            _react2.default.createElement(
+                "i",
+                { className: "flavor yellow" },
+                "Come join us!"
+            )
+        )
     );
 };
 
@@ -31485,7 +31521,7 @@ var HomeButton = exports.HomeButton = function HomeButton(_ref3) {
         "HiQ",
         _react2.default.createElement(
             "i",
-            { className: "flavor" },
+            { className: "flavor pink" },
             "Parking"
         )
     );
@@ -31496,11 +31532,25 @@ HomeButton.propTypes = {
 };
 
 // Menubutton
-var MenuButton = exports.MenuButton = function MenuButton() {
+var MenuButton = exports.MenuButton = function MenuButton(_ref4) {
+    var onClick = _ref4.onClick,
+        open = _ref4.open;
+
+    var openClass = open ? "hamburger open" : "hamburger";
     return _react2.default.createElement(
         "a",
-        { "data-toggle": "menu", className: "menu-button" },
-        _react2.default.createElement("i", { className: "hamburger" }),
+        { onClick: onClick, className: "menu-button" },
+        _react2.default.createElement(
+            "div",
+            { className: openClass },
+            _react2.default.createElement("span", null),
+            _react2.default.createElement("span", null),
+            _react2.default.createElement("span", null),
+            _react2.default.createElement("span", null),
+            _react2.default.createElement("span", null),
+            _react2.default.createElement("span", null)
+        ),
+        _react2.default.createElement("i", { className: "arrow-left" }),
         _react2.default.createElement(
             "span",
             { className: "text" },
@@ -31508,15 +31558,28 @@ var MenuButton = exports.MenuButton = function MenuButton() {
         )
     );
 };
+MenuButton.propTypes = {
+    onClick: _react.PropTypes.func,
+    open: _react.PropTypes.bool.isRequired
+};
 
 // Logout
-var LogoutButton = exports.LogoutButton = function LogoutButton(_ref4) {
-    var onClick = _ref4.onClick;
+var LogoutButton = exports.LogoutButton = function LogoutButton(_ref5) {
+    var onClick = _ref5.onClick;
 
     return _react2.default.createElement(
         "a",
-        { onClick: onClick },
-        "Logout"
+        { onClick: onClick, className: "uppercase" },
+        _react2.default.createElement(
+            "span",
+            null,
+            "Logout",
+            _react2.default.createElement(
+                "i",
+                { className: "flavor blue" },
+                "Oh no don't leave us!"
+            )
+        )
     );
 };
 
@@ -31555,12 +31618,13 @@ var Lot = function Lot(_ref) {
         id = _ref.id,
         name = _ref.name,
         location = _ref.location,
+        isLogged = _ref.isLogged,
         spots = _ref.spots;
 
     if (scene == _constants.SCENE.SHOW_SPOTS) {
         return _react2.default.createElement(
             'div',
-            null,
+            { className: 'small-12 column lot-focused' },
             _react2.default.createElement(
                 'h2',
                 null,
@@ -31571,19 +31635,24 @@ var Lot = function Lot(_ref) {
                 null,
                 location
             ),
-            spots !== undefined && spots.map(function (spot) {
-                return _react2.default.createElement(_Spot2.default, _extends({
-                    key: spot.id,
-                    onClick: function onClick() {
-                        return onSpotClick(spot.id);
-                    }
-                }, spot));
-            })
+            _react2.default.createElement(
+                'div',
+                { className: 'row' },
+                spots !== undefined && spots.map(function (spot) {
+                    return _react2.default.createElement(_Spot2.default, _extends({
+                        key: spot.id,
+                        isLogged: isLogged,
+                        onClick: function onClick() {
+                            return onSpotClick(spot.id);
+                        }
+                    }, spot));
+                })
+            )
         );
     } else if (scene === _constants.SCENE.SHOW_PARKING_LOTS) {
         return _react2.default.createElement(
             'div',
-            { onClick: onClick },
+            { className: 'small-12 medium-6 large-4 column lot', onClick: onClick },
             _react2.default.createElement(
                 'h2',
                 null,
@@ -31605,6 +31674,7 @@ Lot.propTypes = {
     id: _react.PropTypes.number.isRequired,
     name: _react.PropTypes.string.isRequired,
     location: _react.PropTypes.string.isRequired,
+    isLogged: _react.PropTypes.bool.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         onClick: _react.PropTypes.func,
         id: _react.PropTypes.number.isRequired,
@@ -31643,16 +31713,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var LotList = function LotList(_ref) {
     var scene = _ref.scene,
         lots = _ref.lots,
+        isLogged = _ref.isLogged,
         onLotClick = _ref.onLotClick,
         onSpotClick = _ref.onSpotClick;
     return _react2.default.createElement(
         'main',
-        null,
+        { className: 'row' },
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
                 key: lot.id
             }, lot, {
                 scene: scene,
+                isLogged: isLogged,
                 onClick: function onClick() {
                     return onLotClick(lot.id);
                 },
@@ -31666,6 +31738,7 @@ LotList.propTypes = {
     onLotClick: _react.PropTypes.func,
     onSpotClick: _react.PropTypes.func,
     scene: _react.PropTypes.string.isRequired,
+    isLogged: _react.PropTypes.bool.isRequired,
     lots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,
@@ -31709,12 +31782,13 @@ var Spot = function Spot(_ref) {
         isparked = _ref.isparked,
         canmodify = _ref.canmodify,
         parkedby = _ref.parkedby,
-        parkedtime = _ref.parkedtime;
+        parkedtime = _ref.parkedtime,
+        isLogged = _ref.isLogged;
 
     var buttonTxt = isparked ? "Leave" : "Park";
     return _react2.default.createElement(
         'div',
-        null,
+        { className: 'spot small-12 medium-6 large-4 column' },
         _react2.default.createElement(
             'h4',
             null,
@@ -31729,8 +31803,13 @@ var Spot = function Spot(_ref) {
         ),
         canmodify && _react2.default.createElement(
             'button',
-            { onClick: onClick },
+            { onClick: onClick, className: 'button' },
             buttonTxt
+        ),
+        !isLogged && !isparked && _react2.default.createElement(
+            'p',
+            null,
+            'Login to park'
         )
     );
 };
@@ -31742,7 +31821,8 @@ Spot.propTypes = {
     isparked: _react.PropTypes.bool.isRequired,
     canmodify: _react.PropTypes.bool.isRequired,
     parkedby: _react.PropTypes.string.isRequired,
-    parkedtime: _react.PropTypes.string.isRequired
+    parkedtime: _react.PropTypes.string.isRequired,
+    isLogged: _react.PropTypes.bool.isRequired
 };
 
 exports.default = Spot;
@@ -31753,7 +31833,7 @@ exports.default = Spot;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
+exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
 exports.requestParkingLots = requestParkingLots;
 exports.receiveParkingLots = receiveParkingLots;
 exports.receiveParkingLotsError = receiveParkingLotsError;
@@ -31783,6 +31863,7 @@ exports.showParkingLots = showParkingLots;
 exports.selectParkingLot = selectParkingLot;
 exports.toggleSpot = toggleSpot;
 exports.changeScene = changeScene;
+exports.toggleMenu = toggleMenu;
 
 var _isomorphicFetch = require('isomorphic-fetch');
 
@@ -31824,6 +31905,7 @@ var SHOW_PARKING_LOTS = exports.SHOW_PARKING_LOTS = 'SHOW_PARKING_LOTS';
 var SELECT_PARKING_LOT = exports.SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 var TOGGLE_SPOT = exports.TOGGLE_SPOT = 'TOGGLE_SPOT';
 var CHANGE_SCENE = exports.CHANGE_SCENE = 'CHANGE_SCENE';
+var TOGGLE_MENU = exports.TOGGLE_MENU = 'TOGGLE_MENU';
 
 function requestParkingLots() {
     return {
@@ -32135,6 +32217,12 @@ function changeScene(scene) {
     };
 }
 
+function toggleMenu() {
+    return {
+        type: TOGGLE_MENU
+    };
+};
+
 },{"../../../general/helpers":520,"./constants":536,"isomorphic-fetch":322}],535:[function(require,module,exports){
 'use strict';
 
@@ -32355,13 +32443,20 @@ function parkingLots() {
 	}
 }
 
-function currentScene() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _constants.SCENE.SHOW_PARKING_LOTS;
+function scene() {
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menuOpen: false, current: _constants.SCENE.SHOW_PARKING_LOTS };
 	var action = arguments[1];
 
 	switch (action.type) {
 		case _actions.CHANGE_SCENE:
-			return action.scene;
+			return Object.assign({}, state, {
+				current: action.scene,
+				menuOpen: false
+			});
+		case _actions.TOGGLE_MENU:
+			return Object.assign({}, state, {
+				menuOpen: !state.menuOpen
+			});
 		default:
 			return state;
 	}
@@ -32433,7 +32528,7 @@ function error() {
 var rootReducer = (0, _redux.combineReducers)({
 	error: error,
 	user: user,
-	currentScene: currentScene,
+	scene: scene,
 	parkingLots: parkingLots
 });
 

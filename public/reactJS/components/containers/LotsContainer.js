@@ -8,15 +8,16 @@ import { SCENE } from '../redux/constants';
 
 const mapStateToProps = (state) => {
     return {
-        scene: state.currentScene,
+        scene: state.scene.current,
+        isLogged: state.user.isLogged,
         lots: state.parkingLots.lots.filter((lot) => {
-            switch(state.currentScene){
+            switch(state.scene.current){
                 case SCENE.SHOW_SPOTS:
                     return lot.id === state.parkingLots.selectedParkingLot;
                 case SCENE.SHOW_PARKING_LOTS:
                     return true;
                 default:
-                    return false;
+                    return true;
             }
         })
     }

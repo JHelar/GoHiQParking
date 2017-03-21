@@ -4,18 +4,21 @@
 import React, { PropTypes } from 'react';
 import { timeDifference } from '../../../general/helpers';
 
-const Spot = ({onClick, id, name, isparked, canmodify, parkedby, parkedtime}) => {
+const Spot = ({onClick, id, name, isparked, canmodify, parkedby, parkedtime, isLogged}) => {
     let buttonTxt = isparked ? "Leave" : "Park";
     return(
-        <div>
+        <div className="spot small-12 medium-6 large-4 column">
             <h4>{name}</h4>
             {isparked &&
             <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
             }
             {canmodify &&
-            <button onClick={onClick}>
+            <button onClick={onClick} className="button">
                 { buttonTxt }
             </button>
+            }
+            {(!isLogged && !isparked) &&
+                <p>Login to park</p>
             }
         </div>
     );
@@ -28,7 +31,8 @@ Spot.propTypes = {
     isparked: PropTypes.bool.isRequired,
     canmodify: PropTypes.bool.isRequired,
     parkedby: PropTypes.string.isRequired,
-    parkedtime: PropTypes.string.isRequired
+    parkedtime: PropTypes.string.isRequired,
+    isLogged: PropTypes.bool.isRequired
 };
 
 export default Spot;

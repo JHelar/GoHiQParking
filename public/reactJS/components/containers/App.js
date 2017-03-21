@@ -20,7 +20,7 @@ class App extends Component {
     render(){
         // ToDo: Add event stream!!
         return(
-            <section>
+            <section className="">
                 <Header />
                 <SceneSwapper />
             </section>

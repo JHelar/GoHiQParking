@@ -8,6 +8,7 @@
 body {
   margin: 0;
   background: $white;
+  overflow: hidden;
   @include box-size();
   @include font($font-size-1, $font-family-robotolight);
 }
@@ -99,14 +100,196 @@ h6,
   }
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
+.flavor {
+  position: absolute;
+  font-family: $font-family-reeniebeanie;
+  font-size: $font-size-1;
+  font-weight: 700;
+  bottom: -15px;
+  right: 5px;
+  @include rotate(-15deg);
+
+  @include breakpoint(large){
+    bottom: -30px;
+    font-size: $font-size-2;
+  }
+
+  &.pink {
+    color: $pink;
+  }
+  &.blue {
+    color: $blue;
+  }
+  &.yellow {
+    color: $yellow;
+  }
+  &.green {
+    color: $green;
+  }
+}
+
+// Root
+#root {
+  height: 100%;
+  > section {
+    height: 100%;
+    background-image: url('../image/texture-asphalt.jpg');
+
+  }
+}
+
+
+// Dat hambörger
+.hamburger {
+  width: 60px;
+  height: 45px;
+  position: relative;
+  @include rotate(0deg);
+  @include transition(all, .5s, ease-in-out);
+  cursor: pointer;
+
+  span {
+    display: block;
+    position: absolute;
+    height: 9px;
+    width: 50%;
+    background-color: $white;
+    @include rotate(0deg);
+    @include transition(all, .25s, ease-in-out);
+
+    &:nth-child(1),
+    &:nth-child(2){
+      top: 0;
+    }
+    &:nth-child(3),
+    &:nth-child(4){
+      top: 18px;
+    }
+    &:nth-child(5),
+    &:nth-child(6){
+      top: 36px;
+    }
+    &:nth-child(odd){
+      left: 0;
+      border-radius: 9px 0 0 9px;
+    }
+    &:nth-child(even){
+      left: 50%;
+      border-radius: 0 9px 9px 0;
+    }
+  }
+
+
+  &:hover{
+    span {
+      background-color: $pink;
+    }
+  }
+  &.open {
+    span {
+      background-color: $pink;
+
+      &:nth-child(1) {
+        left: 5px;
+        top: 7px;
+      }
+      &:nth-child(2){
+        left: calc(50% - 5px);
+        top: 7px;
+      }
+      &:nth-child(3){
+        left: -50%;
+        opacity: 0;
+      }
+      &:nth-child(4){
+        left: 100%;
+        opacity: 0;
+      }
+      &:nth-child(5){
+        left: 5px;
+        top: 29px;
+      }
+      &:nth-child(6){
+        left: calc(50% - 5px);
+        top: 29px;
+      }
+      &:nth-child(2),
+      &:nth-child(5){
+        @include rotate(-45deg);
+      }
+      &:nth-child(1),
+      &:nth-child(6){
+        @include rotate(45deg);
+      }
+    }
+  }
+}
+
 // Header
 #main-header {
-  background: url('../image/bg-top-mob.png') no-repeat center;
-  -webkit-background-size: cover;
-  background-size: cover;
-  height: 100px;
   justify-content: space-between;
   padding: 20px 20px 0 20px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20vh;
+  @include breakpoint(large){
+    padding: 50px 70px 0 90px;
+  }
+  &:before{
+    z-index: 1;
+    @include breakpoint(medium) {
+      background: url('../image/bg-top-left-tab.png') no-repeat center;
+      width: 291px;
+      height: 189px;
+
+      background-size: cover;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: inline-block;
+
+      @include breakpoint(large){
+        background: url('../image/bg-top-left-screen.png') no-repeat center;
+        width: 399px;
+        height: 259px;
+      }
+    }
+  }
+
+  &:after {
+    background-size: cover;
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: inline-block;
+    z-index: 1;
+
+    @include breakpoint(small){
+      background: url('../image/bg-top-mob.png') no-repeat center;
+      width: 100%;
+      height: 183px;
+    }
+
+    @include breakpoint(medium) {
+      background: url('../image/bg-top-right-tab.png') no-repeat center;
+      width: 402px;
+      height: 104px;
+    }
+
+    @include breakpoint(large){
+      background: url('../image/bg-top-right-screen.png') no-repeat center;
+      width: 518px;
+      height: 143px;
+    }
+  }
 
   .home-button{
     color: $white;
@@ -115,94 +298,84 @@ h6,
     line-height: $font-size-15;
     @include transition(color);
     position: relative;
+    z-index: 2;
 
-    .flavor {
-      position: absolute;
-      color: $pink;
-      font-family: $font-family-reeniebeanie;
-      font-size: $font-size-1;
-      font-weight: 700;
-      bottom: -15px;
-      right: 5px;
-      @include rotate(-15deg);
+    @include breakpoint(medium){
+      font-size: $font-size-3;
+    }
+    @include breakpoint(large){
+      font-size: $font-size-5;
+      line-height: 16px;
     }
   }
   .menu-button {
-    .text {
+    z-index: 2;
+    @include breakpoint(large){
+      @include translateY(-50%);
+    }
+    .hamburger {
       display: inline-block;
+      @include breakpoint(large){
+        margin-right: 1rem;
+      }
+    }
+    .text {
+      display: none;
+      @include breakpoint(large){display: inline-block;}
       color: $yellow;
       font-family: $font-family-reeniebeanie;
       font-size: $font-size-15;
+      margin-right: .5rem;
+
+      @include translateY(-25%);
       @include transition(color);
-
-    }
-
-    .hamburger {
-      display: inline-block;
-      width: 20px;
-      background: $white;
-      height: 2px;
-      position: relative;
-      @include transition(all, .3s);
-      @include translateY(-7px);
-
-      &:before {
-        width: 20px;
-        height: 2px;
-        content: '';
-        display: block;
-        background: $white;
-        @include translateY(9px);
-        @include transition();
-      }
-
-      &:after {
-        width: 20px;
-        height: 2px;
-        content: '';
-        display: block;
-        background: $white;
-        @include translateY(-10px);
-        @include transition();
-      }
-    }
-
-    &:hover {
-      .text {
-        color: $yellow-dark;
-      }
-      .hamburger {
-        background-color: $yellow-dark;
-        &:after,
-        &:before {
-          background-color: $yellow-dark;
-        }
+      @include breakpoint(large){
+        font-size: $font-size-25;
       }
     }
   }
 }
 #menu {
-  display: none;
   padding-top: 80px;
   position: absolute;
   width: 100%;
   height: 100vh;
   top: 0;
+  left: 0;
   background-color: rgba(0, 0, 0, 0.8);
-
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  
+  @include translateY(-100vh);
+  @include transition();
   .user-name,
   a {
     font-family: $font-family-hiqrough;
-    font-size: $font-size-2;
+    font-size: $font-size-25;
     font-weight: 700;
     color: $white;
     text-align: center;
     display: block;
 
+    @include breakpoint(medium){
+      font-size: $font-size-5;
+    }
+  }
+
+  a {
+    @include transition(all, .2s);
+    &:hover {
+      color: $pink;
+      text-shadow: 3px 3px 0 $yellow;
+    }
+    span {
+      position: relative;
+    }
   }
 
   &.show{
-    display: block;
+    @include translateY(0);
   }
 }
 .arrow-left {
@@ -210,4 +383,40 @@ h6,
   -webkit-background-size:cover;
   background-size:cover;
 
+}
+// Lot
+.lot {
+  box-shadow: 3px 3px $blue;
+  background: url('../image/texture-blue.png') no-repeat center;
+  background-size: cover;
+  padding: 1rem;
+  cursor: pointer;
+
+  &:hover {
+  }
+
+  h2 {
+    color: $white;
+  }
+  &:not(:last-child){
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+
+    @include breakpoint(medium){
+      margin-bottom: 0;
+    }
+  }
+}
+
+.lot-focused{
+  text-align: center;
+
+  h2 {
+    color: $white;
+  }
+}
+
+// Spot
+.spot {
+  color: $white;
 }

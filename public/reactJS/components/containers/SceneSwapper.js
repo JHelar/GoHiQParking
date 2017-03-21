@@ -29,9 +29,7 @@ class SceneSwapper extends Component {
                     <Register />
                 );
             default:
-                return (
-                    <LotsContainer />
-                );
+                return null;
         }
     }
 }
@@ -42,7 +40,7 @@ SceneSwapper.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-      scene: state.currentScene
+      scene: state.scene.current
   };
 };
 

@@ -4,13 +4,14 @@
 import Lot from './Lot';
 import React, { PropTypes } from 'react';
 
-const LotList = ({scene, lots, onLotClick, onSpotClick}) => (
-    <main>
+const LotList = ({scene, lots, isLogged, onLotClick, onSpotClick}) => (
+    <main className="row">
         {lots.map(lot =>
             <Lot
                 key={ lot.id }
                 { ...lot }
                 scene={scene}
+                isLogged={isLogged}
                 onClick={ () => onLotClick(lot.id) }
                 onSpotClick={ onSpotClick }
             />
@@ -22,6 +23,7 @@ LotList.propTypes = {
     onLotClick: PropTypes.func,
     onSpotClick: PropTypes.func,
     scene: PropTypes.string.isRequired,
+    isLogged: PropTypes.bool.isRequired,
     lots: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
