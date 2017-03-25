@@ -9,10 +9,28 @@
   color: $color;
 }
 
+
 @mixin box-size($type:border-box){
   -webkit-box-sizing: $type;
   -moz-box-sizing: $type;
   box-sizing: $type;
+}
+
+@mixin text-shadow($color){
+  text-shadow: 3px 3px 0 $color;
+}
+
+@mixin text-orientation($value){
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  -moz-writing-mode: vertical-rl;
+  -ms-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+
+  -webkit-text-orientation: $value;
+  -moz-text-orientation: $value;
+  -ms-text-orientation: $value;
+  text-orientation: $value;
 }
 
 @mixin transition($element:all, $timing:.2s, $easing: ease-out){

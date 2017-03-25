@@ -8,12 +8,17 @@ const Spot = ({onClick, id, name, isparked, canmodify, parkedby, parkedtime, isL
     let buttonTxt = isparked ? "Leave" : "Park";
     return(
         <div className="spot small-12 medium-6 large-4 column">
-            <h4>{name}</h4>
+            <span className="name">{name}</span>
             {isparked &&
             <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
             }
-            {canmodify &&
-            <button onClick={onClick} className="button">
+            {(canmodify && isparked) &&
+            <button onClick={onClick} className="button-flavor green">
+                { buttonTxt }
+            </button>
+            }
+            {(canmodify && !isparked) &&
+            <button onClick={onClick} className="button-flavor blue">
                 { buttonTxt }
             </button>
             }

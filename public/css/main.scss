@@ -104,10 +104,37 @@ h6,
   text-transform: uppercase;
 }
 
+.vertical-text {
+  width: 1px;
+  word-wrap: break-word;
+}
+.button-flavor {
+  font-family: $font-family-reeniebeanie;
+  font-size: $font-size-2;
+  font-weight: 700;
+
+
+  @include breakpoint(large){
+    font-size: $font-size-3;
+  }
+
+  &.pink {
+    color: $pink;
+  }
+  &.blue {
+    color: $blue;
+  }
+  &.yellow {
+    color: $yellow;
+  }
+  &.green {
+    color: $green;
+  }
+}
 .flavor {
   position: absolute;
   font-family: $font-family-reeniebeanie;
-  font-size: $font-size-1;
+  font-size: $font-size-2;
   font-weight: 700;
   bottom: -15px;
   right: 5px;
@@ -115,7 +142,7 @@ h6,
 
   @include breakpoint(large){
     bottom: -30px;
-    font-size: $font-size-2;
+    font-size: $font-size-3;
   }
 
   &.pink {
@@ -235,12 +262,20 @@ h6,
   padding: 20px 20px 0 20px;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 20vh;
+
+  @include transition(margin-bottom);
+
+  @include breakpoint(medium){
+    margin-bottom: 10vh;
+  }
+
   @include breakpoint(large){
     padding: 50px 70px 0 90px;
+    margin-bottom: 0;
   }
+
   &:before{
     z-index: 1;
     @include breakpoint(medium) {
@@ -298,7 +333,8 @@ h6,
     line-height: $font-size-15;
     @include transition(color);
     position: relative;
-    z-index: 2;
+    z-index: 55;
+
 
     @include breakpoint(medium){
       font-size: $font-size-3;
@@ -309,7 +345,7 @@ h6,
     }
   }
   .menu-button {
-    z-index: 2;
+    z-index: 55;
     @include breakpoint(large){
       @include translateY(-50%);
     }
@@ -346,6 +382,7 @@ h6,
   display: flex;
   flex-flow: column;
   justify-content: space-around;
+  z-index: 50;
   
   @include translateY(-100vh);
   @include transition();
@@ -367,7 +404,7 @@ h6,
     @include transition(all, .2s);
     &:hover {
       color: $pink;
-      text-shadow: 3px 3px 0 $yellow;
+      @include text-shadow($yellow);
     }
     span {
       position: relative;
@@ -411,6 +448,14 @@ h6,
 .lot-focused{
   text-align: center;
 
+  h1 {
+    color: $pink;
+    font-family: $font-family-hiqrough;
+    font-size: $font-size-7;
+    @include text-shadow($yellow);
+    text-transform: uppercase;
+
+  }
   h2 {
     color: $white;
   }
@@ -419,4 +464,38 @@ h6,
 // Spot
 .spot {
   color: $white;
+  border: 1rem solid $white;
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;
+
+  min-height: 25rem;
+  position: relative;
+  h2 {
+    color: $white;
+    @include text-shadow($yellow);
+  }
+
+  .name {
+    position: absolute;
+    display: block;
+    content: '';
+    width: 100%;
+    height: 100%;
+    @include text-orientation(upright);
+    z-index: 0;
+  }
+}
+
+.map-reveal {
+
+  .map {
+    height: 0;
+    @include transition(height);
+    overflow: hidden;
+  }
+  &.show {
+    .map {
+      height: 150px;
+    }
+  }
 }

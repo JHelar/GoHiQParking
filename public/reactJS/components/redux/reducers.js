@@ -23,7 +23,8 @@ import {
 	SELECT_PARKING_LOT,
 	TOGGLE_SPOT,
 	CHANGE_SCENE,
-    TOGGLE_MENU
+    TOGGLE_MENU,
+    TOGGLE_MAP_REVEAL
 } from './actions';
 
 
@@ -177,7 +178,7 @@ function parkingLots(state = {
 	}
 }
 
-function scene(state = {menuOpen: false, current: SCENE.SHOW_PARKING_LOTS}, action){
+function scene(state = {menuOpen: false, showMapReveal: false, current: SCENE.SHOW_PARKING_LOTS}, action){
 	switch(action.type){
 		case CHANGE_SCENE:
 			return Object.assign({}, state, {
@@ -188,6 +189,10 @@ function scene(state = {menuOpen: false, current: SCENE.SHOW_PARKING_LOTS}, acti
             return Object.assign({}, state, {
                menuOpen: !state.menuOpen
             });
+		case TOGGLE_MAP_REVEAL:
+			return Object.assign({}, state, {
+				showMapReveal: !state.showMapReveal
+			});
 		default:
 			return state;
 	}

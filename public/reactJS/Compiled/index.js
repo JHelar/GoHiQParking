@@ -7047,6 +7047,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 },{}],307:[function(require,module,exports){
+(function (global){
 'use strict';
 
 /**
@@ -7068,19 +7069,24 @@ module.exports = focusNode;
  *
  * The activeElement will be null only if the document or document body is not
  * yet defined.
+ *
+ * @param {?DOMDocument} doc Defaults to current document.
+ * @return {?DOMElement}
  */
-function getActiveElement() /*?DOMElement*/{
-  if (typeof document === 'undefined') {
+function getActiveElement(doc) /*?DOMElement*/{
+  doc = doc || global.document;
+  if (typeof doc === 'undefined') {
     return null;
   }
   try {
-    return document.activeElement || document.body;
+    return doc.activeElement || doc.body;
   } catch (e) {
-    return document.body;
+    return doc.body;
   }
 }
 
 module.exports = getActiveElement;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],308:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -7204,10 +7210,10 @@ module.exports = getMarkupWrap;
  */
 
 function getUnboundedScrollPosition(scrollable) {
-  if (scrollable === window) {
+  if (scrollable.Window && scrollable instanceof scrollable.Window) {
     return {
-      x: window.pageXOffset || document.documentElement.scrollLeft,
-      y: window.pageYOffset || document.documentElement.scrollTop
+      x: scrollable.pageXOffset || scrollable.document.documentElement.scrollLeft,
+      y: scrollable.pageYOffset || scrollable.document.documentElement.scrollTop
     };
   }
   return {
@@ -7366,7 +7372,9 @@ module.exports = invariant;
  * @return {boolean} Whether or not the object is a DOM node.
  */
 function isNode(object) {
-  return !!(object && (typeof Node === 'function' ? object instanceof Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
+  var doc = object ? object.ownerDocument || object : document;
+  var defaultView = doc.defaultView || window;
+  return !!(object && (typeof defaultView.Node === 'function' ? object instanceof defaultView.Node : typeof object === 'object' && typeof object.nodeType === 'number' && typeof object.nodeName === 'string'));
 }
 
 module.exports = isNode;
@@ -28466,9 +28474,9 @@ function defaultTitleFormatter(options) {
   return function (action, time, took) {
     var parts = ['action'];
 
-    if (timestamp) parts.push('@ ' + time);
-    parts.push(String(action.type));
-    if (duration) parts.push('(in ' + took.toFixed(2) + ' ms)');
+    parts.push('%c' + String(action.type));
+    if (timestamp) parts.push('%c@ ' + time);
+    if (duration) parts.push('%c(in ' + took.toFixed(2) + ' ms)');
 
     return parts.join(' ');
   };
@@ -28508,15 +28516,19 @@ function printBuffer(buffer, options) {
     }, action, logEntry) : collapsed;
 
     var formattedTime = (0, _helpers.formatTime)(startedTime);
-    var titleCSS = colors.title ? 'color: ' + colors.title(formattedAction) + ';' : null;
+    var titleCSS = colors.title ? 'color: ' + colors.title(formattedAction) + ';' : '';
+    var headerCSS = ['color: gray; font-weight: lighter;'];
+    headerCSS.push(titleCSS);
+    if (options.timestamp) headerCSS.push('color: gray; font-weight: lighter;');
+    if (options.duration) headerCSS.push('color: gray; font-weight: lighter;');
     var title = titleFormatter(formattedAction, formattedTime, took);
 
     // Render
     try {
       if (isCollapsed) {
-        if (colors.title) logger.groupCollapsed('%c ' + title, titleCSS);else logger.groupCollapsed(title);
+        if (colors.title) logger.groupCollapsed.apply(logger, ['%c ' + title].concat(headerCSS));else logger.groupCollapsed(title);
       } else {
-        if (colors.title) logger.group('%c ' + title, titleCSS);else logger.group(title);
+        if (colors.title) logger.group.apply(logger, ['%c ' + title].concat(headerCSS));else logger.group(title);
       }
     } catch (e) {
       logger.log(title);
@@ -28532,11 +28544,11 @@ function printBuffer(buffer, options) {
     }
 
     if (actionLevel) {
-      if (colors.action) logger[actionLevel]('%c action', 'color: ' + colors.action(formattedAction) + '; font-weight: bold', formattedAction);else logger[actionLevel]('action', formattedAction);
+      if (colors.action) logger[actionLevel]('%c action    ', 'color: ' + colors.action(formattedAction) + '; font-weight: bold', formattedAction);else logger[actionLevel]('action    ', formattedAction);
     }
 
     if (error && errorLevel) {
-      if (colors.error) logger[errorLevel]('%c error', 'color: ' + colors.error(error, prevState) + '; font-weight: bold', error);else logger[errorLevel]('error', error);
+      if (colors.error) logger[errorLevel]('%c error     ', 'color: ' + colors.error(error, prevState) + '; font-weight: bold;', error);else logger[errorLevel]('error     ', error);
     }
 
     if (nextStateLevel) {
@@ -28722,6 +28734,7 @@ var timer = exports.timer = typeof performance !== "undefined" && performance !=
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.logger = exports.defaults = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -28786,7 +28799,7 @@ function createLogger() {
   // Detect if 'createLogger' was passed directly to 'applyMiddleware'.
   if (options.getState && options.dispatch) {
     // eslint-disable-next-line no-console
-    console.error('redux-logger not installed. Make sure to pass logger instance as middleware:\n\nimport createLogger from \'redux-logger\';\n\nconst logger = createLogger();\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n);');
+    console.error('[redux-logger] redux-logger not installed. Make sure to pass logger instance as middleware:\n\n// Logger with default options\nimport { logger } from \'redux-logger\'\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n\n\n// Or you can create your own logger with custom options http://bit.ly/redux-logger-options\nimport createLogger from \'redux-logger\'\n\nconst logger = createLogger({\n  // ...options\n});\n\nconst store = createStore(\n  reducer,\n  applyMiddleware(logger)\n)\n');
 
     return function () {
       return function (next) {
@@ -28842,8 +28855,13 @@ function createLogger() {
   };
 }
 
+var defaultLogger = createLogger();
+
+exports.defaults = _defaults2.default;
+exports.logger = defaultLogger;
 exports.default = createLogger;
 module.exports = exports['default'];
+
 },{"./core":502,"./defaults":503,"./helpers":505}],507:[function(require,module,exports){
 'use strict';
 
@@ -30915,7 +30933,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":534,"./Header":522,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
+},{"../redux/actions":535,"./Header":522,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31063,7 +31081,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":529,"../presentational/HeaderButtons":530,"../redux/actions":534,"../redux/constants":536,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../presentational/Error":529,"../presentational/HeaderButtons":530,"../redux/actions":535,"../redux/constants":537,"react":501,"react-redux":471}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31118,7 +31136,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":534,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../redux/actions":535,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31174,7 +31192,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":532,"../redux/actions":534,"../redux/constants":536,"react-redux":471}],525:[function(require,module,exports){
+},{"../presentational/LotList":532,"../redux/actions":535,"../redux/constants":537,"react-redux":471}],525:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31236,7 +31254,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":534,"react":501,"react-redux":471}],526:[function(require,module,exports){
+},{"../redux/actions":535,"react":501,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31297,7 +31315,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":535,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/configureStore":536,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31380,7 +31398,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":536,"./Login":523,"./LotsContainer":524,"./Register":525,"react":501,"react-redux":471}],528:[function(require,module,exports){
+},{"../redux/constants":537,"./Login":523,"./LotsContainer":524,"./Register":525,"react":501,"react-redux":471}],528:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31609,6 +31627,10 @@ var _Spot = require('./Spot');
 
 var _Spot2 = _interopRequireDefault(_Spot);
 
+var _MapReveal = require('./MapReveal');
+
+var _MapReveal2 = _interopRequireDefault(_MapReveal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Lot = function Lot(_ref) {
@@ -31626,18 +31648,14 @@ var Lot = function Lot(_ref) {
             'div',
             { className: 'small-12 column lot-focused' },
             _react2.default.createElement(
-                'h2',
+                'h1',
                 null,
                 name
             ),
-            _react2.default.createElement(
-                'h3',
-                null,
-                location
-            ),
+            _react2.default.createElement(_MapReveal2.default, { location: location, flavorText: " Find me " }),
             _react2.default.createElement(
                 'div',
-                { className: 'row' },
+                { className: 'row align-justify' },
                 spots !== undefined && spots.map(function (spot) {
                     return _react2.default.createElement(_Spot2.default, _extends({
                         key: spot.id,
@@ -31688,7 +31706,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../redux/constants":536,"./Spot":533,"react":501}],532:[function(require,module,exports){
+},{"../redux/constants":537,"./MapReveal":533,"./Spot":534,"react":501}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31768,6 +31786,82 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactRedux = require('react-redux');
+
+var _actions = require('../redux/actions');
+
+var _helpers = require('../../../general/helpers');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// This component might mutate it's state but it is mutating locally and it does not affect the state globally.
+// Thus I am not using the redux store in order to change the state of the component.
+
+/**
+ * Created by Johnh on 25/03/2017.
+ */
+var MapReveal = function MapReveal(_ref) {
+    var onRevealClick = _ref.onRevealClick,
+        location = _ref.location,
+        flavorText = _ref.flavorText,
+        show = _ref.show;
+
+    var mapUrl = (0, _helpers.getGoogleStaticMap)(location);
+    var displayClass = show ? "map-reveal show" : "map-reveal";
+    return _react2.default.createElement(
+        'div',
+        { className: displayClass },
+        _react2.default.createElement(
+            'a',
+            { className: 'button-flavor green', onClick: function onClick() {
+                    return onRevealClick();
+                } },
+            '>',
+            flavorText,
+            '<'
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'map' },
+            _react2.default.createElement('img', { src: mapUrl })
+        )
+    );
+};
+
+MapReveal.propTypes = {
+    onRevealClick: _react.PropTypes.func,
+    location: _react.PropTypes.string.isRequired,
+    flavorText: _react.PropTypes.string,
+    show: _react.PropTypes.bool
+};
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        show: state.scene.showMapReveal
+    };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        onRevealClick: function onRevealClick() {
+            dispatch((0, _actions.toggleMapReveal)());
+        }
+    };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(MapReveal);
+
+},{"../../../general/helpers":520,"../redux/actions":535,"react":501,"react-redux":471}],534:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
 var _helpers = require('../../../general/helpers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31790,8 +31884,8 @@ var Spot = function Spot(_ref) {
         'div',
         { className: 'spot small-12 medium-6 large-4 column' },
         _react2.default.createElement(
-            'h4',
-            null,
+            'span',
+            { className: 'name' },
             name
         ),
         isparked && _react2.default.createElement(
@@ -31801,9 +31895,14 @@ var Spot = function Spot(_ref) {
             ' - ',
             (0, _helpers.timeDifference)(new Date(parkedtime))
         ),
-        canmodify && _react2.default.createElement(
+        canmodify && isparked && _react2.default.createElement(
             'button',
-            { onClick: onClick, className: 'button' },
+            { onClick: onClick, className: 'button-flavor green' },
+            buttonTxt
+        ),
+        canmodify && !isparked && _react2.default.createElement(
+            'button',
+            { onClick: onClick, className: 'button-flavor blue' },
             buttonTxt
         ),
         !isLogged && !isparked && _react2.default.createElement(
@@ -31827,13 +31926,13 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/helpers":520,"react":501}],534:[function(require,module,exports){
+},{"../../../general/helpers":520,"react":501}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
+exports.TOGGLE_MAP_REVEAL = exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
 exports.requestParkingLots = requestParkingLots;
 exports.receiveParkingLots = receiveParkingLots;
 exports.receiveParkingLotsError = receiveParkingLotsError;
@@ -31864,6 +31963,7 @@ exports.selectParkingLot = selectParkingLot;
 exports.toggleSpot = toggleSpot;
 exports.changeScene = changeScene;
 exports.toggleMenu = toggleMenu;
+exports.toggleMapReveal = toggleMapReveal;
 
 var _isomorphicFetch = require('isomorphic-fetch');
 
@@ -31906,6 +32006,7 @@ var SELECT_PARKING_LOT = exports.SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 var TOGGLE_SPOT = exports.TOGGLE_SPOT = 'TOGGLE_SPOT';
 var CHANGE_SCENE = exports.CHANGE_SCENE = 'CHANGE_SCENE';
 var TOGGLE_MENU = exports.TOGGLE_MENU = 'TOGGLE_MENU';
+var TOGGLE_MAP_REVEAL = exports.TOGGLE_MAP_REVEAL = 'TOGGLE_MAP_REVEAL';
 
 function requestParkingLots() {
     return {
@@ -32221,9 +32322,15 @@ function toggleMenu() {
     return {
         type: TOGGLE_MENU
     };
-};
+}
 
-},{"../../../general/helpers":520,"./constants":536,"isomorphic-fetch":322}],535:[function(require,module,exports){
+function toggleMapReveal() {
+    return {
+        type: TOGGLE_MAP_REVEAL
+    };
+}
+
+},{"../../../general/helpers":520,"./constants":537,"isomorphic-fetch":322}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32257,7 +32364,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":537,"redux":513,"redux-logger":506,"redux-thunk":507}],536:[function(require,module,exports){
+},{"./reducers":538,"redux":513,"redux-logger":506,"redux-thunk":507}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32273,7 +32380,7 @@ var SCENE = exports.SCENE = {
     SHOW_REGISTER: 'SHOW_REGISTER'
 };
 
-},{}],537:[function(require,module,exports){
+},{}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32444,7 +32551,7 @@ function parkingLots() {
 }
 
 function scene() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menuOpen: false, current: _constants.SCENE.SHOW_PARKING_LOTS };
+	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menuOpen: false, showMapReveal: false, current: _constants.SCENE.SHOW_PARKING_LOTS };
 	var action = arguments[1];
 
 	switch (action.type) {
@@ -32456,6 +32563,10 @@ function scene() {
 		case _actions.TOGGLE_MENU:
 			return Object.assign({}, state, {
 				menuOpen: !state.menuOpen
+			});
+		case _actions.TOGGLE_MAP_REVEAL:
+			return Object.assign({}, state, {
+				showMapReveal: !state.showMapReveal
 			});
 		default:
 			return state;
@@ -32534,4 +32645,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":534,"./constants":536,"redux":513}]},{},[528]);
+},{"./actions":535,"./constants":537,"redux":513}]},{},[528]);

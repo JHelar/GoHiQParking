@@ -33,6 +33,7 @@ export const SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 export const TOGGLE_SPOT = 'TOGGLE_SPOT';
 export const CHANGE_SCENE = 'CHANGE_SCENE';
 export const TOGGLE_MENU = 'TOGGLE_MENU';
+export const TOGGLE_MAP_REVEAL = 'TOGGLE_MAP_REVEAL';
 
 export function requestParkingLots() {
 	return {
@@ -365,4 +366,10 @@ export function toggleMenu() {
     return {
         type: TOGGLE_MENU
     }
-};
+}
+
+export function toggleMapReveal() {
+    return {
+        type: TOGGLE_MAP_REVEAL
+    }
+}

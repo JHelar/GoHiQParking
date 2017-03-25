@@ -4,14 +4,15 @@
 import { SCENE } from '../redux/constants';
 import React, { PropTypes } from 'react';
 import Spot from './Spot';
+import MapReveal from './MapReveal';
 
 const Lot = ({onClick, onSpotClick, scene, id, name, location, isLogged, spots}) => {
     if(scene == SCENE.SHOW_SPOTS){
         return(
             <div className="small-12 column lot-focused">
-                <h2>{name}</h2>
-                <h3>{location}</h3>
-                <div className="row">
+                <h1>{name}</h1>
+                <MapReveal location={location} flavorText={" Find me "}/>
+                <div className="row align-justify">
                 {spots !== undefined &&
                     spots.map(spot =>
                     <Spot
