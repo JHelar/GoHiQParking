@@ -4137,23 +4137,11 @@ h6,
 
 #main-header {
   justify-content: space-between;
-  padding: 20px 20px 0 20px;
   display: flex;
   flex-flow: row nowrap;
-  align-items: flex-start;
-  margin-bottom: 20vh;
-  -webkit-transition: margin-bottom 0.2s ease-out;
-  -moz-transition: margin-bottom 0.2s ease-out;
-  -ms-transition: margin-bottom 0.2s ease-out;
-  -o-transition: margin-bottom 0.2s ease-out;
-  transition: margin-bottom 0.2s ease-out; }
-  @media print, screen and (min-width: 40em) {
-    #main-header {
-      margin-bottom: 10vh; } }
-  @media print, screen and (min-width: 64em) {
-    #main-header {
-      padding: 50px 70px 0 90px;
-      margin-bottom: 0; } }
+  align-items: center;
+  height: 120px;
+  padding: 0 5rem; }
   #main-header:before {
     z-index: 1; }
     @media print, screen and (min-width: 40em) {
@@ -4195,10 +4183,10 @@ h6,
         width: 518px;
         height: 143px; } }
   #main-header .home-button {
+    display: block;
     color: #ffffff;
     font-family: "HiQ", sans-serif;
     font-size: 2rem;
-    line-height: 1.5rem;
     -webkit-transition: color 0.2s ease-out;
     -moz-transition: color 0.2s ease-out;
     -ms-transition: color 0.2s ease-out;
@@ -4211,17 +4199,10 @@ h6,
         font-size: 3rem; } }
     @media print, screen and (min-width: 64em) {
       #main-header .home-button {
-        font-size: 5rem;
-        line-height: 16px; } }
+        font-size: 5rem; } }
   #main-header .menu-button {
+    display: block;
     z-index: 55; }
-    @media print, screen and (min-width: 64em) {
-      #main-header .menu-button {
-        -webkit-transform: translateY(-50%);
-        -moz-transform: translateY(-50%);
-        -ms-transform: translateY(-50%);
-        -o-transform: translateY(-50%);
-        transform: translateY(-50%); } }
     #main-header .menu-button .hamburger {
       display: inline-block; }
       @media print, screen and (min-width: 64em) {

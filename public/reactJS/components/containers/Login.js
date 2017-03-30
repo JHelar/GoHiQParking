@@ -10,7 +10,7 @@ let Login = ({ dispatch }) => {
     let inputPassword;
 
     return(
-        <main className="row">
+        <main>
             <h1>Login</h1>
             <form onSubmit={e => {
                 e.preventDefault();

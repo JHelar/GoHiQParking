@@ -35,7 +35,7 @@ class Header extends Component {
                 {error.status &&
                     <Error {...error}/>
                 }
-                <header id="main-header" className={["align-top"]}>
+                <header id="main-header">
                     <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
                     <MenuButton open={menuOpen} onClick={() => this.onToggleMenu()}
                     />

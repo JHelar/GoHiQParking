@@ -7047,7 +7047,6 @@ function focusNode(node) {
 
 module.exports = focusNode;
 },{}],307:[function(require,module,exports){
-(function (global){
 'use strict';
 
 /**
@@ -7074,7 +7073,7 @@ module.exports = focusNode;
  * @return {?DOMElement}
  */
 function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || global.document;
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
   if (typeof doc === 'undefined') {
     return null;
   }
@@ -7086,7 +7085,6 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],308:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -31023,7 +31021,7 @@ var Header = function (_Component) {
                 error.status && _react2.default.createElement(_Error2.default, error),
                 _react2.default.createElement(
                     'header',
-                    { id: 'main-header', className: ["align-top"] },
+                    { id: 'main-header' },
                     _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
                             return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
                         } }),
@@ -31106,7 +31104,7 @@ var Login = function Login(_ref) {
 
     return _react2.default.createElement(
         'main',
-        { className: 'row' },
+        null,
         _react2.default.createElement(
             'h1',
             null,
@@ -31218,7 +31216,7 @@ var Register = function Register(_ref) {
 
     return _react2.default.createElement(
         'main',
-        { className: 'row' },
+        null,
         _react2.default.createElement(
             'h1',
             null,
@@ -31736,7 +31734,7 @@ var LotList = function LotList(_ref) {
         onSpotClick = _ref.onSpotClick;
     return _react2.default.createElement(
         'main',
-        { className: 'row' },
+        null,
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
                 key: lot.id

@@ -5,7 +5,7 @@ import Lot from './Lot';
 import React, { PropTypes } from 'react';
 
 const LotList = ({scene, lots, isLogged, onLotClick, onSpotClick}) => (
-    <main className="row">
+    <main>
         {lots.map(lot =>
             <Lot
                 key={ lot.id }

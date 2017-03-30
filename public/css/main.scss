@@ -259,22 +259,11 @@ h6,
 // Header
 #main-header {
   justify-content: space-between;
-  padding: 20px 20px 0 20px;
   display: flex;
   flex-flow: row nowrap;
-  align-items: flex-start;
-  margin-bottom: 20vh;
-
-  @include transition(margin-bottom);
-
-  @include breakpoint(medium){
-    margin-bottom: 10vh;
-  }
-
-  @include breakpoint(large){
-    padding: 50px 70px 0 90px;
-    margin-bottom: 0;
-  }
+  align-items: center;
+  height: 120px;
+  padding: 0 5rem;
 
   &:before{
     z-index: 1;
@@ -327,10 +316,10 @@ h6,
   }
 
   .home-button{
+    display: block;
     color: $white;
     font-family: $font-family-hiq;
     font-size: $font-size-2;
-    line-height: $font-size-15;
     @include transition(color);
     position: relative;
     z-index: 55;
@@ -341,14 +330,12 @@ h6,
     }
     @include breakpoint(large){
       font-size: $font-size-5;
-      line-height: 16px;
     }
   }
   .menu-button {
+    display: block;
     z-index: 55;
-    @include breakpoint(large){
-      @include translateY(-50%);
-    }
+
     .hamburger {
       display: inline-block;
       @include breakpoint(large){
