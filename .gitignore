@@ -60,3 +60,4 @@ db/hiqparking.db
 #Server specific
 server.log
 server_pid.txt
+server_start.txt
