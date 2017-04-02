@@ -165,6 +165,7 @@ h6,
   > section {
     height: 100%;
     background-image: url('../image/texture-asphalt.jpg');
+    position: relative;
 
   }
 }
@@ -266,7 +267,7 @@ h6,
   padding: 0 5rem;
 
   &:before{
-    z-index: 1;
+    z-index: 20;
     @include breakpoint(medium) {
       background: url('../image/bg-top-left-tab.png') no-repeat center;
       width: 291px;
@@ -294,7 +295,7 @@ h6,
     right: 0;
     top: 0;
     display: inline-block;
-    z-index: 1;
+    z-index: 20;
 
     @include breakpoint(small){
       background: url('../image/bg-top-mob.png') no-repeat center;
@@ -409,46 +410,72 @@ h6,
 
 }
 // Lot
+.lot-wrapper{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  .lot {
+    position: relative;
+    z-index: 10;
+    @include transition(all, .5s);
+    
+  }
+  &.hide-lots {
+    .lot{
+      z-index: -1;
+      &:first-child{
+        @include translateX(-100%);
+      }
+
+      &:last-child{
+        @include translateX(100%);
+      }
+    }
+  }
+}
 .lot {
-  box-shadow: 3px 3px $blue;
-  background: url('../image/texture-blue.png') no-repeat center;
   background-size: cover;
   padding: 1rem;
   cursor: pointer;
+  height: 100%;
+  width: 50%;
+  display: inline-block;
 
   &:hover {
   }
 
-  h2 {
+  h1 {
     color: $white;
-  }
-  &:not(:last-child){
-    margin-right: 1rem;
-    margin-bottom: 1rem;
-
-    @include breakpoint(medium){
-      margin-bottom: 0;
-    }
+    text-align: center;
   }
 }
 
-.lot-focused{
-  text-align: center;
-
-  h1 {
-    color: $pink;
-    font-family: $font-family-hiqrough;
-    font-size: $font-size-7;
-    @include text-shadow($yellow);
-    text-transform: uppercase;
-
-  }
-  h2 {
-    color: $white;
-  }
+.content {
+  z-index: 0;
+  position: relative;
 }
 
 // Spot
+.spots-wrapper {
+  position: relative;
+  z-index: 0;
+
+  h1 {
+    font-family: $font-family-hiqrough;
+    font-size: $font-size-6;
+    font-weight: 700;
+    color: $pink;
+    text-align: center;
+    text-transform: uppercase;
+    display: block;
+    @include text-shadow($yellow);
+
+    flex-basis: 100%;
+  }
+}
 .spot {
   color: $white;
   border: 1rem solid $white;
@@ -457,10 +484,6 @@ h6,
 
   min-height: 25rem;
   position: relative;
-  h2 {
-    color: $white;
-    @include text-shadow($yellow);
-  }
 
   .name {
     position: absolute;

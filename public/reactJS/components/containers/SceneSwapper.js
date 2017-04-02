@@ -2,9 +2,9 @@
  * Created by Johnh on 2017-03-19.
  */
 import { SCENE } from '../redux/constants';
-import LotsContainer from './LotsContainer';
 import Login from './Login';
 import Register from './Register';
+import SpotsContainer from './SpotsContainer';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
@@ -15,10 +15,10 @@ class SceneSwapper extends Component {
     render() {
         const { scene } = this.props;
         switch (scene) {
-            case SCENE.SHOW_PARKING_LOTS:
             case SCENE.SHOW_SPOTS:
+            case SCENE.SHOW_PARKING_LOTS:
                 return (
-                    <LotsContainer />
+                    <SpotsContainer/>
                 );
             case SCENE.SHOW_LOGIN:
                 return (
@@ -35,7 +35,7 @@ class SceneSwapper extends Component {
 }
 
 SceneSwapper.propTypes = {
-    scene: PropTypes.string.isRequired
+    scene: PropTypes.string
 };
 
 const mapStateToProps = (state) => {

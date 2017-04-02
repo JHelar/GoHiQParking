@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import SceneSwapper from './SceneSwapper';
 import Header from './Header';
+import LotsContanier from './LotsContainer';
 import { fetchParkingLots } from '../redux/actions';
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
         return(
             <section className="">
                 <Header />
+                <LotsContanier />
                 <SceneSwapper />
             </section>
         );

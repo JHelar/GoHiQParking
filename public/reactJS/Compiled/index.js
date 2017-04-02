@@ -30774,6 +30774,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.createCookie = createCookie;
 exports.getCookie = getCookie;
 exports.deleteCookie = deleteCookie;
+exports.getHiQGoogleStaticMap = getHiQGoogleStaticMap;
 exports.getGoogleStaticMap = getGoogleStaticMap;
 exports.timeDifference = timeDifference;
 /**
@@ -30782,6 +30783,118 @@ exports.timeDifference = timeDifference;
 /**
  * Created by johnla on 2016-11-03.
  */
+var googleMapsKey = "AIzaSyD55li1OuTm-bRAzfO4Mo3AsdNKHywfp1s";
+var googleMapsBaseUrl = "https://maps.googleapis.com/maps/api/staticmap";
+
+var mapStyles = {
+    //style=feature:myFeatureArgument|element:myElementArgument|myRule1:myRule1Argument|myRule2:myRule2Argument
+    features: [{
+        type: "road",
+        element: "geometry",
+        rules: [{
+            name: "color",
+            value: "0xfe0070"
+        }, {
+            name: "visibility",
+            value: "simplified"
+        }]
+    }, {
+        type: "road",
+        element: "labels",
+        rules: [{
+            name: "visibility",
+            value: "off"
+        }]
+    }, {
+        type: "poi",
+        element: "labels",
+        rules: [{
+            name: "visibility",
+            value: "off"
+        }]
+    }, {
+        type: "poi",
+        element: "geometry",
+        rules: [{
+            name: "color",
+            value: "0x000000"
+        }]
+    }, {
+        type: "landscape",
+        element: "geometry",
+        rules: [{
+            name: "color",
+            value: "0x000000"
+        }]
+    }, {
+        type: "transit.line",
+        element: "geometry",
+        rules: [{
+            name: "color",
+            value: "0xfe0070"
+        }]
+    }, {
+        type: "transit",
+        element: "labels.icon",
+        rules: [{
+            name: "visibility",
+            value: "off"
+        }]
+    }, {
+        type: "water",
+        element: "geometry",
+        rules: [{
+            name: "color",
+            value: "0x00a3f2"
+        }, {
+            name: "visibility",
+            value: "simplified"
+        }]
+    }, {
+        type: "water",
+        element: "labels",
+        rules: [{
+            name: "visibility",
+            value: "off"
+        }]
+    }, {
+        type: "administrative.locality",
+        element: "labels.text.stroke",
+        rules: [{
+            name: "color",
+            value: "0xffe50d"
+        }]
+    }, {
+        type: "administrative.locality",
+        element: "labels.text.fill",
+        rules: [{
+            name: "color",
+            value: "0xfe0070"
+        }, {
+            name: "weight",
+            value: "20"
+        }]
+    }],
+    asUrl: function asUrl() {
+        var url = "";
+        for (var i = 0; i < this.features.length; i++) {
+            var feature = this.features[i];
+
+            url += "&style=feature:" + feature.type + "|element:" + feature.element;
+
+            var rules = "";
+
+            for (var j = 0; j < feature.rules.length; j++) {
+                var rule = feature.rules[j];
+                rules += "|" + rule.name + ":" + rule.value;
+            }
+
+            url += rules;
+        }
+        return url;
+    }
+};
+
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
@@ -30825,6 +30938,10 @@ function getCookie(cname) {
 
 function deleteCookie(name) {
     createCookie(name, "", -1);
+}
+
+function getHiQGoogleStaticMap(location) {
+    return googleMapsBaseUrl + "?zoom=13&size=640x640&scale=2&center=" + encodeURIComponent(location) + mapStyles.asUrl() + "&key=" + googleMapsKey;
 }
 
 function getGoogleStaticMap(location) {
@@ -30880,6 +30997,10 @@ var _Header = require('./Header');
 
 var _Header2 = _interopRequireDefault(_Header);
 
+var _LotsContainer = require('./LotsContainer');
+
+var _LotsContainer2 = _interopRequireDefault(_LotsContainer);
+
 var _actions = require('../redux/actions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -30917,6 +31038,7 @@ var App = function (_Component) {
                 'section',
                 { className: '' },
                 _react2.default.createElement(_Header2.default, null),
+                _react2.default.createElement(_LotsContainer2.default, null),
                 _react2.default.createElement(_SceneSwapper2.default, null)
             );
         }
@@ -30931,7 +31053,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":535,"./Header":522,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
+},{"../redux/actions":536,"./Header":522,"./LotsContainer":524,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31079,7 +31201,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":529,"../presentational/HeaderButtons":530,"../redux/actions":535,"../redux/constants":537,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../presentational/Error":530,"../presentational/HeaderButtons":531,"../redux/actions":536,"../redux/constants":538,"react":501,"react-redux":471}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31104,7 +31226,7 @@ var Login = function Login(_ref) {
 
     return _react2.default.createElement(
         'main',
-        null,
+        { className: 'content' },
         _react2.default.createElement(
             'h1',
             null,
@@ -31134,7 +31256,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":535,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../redux/actions":536,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31158,18 +31280,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var mapStateToProps = function mapStateToProps(state) {
     return {
-        scene: state.scene.current,
-        isLogged: state.user.isLogged,
-        lots: state.parkingLots.lots.filter(function (lot) {
-            switch (state.scene.current) {
-                case _constants.SCENE.SHOW_SPOTS:
-                    return lot.id === state.parkingLots.selectedParkingLot;
-                case _constants.SCENE.SHOW_PARKING_LOTS:
-                    return true;
-                default:
-                    return true;
-            }
-        })
+        show: state.scene.current === _constants.SCENE.SHOW_PARKING_LOTS,
+        lots: state.parkingLots.lots
     };
 };
 
@@ -31178,10 +31290,6 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         onLotClick: function onLotClick(id) {
             dispatch((0, _actions.selectParkingLot)(id));
             dispatch((0, _actions.fetchSpots)(id));
-        },
-        onSpotClick: function onSpotClick(id) {
-            dispatch((0, _actions.toggleSpot)(id));
-            dispatch((0, _actions.fetchToggleSpot)(id));
         }
     };
 };
@@ -31190,7 +31298,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":532,"../redux/actions":535,"../redux/constants":537,"react-redux":471}],525:[function(require,module,exports){
+},{"../presentational/LotList":533,"../redux/actions":536,"../redux/constants":538,"react-redux":471}],525:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31216,7 +31324,7 @@ var Register = function Register(_ref) {
 
     return _react2.default.createElement(
         'main',
-        null,
+        { className: 'content' },
         _react2.default.createElement(
             'h1',
             null,
@@ -31252,7 +31360,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":535,"react":501,"react-redux":471}],526:[function(require,module,exports){
+},{"../redux/actions":536,"react":501,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31313,7 +31421,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":536,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/configureStore":537,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31324,10 +31432,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _constants = require('../redux/constants');
 
-var _LotsContainer = require('./LotsContainer');
-
-var _LotsContainer2 = _interopRequireDefault(_LotsContainer);
-
 var _Login = require('./Login');
 
 var _Login2 = _interopRequireDefault(_Login);
@@ -31335,6 +31439,10 @@ var _Login2 = _interopRequireDefault(_Login);
 var _Register = require('./Register');
 
 var _Register2 = _interopRequireDefault(_Register);
+
+var _SpotsContainer = require('./SpotsContainer');
+
+var _SpotsContainer2 = _interopRequireDefault(_SpotsContainer);
 
 var _react = require('react');
 
@@ -31368,9 +31476,9 @@ var SceneSwapper = function (_Component) {
             var scene = this.props.scene;
 
             switch (scene) {
-                case _constants.SCENE.SHOW_PARKING_LOTS:
                 case _constants.SCENE.SHOW_SPOTS:
-                    return _react2.default.createElement(_LotsContainer2.default, null);
+                case _constants.SCENE.SHOW_PARKING_LOTS:
+                    return _react2.default.createElement(_SpotsContainer2.default, null);
                 case _constants.SCENE.SHOW_LOGIN:
                     return _react2.default.createElement(_Login2.default, null);
                 case _constants.SCENE.SHOW_REGISTER:
@@ -31385,7 +31493,7 @@ var SceneSwapper = function (_Component) {
 }(_react.Component);
 
 SceneSwapper.propTypes = {
-    scene: _react.PropTypes.string.isRequired
+    scene: _react.PropTypes.string
 };
 
 var mapStateToProps = function mapStateToProps(state) {
@@ -31396,7 +31504,53 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":537,"./Login":523,"./LotsContainer":524,"./Register":525,"react":501,"react-redux":471}],528:[function(require,module,exports){
+},{"../redux/constants":538,"./Login":523,"./Register":525,"./SpotsContainer":528,"react":501,"react-redux":471}],528:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _actions = require('../redux/actions');
+
+var _reactRedux = require('react-redux');
+
+var _SpotList = require('../presentational/SpotList');
+
+var _SpotList2 = _interopRequireDefault(_SpotList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+    var currentLot = state.parkingLots.lots.filter(function (lot) {
+        return lot.id === state.parkingLots.selectedParkingLot;
+    })[0];
+
+    var spots = currentLot === undefined ? [] : currentLot.spots;
+    var name = currentLot === undefined ? "" : currentLot.name;
+
+    return {
+        isLogged: state.user.isLogged,
+        spots: spots,
+        header: name
+    };
+}; /**
+    * Created by Johnh on 2017-04-02.
+    */
+
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        onSpotClick: function onSpotClick(id) {
+            dispatch((0, _actions.toggleSpot)(id));
+            dispatch((0, _actions.fetchToggleSpot)(id));
+        }
+    };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
+
+},{"../presentational/SpotList":535,"../redux/actions":536,"react-redux":471}],529:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31418,7 +31572,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
-},{"./containers/Root":526,"babel-polyfill":1,"react":501,"react-dom":335}],529:[function(require,module,exports){
+},{"./containers/Root":526,"babel-polyfill":1,"react":501,"react-dom":335}],530:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31462,7 +31616,7 @@ Error.propTypes = {
 
 exports.default = Error;
 
-},{"react":501}],530:[function(require,module,exports){
+},{"react":501}],531:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31603,108 +31757,55 @@ LogoutButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-},{"react":501}],531:[function(require,module,exports){
+},{"react":501}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
-                                                                                                                                                                                                                                                                   * Created by Johnh on 2017-03-19.
-                                                                                                                                                                                                                                                                   */
-
-
-var _constants = require('../redux/constants');
-
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Spot = require('./Spot');
-
-var _Spot2 = _interopRequireDefault(_Spot);
-
-var _MapReveal = require('./MapReveal');
-
-var _MapReveal2 = _interopRequireDefault(_MapReveal);
+var _helpers = require('../../../general/helpers');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * Created by Johnh on 2017-03-19.
+ */
 var Lot = function Lot(_ref) {
     var onClick = _ref.onClick,
-        onSpotClick = _ref.onSpotClick,
-        scene = _ref.scene,
-        id = _ref.id,
         name = _ref.name,
-        location = _ref.location,
-        isLogged = _ref.isLogged,
-        spots = _ref.spots;
+        location = _ref.location;
 
-    if (scene == _constants.SCENE.SHOW_SPOTS) {
-        return _react2.default.createElement(
-            'div',
-            { className: 'small-12 column lot-focused' },
-            _react2.default.createElement(
-                'h1',
-                null,
-                name
-            ),
-            _react2.default.createElement(_MapReveal2.default, { location: location, flavorText: " Find me " }),
-            _react2.default.createElement(
-                'div',
-                { className: 'row align-justify' },
-                spots !== undefined && spots.map(function (spot) {
-                    return _react2.default.createElement(_Spot2.default, _extends({
-                        key: spot.id,
-                        isLogged: isLogged,
-                        onClick: function onClick() {
-                            return onSpotClick(spot.id);
-                        }
-                    }, spot));
-                })
-            )
-        );
-    } else if (scene === _constants.SCENE.SHOW_PARKING_LOTS) {
-        return _react2.default.createElement(
-            'div',
-            { className: 'small-12 medium-6 large-4 column lot', onClick: onClick },
-            _react2.default.createElement(
-                'h2',
-                null,
-                name
-            ),
-            _react2.default.createElement(
-                'h3',
-                null,
-                location
-            )
-        );
-    }
+    return _react2.default.createElement(
+        'div',
+        { className: 'lot', onClick: onClick, style: { backgroundImage: "url(" + (0, _helpers.getHiQGoogleStaticMap)(location) + ")" } },
+        _react2.default.createElement(
+            'h1',
+            null,
+            name
+        ),
+        _react2.default.createElement(
+            'h3',
+            null,
+            location
+        )
+    );
 };
 
 Lot.propTypes = {
     onClick: _react.PropTypes.func,
-    onSpotClick: _react.PropTypes.func,
-    scene: _react.PropTypes.string.isRequired,
     id: _react.PropTypes.number.isRequired,
     name: _react.PropTypes.string.isRequired,
-    location: _react.PropTypes.string.isRequired,
-    isLogged: _react.PropTypes.bool.isRequired,
-    spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
-        onClick: _react.PropTypes.func,
-        id: _react.PropTypes.number.isRequired,
-        name: _react.PropTypes.string.isRequired,
-        isparked: _react.PropTypes.bool.isRequired,
-        canmodify: _react.PropTypes.bool.isRequired,
-        parkedby: _react.PropTypes.string.isRequired,
-        parkedtime: _react.PropTypes.string.isRequired
-    }).isRequired).isRequired
+    location: _react.PropTypes.string.isRequired
 };
 
 exports.default = Lot;
 
-},{"../redux/constants":537,"./MapReveal":533,"./Spot":534,"react":501}],532:[function(require,module,exports){
+},{"../../../general/helpers":520,"react":501}],533:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31727,24 +31828,21 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var LotList = function LotList(_ref) {
-    var scene = _ref.scene,
+    var show = _ref.show,
         lots = _ref.lots,
-        isLogged = _ref.isLogged,
-        onLotClick = _ref.onLotClick,
-        onSpotClick = _ref.onSpotClick;
+        onLotClick = _ref.onLotClick;
+
+    var cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
     return _react2.default.createElement(
         'main',
-        null,
+        { className: cn },
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
                 key: lot.id
             }, lot, {
-                scene: scene,
-                isLogged: isLogged,
                 onClick: function onClick() {
                     return onLotClick(lot.id);
-                },
-                onSpotClick: onSpotClick
+                }
             }));
         })
     );
@@ -31752,104 +31850,17 @@ var LotList = function LotList(_ref) {
 
 LotList.propTypes = {
     onLotClick: _react.PropTypes.func,
-    onSpotClick: _react.PropTypes.func,
-    scene: _react.PropTypes.string.isRequired,
-    isLogged: _react.PropTypes.bool.isRequired,
+    show: _react.PropTypes.bool.isRequired,
     lots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,
-        location: _react.PropTypes.string.isRequired,
-        spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
-            onClick: _react.PropTypes.func,
-            id: _react.PropTypes.number.isRequired,
-            name: _react.PropTypes.string.isRequired,
-            isparked: _react.PropTypes.bool.isRequired,
-            canmodify: _react.PropTypes.bool.isRequired,
-            parkedby: _react.PropTypes.string.isRequired,
-            parkedtime: _react.PropTypes.string.isRequired
-        }).isRequired)
+        location: _react.PropTypes.string.isRequired
     }).isRequired)
 };
 
 exports.default = LotList;
 
-},{"./Lot":531,"react":501}],533:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRedux = require('react-redux');
-
-var _actions = require('../redux/actions');
-
-var _helpers = require('../../../general/helpers');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// This component might mutate it's state but it is mutating locally and it does not affect the state globally.
-// Thus I am not using the redux store in order to change the state of the component.
-
-/**
- * Created by Johnh on 25/03/2017.
- */
-var MapReveal = function MapReveal(_ref) {
-    var onRevealClick = _ref.onRevealClick,
-        location = _ref.location,
-        flavorText = _ref.flavorText,
-        show = _ref.show;
-
-    var mapUrl = (0, _helpers.getGoogleStaticMap)(location);
-    var displayClass = show ? "map-reveal show" : "map-reveal";
-    return _react2.default.createElement(
-        'div',
-        { className: displayClass },
-        _react2.default.createElement(
-            'a',
-            { className: 'button-flavor green', onClick: function onClick() {
-                    return onRevealClick();
-                } },
-            '>',
-            flavorText,
-            '<'
-        ),
-        _react2.default.createElement(
-            'div',
-            { className: 'map' },
-            _react2.default.createElement('img', { src: mapUrl })
-        )
-    );
-};
-
-MapReveal.propTypes = {
-    onRevealClick: _react.PropTypes.func,
-    location: _react.PropTypes.string.isRequired,
-    flavorText: _react.PropTypes.string,
-    show: _react.PropTypes.bool
-};
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        show: state.scene.showMapReveal
-    };
-};
-
-var mapDispatchToProps = function mapDispatchToProps(dispatch) {
-    return {
-        onRevealClick: function onRevealClick() {
-            dispatch((0, _actions.toggleMapReveal)());
-        }
-    };
-};
-
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(MapReveal);
-
-},{"../../../general/helpers":520,"../redux/actions":535,"react":501,"react-redux":471}],534:[function(require,module,exports){
+},{"./Lot":532,"react":501}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31925,6 +31936,70 @@ Spot.propTypes = {
 exports.default = Spot;
 
 },{"../../../general/helpers":520,"react":501}],535:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; /**
+                                                                                                                                                                                                                                                                   * Created by Johnh on 2017-04-02.
+                                                                                                                                                                                                                                                                   */
+
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Spot = require('../presentational/Spot');
+
+var _Spot2 = _interopRequireDefault(_Spot);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SpotsList = function SpotsList(_ref) {
+    var spots = _ref.spots,
+        isLogged = _ref.isLogged,
+        onSpotClick = _ref.onSpotClick,
+        header = _ref.header;
+
+
+    return _react2.default.createElement(
+        'main',
+        { className: 'content spots-wrapper row' },
+        _react2.default.createElement(
+            'h1',
+            null,
+            header
+        ),
+        spots.map(function (spot) {
+            return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
+                isLogged: isLogged,
+                onClick: function onClick() {
+                    return onSpotClick(spot.id);
+                }
+            }));
+        })
+    );
+};
+
+SpotsList.propTypes = {
+    onSpotClick: _react.PropTypes.func,
+    header: _react.PropTypes.string.isRequired,
+    spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
+        id: _react.PropTypes.number.isRequired,
+        name: _react.PropTypes.string.isRequired,
+        isparked: _react.PropTypes.bool.isRequired,
+        canmodify: _react.PropTypes.bool.isRequired,
+        parkedby: _react.PropTypes.string.isRequired,
+        parkedtime: _react.PropTypes.string.isRequired
+    }).isRequired),
+    isLogged: _react.PropTypes.bool.isRequired
+};
+
+exports.default = SpotsList;
+
+},{"../presentational/Spot":534,"react":501}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32328,7 +32403,7 @@ function toggleMapReveal() {
     };
 }
 
-},{"../../../general/helpers":520,"./constants":537,"isomorphic-fetch":322}],536:[function(require,module,exports){
+},{"../../../general/helpers":520,"./constants":538,"isomorphic-fetch":322}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32362,7 +32437,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":538,"redux":513,"redux-logger":506,"redux-thunk":507}],537:[function(require,module,exports){
+},{"./reducers":539,"redux":513,"redux-logger":506,"redux-thunk":507}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32375,10 +32450,12 @@ var SCENE = exports.SCENE = {
     SHOW_PARKING_LOTS: 'SHOW_PARKING_LOT_SCENE',
     SHOW_SPOTS: 'SHOW_SPOTS',
     SHOW_LOGIN: 'SHOW_LOGIN',
-    SHOW_REGISTER: 'SHOW_REGISTER'
+    SHOW_REGISTER: 'SHOW_REGISTER',
+
+    SPOTS_FETCHED: "SPOTS_FETCHED_SCENE"
 };
 
-},{}],538:[function(require,module,exports){
+},{}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32457,6 +32534,7 @@ function parkingLots() {
 		isFetching: false,
 		didInvalidate: false,
 		lastUpdate: Date.now(),
+		selectedParkingLot: 0,
 		lots: []
 	};
 	var action = arguments[1];
@@ -32643,4 +32721,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":535,"./constants":537,"redux":513}]},{},[528]);
+},{"./actions":536,"./constants":538,"redux":513}]},{},[529]);

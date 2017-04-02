@@ -49,6 +49,14 @@
   transform: translateY($amount);
 }
 
+@mixin translateX($amount){
+  -webkit-transform: translateX($amount);
+  -moz-transform: translateX($amount);
+  -ms-transform: translateX($amount);
+  -o-transform: translateX($amount);
+  transform: translateX($amount);
+}
+
 @mixin rotate($deg){
   -webkit-transform: rotate($deg);
   -moz-transform: rotate($deg);

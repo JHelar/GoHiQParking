@@ -89,6 +89,7 @@ function parkingLots(state = {
 	isFetching: false,
 	didInvalidate: false,
 	lastUpdate: Date.now(),
+	selectedParkingLot: 0,
 	lots: []	
 }, action) {
 	switch(action.type){

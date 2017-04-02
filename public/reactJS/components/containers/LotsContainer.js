@@ -8,19 +8,9 @@ import { SCENE } from '../redux/constants';
 
 const mapStateToProps = (state) => {
     return {
-        scene: state.scene.current,
-        isLogged: state.user.isLogged,
-        lots: state.parkingLots.lots.filter((lot) => {
-            switch(state.scene.current){
-                case SCENE.SHOW_SPOTS:
-                    return lot.id === state.parkingLots.selectedParkingLot;
-                case SCENE.SHOW_PARKING_LOTS:
-                    return true;
-                default:
-                    return true;
-            }
-        })
-    }
+        show: state.scene.current === SCENE.SHOW_PARKING_LOTS,
+        lots: state.parkingLots.lots
+    };
 };
 
 const mapDispatchToProps = (dispatch) => {
@@ -28,10 +18,6 @@ const mapDispatchToProps = (dispatch) => {
         onLotClick: (id) => {
             dispatch(selectParkingLot(id));
             dispatch(fetchSpots(id));
-        },
-        onSpotClick: (id) => {
-            dispatch(toggleSpot(id));
-            dispatch(fetchToggleSpot(id))
         }
     }
 };
