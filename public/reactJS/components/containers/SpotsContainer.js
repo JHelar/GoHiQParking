@@ -11,12 +11,10 @@ const mapStateToProps = (state) => {
     })[0];
 
     let spots = currentLot === undefined ? [] : currentLot.spots;
-    let name = currentLot === undefined ? "" : currentLot.name;
 
     return {
         isLogged: state.user.isLogged,
-        spots: spots,
-        header: name
+        spots: spots
     };
 };
 

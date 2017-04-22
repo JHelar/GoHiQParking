@@ -8,7 +8,6 @@ const Lot = ({onClick, name, location}) => {
     return (
         <div className="lot" onClick={onClick} style={{backgroundImage: "url(" + getHiQGoogleStaticMap(location) + ")"}}>
             <h1>{name}</h1>
-            <h3>{location}</h3>
         </div>
     );
 };

@@ -31279,7 +31279,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Created by Johnh on 2017-03-19.
  */
 var mapStateToProps = function mapStateToProps(state) {
+    var currentLot = state.parkingLots.lots.filter(function (lot) {
+        return lot.id === state.parkingLots.selectedParkingLot;
+    })[0];
+
+    var name = currentLot === undefined ? "" : currentLot.name;
+
     return {
+        name: name,
         show: state.scene.current === _constants.SCENE.SHOW_PARKING_LOTS,
         lots: state.parkingLots.lots
     };
@@ -31527,12 +31534,10 @@ var mapStateToProps = function mapStateToProps(state) {
     })[0];
 
     var spots = currentLot === undefined ? [] : currentLot.spots;
-    var name = currentLot === undefined ? "" : currentLot.name;
 
     return {
         isLogged: state.user.isLogged,
-        spots: spots,
-        header: name
+        spots: spots
     };
 }; /**
     * Created by Johnh on 2017-04-02.
@@ -31787,11 +31792,6 @@ var Lot = function Lot(_ref) {
             'h1',
             null,
             name
-        ),
-        _react2.default.createElement(
-            'h3',
-            null,
-            location
         )
     );
 };
@@ -31830,11 +31830,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var LotList = function LotList(_ref) {
     var show = _ref.show,
         lots = _ref.lots,
-        onLotClick = _ref.onLotClick;
+        onLotClick = _ref.onLotClick,
+        name = _ref.name;
 
     var cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
     return _react2.default.createElement(
-        'main',
+        'header',
         { className: cn },
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
@@ -31844,13 +31845,19 @@ var LotList = function LotList(_ref) {
                     return onLotClick(lot.id);
                 }
             }));
-        })
+        }),
+        _react2.default.createElement(
+            'h1',
+            { className: 'current-lot-name' },
+            name
+        )
     );
 };
 
 LotList.propTypes = {
     onLotClick: _react.PropTypes.func,
     show: _react.PropTypes.bool.isRequired,
+    name: _react.PropTypes.string.isRequired,
     lots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,
@@ -31960,18 +31967,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var SpotsList = function SpotsList(_ref) {
     var spots = _ref.spots,
         isLogged = _ref.isLogged,
-        onSpotClick = _ref.onSpotClick,
-        header = _ref.header;
+        onSpotClick = _ref.onSpotClick;
 
 
     return _react2.default.createElement(
         'main',
         { className: 'content spots-wrapper row' },
-        _react2.default.createElement(
-            'h1',
-            null,
-            header
-        ),
         spots.map(function (spot) {
             return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
                 isLogged: isLogged,
@@ -31985,7 +31986,6 @@ var SpotsList = function SpotsList(_ref) {
 
 SpotsList.propTypes = {
     onSpotClick: _react.PropTypes.func,
-    header: _react.PropTypes.string.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,

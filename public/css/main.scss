@@ -416,54 +416,19 @@ h6,
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.8);
 
-  .lot {
-    position: relative;
-    z-index: 10;
-    @include transition(all, .5s);
-    
-  }
-  &.hide-lots {
-    .lot{
-      z-index: -1;
-      &:first-child{
-        @include translateX(-100%);
-      }
+  @include transition(transform);
 
-      &:last-child{
-        @include translateX(100%);
-      }
-    }
-  }
-}
-.lot {
-  background-size: cover;
-  padding: 1rem;
-  cursor: pointer;
-  height: 100%;
-  width: 50%;
-  display: inline-block;
+  .current-lot-name {
+    position: absolute;
+    bottom: -12%;
 
-  &:hover {
-  }
-
-  h1 {
-    color: $white;
-    text-align: center;
-  }
-}
-
-.content {
-  z-index: 0;
-  position: relative;
-}
-
-// Spot
-.spots-wrapper {
-  position: relative;
-  z-index: 0;
-
-  h1 {
     font-family: $font-family-hiqrough;
     font-size: $font-size-6;
     font-weight: 700;
@@ -475,11 +440,63 @@ h6,
 
     flex-basis: 100%;
   }
+
+  .lot {
+    background-size: 70%;
+    background-position: center center;
+    background-attachment: fixed;
+
+    border: $border-size solid $white;
+    border-radius: $border-radius;
+    padding: 3rem 0;
+    cursor: pointer;
+    width: 50%;
+
+    position: relative;
+    z-index: 10;
+    @include transition(all, .5s);
+
+    &:hover {
+      -webkit-background-size:100%;
+      background-size:100%;
+
+
+      h1 {
+        @include text-shadow($yellow);
+      }
+    }
+
+    h1 {
+      font-family: $font-family-hiqrough;
+      font-size: $font-size-5;
+      font-weight: 700;
+      color: $white;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+  }
+
+  &.lot-wrapper.hide-lots {
+    @include translateY(-100%);
+  }
+}
+
+
+.content {
+  z-index: 0;
+  position: relative;
+}
+
+// Spot
+.spots-wrapper {
+  position: relative;
+  z-index: 0;
 }
 .spot {
   color: $white;
-  border: 1rem solid $white;
-  border-radius: 10px 10px 0 0;
+  border: $border-size solid $white;
+  border-radius: $border-radius $border-radius 0 0;
   border-bottom: none;
 
   min-height: 25rem;

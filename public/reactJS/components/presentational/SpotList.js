@@ -4,10 +4,9 @@
 import React, { Component, PropTypes } from 'react';
 import Spot from '../presentational/Spot';
 
-const SpotsList = ({spots, isLogged, onSpotClick, header}) => {
+const SpotsList = ({spots, isLogged, onSpotClick}) => {
 
     return (<main className="content spots-wrapper row">
-        <h1>{header}</h1>
         {spots.map(spot =>
             <Spot
                 { ...spot }
@@ -20,7 +19,6 @@ const SpotsList = ({spots, isLogged, onSpotClick, header}) => {
 
 SpotsList.propTypes = {
     onSpotClick: PropTypes.func,
-    header: PropTypes.string.isRequired,
     spots: PropTypes.arrayOf(PropTypes.shape({
             id: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired,
