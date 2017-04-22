@@ -3807,6 +3807,9 @@ a.thumbnail {
 
   .large-order-6 {
     order: 6; } }
+html {
+  overflow: hidden; }
+
 body {
   margin: 0;
   background: #ffffff;
@@ -4296,9 +4299,10 @@ h6,
   width: 100%;
   height: 100%;
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
   justify-content: center;
   align-items: center;
+  align-content: center;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
   -webkit-transition: transform 0.2s ease-out;
@@ -4306,9 +4310,15 @@ h6,
   -ms-transition: transform 0.2s ease-out;
   -o-transition: transform 0.2s ease-out;
   transition: transform 0.2s ease-out; }
+  @media print, screen and (min-width: 40em) {
+    .lot-wrapper {
+      justify-content: center; } }
+  @media print, screen and (min-width: 64em) {
+    .lot-wrapper {
+      justify-content: space-around; } }
   .lot-wrapper .current-lot-name {
     position: absolute;
-    bottom: -12%;
+    bottom: -25%;
     font-family: "HiQRough", sans-serif;
     font-size: 6rem;
     font-weight: 700;
@@ -4319,26 +4329,43 @@ h6,
     text-shadow: 3px 3px 0 #ffe50d;
     flex-basis: 100%; }
   .lot-wrapper .lot {
-    background-size: 70%;
+    -webkit-background-size: cover;
+    background-size: cover;
     background-position: center center;
     background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
+    z-index: 10;
     border: 1rem solid #ffffff;
     border-radius: 10px;
     padding: 3rem 0;
     cursor: pointer;
-    width: 50%;
-    position: relative;
-    z-index: 10;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 100%;
     -webkit-transition: all 0.5s ease-out;
     -moz-transition: all 0.5s ease-out;
     -ms-transition: all 0.5s ease-out;
     -o-transition: all 0.5s ease-out;
     transition: all 0.5s ease-out; }
+    @media print, screen and (min-width: 64em) {
+      .lot-wrapper .lot {
+        background-size: 70%; } }
+    @media print, screen and (min-width: 40em) {
+      .lot-wrapper .lot {
+        flex-basis: 50%; } }
+    @media print, screen and (min-width: 64em) {
+      .lot-wrapper .lot {
+        flex-basis: 25%; } }
     .lot-wrapper .lot:hover {
-      -webkit-background-size: 100%;
-      background-size: 100%; }
+      border-color: #fe0070; }
+      @media print, screen and (min-width: 64em) {
+        .lot-wrapper .lot:hover {
+          -webkit-background-size: 100%;
+          background-size: 100%; } }
       .lot-wrapper .lot:hover h1 {
-        text-shadow: 3px 3px 0 #ffe50d; }
+        text-shadow: 3px 3px 0 #ffe50d;
+        color: #fe0070; }
     .lot-wrapper .lot h1 {
       font-family: "HiQRough", sans-serif;
       font-size: 5rem;
@@ -4359,15 +4386,22 @@ h6,
 
 .spots-wrapper {
   position: relative;
-  z-index: 0; }
+  z-index: 0;
+  margin-top: 25%; }
+  @media print, screen and (min-width: 64em) {
+    .spots-wrapper {
+      margin-top: 10%; } }
 
 .spot {
   color: #ffffff;
   border: 1rem solid #ffffff;
   border-radius: 10px 10px 0 0;
   border-bottom: none;
-  min-height: 25rem;
-  position: relative; }
+  min-height: 15rem;
+  position: relative;
+  background-color: rgba(0, 255, 0, 0.3); }
+  .spot.parked {
+    background-color: rgba(255, 0, 0, 0.3); }
   .spot .name {
     position: absolute;
     display: block;

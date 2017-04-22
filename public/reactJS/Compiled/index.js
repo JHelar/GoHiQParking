@@ -31896,9 +31896,10 @@ var Spot = function Spot(_ref) {
         isLogged = _ref.isLogged;
 
     var buttonTxt = isparked ? "Leave" : "Park";
+    var spotClass = isparked ? "spot small-6 medium-4 large-3 column parked" : "spot small-6 medium-4 large-3 column";
     return _react2.default.createElement(
         'div',
-        { className: 'spot small-12 medium-6 large-4 column' },
+        { className: spotClass },
         _react2.default.createElement(
             'span',
             { className: 'name' },

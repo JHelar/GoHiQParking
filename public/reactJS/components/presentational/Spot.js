@@ -6,8 +6,9 @@ import { timeDifference } from '../../../general/helpers';
 
 const Spot = ({onClick, id, name, isparked, canmodify, parkedby, parkedtime, isLogged}) => {
     let buttonTxt = isparked ? "Leave" : "Park";
+    let spotClass = isparked ? "spot small-6 medium-4 large-3 column parked" : "spot small-6 medium-4 large-3 column";
     return(
-        <div className="spot small-12 medium-6 large-4 column">
+        <div className={spotClass}>
             <span className="name">{name}</span>
             {isparked &&
             <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
