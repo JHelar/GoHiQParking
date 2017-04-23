@@ -9,10 +9,11 @@ const mapStateToProps = (state) => {
     let currentLot = state.parkingLots.lots.filter((lot) => {
         return lot.id === state.parkingLots.selectedParkingLot;
     })[0];
-
+    let lotName = currentLot === undefined ? "" : currentLot.name;
     let spots = currentLot === undefined ? [] : currentLot.spots;
 
     return {
+        lotName: lotName,
         isLogged: state.user.isLogged,
         spots: spots
     };

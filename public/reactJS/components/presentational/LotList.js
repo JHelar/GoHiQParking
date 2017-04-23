@@ -4,7 +4,7 @@
 import Lot from './Lot';
 import React, { PropTypes } from 'react';
 
-const LotList = ({ show, lots, onLotClick, name }) => {
+const LotList = ({ show, lots, onLotClick }) => {
     let cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
     return (<header className={cn}>
         {lots.map(lot =>
@@ -14,7 +14,6 @@ const LotList = ({ show, lots, onLotClick, name }) => {
                 onClick={ () => onLotClick(lot.id) }
             />
         )}
-        <h1 className="current-lot-name">{name}</h1>
     </header>);
 };
 

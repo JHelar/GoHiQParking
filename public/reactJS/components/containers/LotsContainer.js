@@ -7,14 +7,7 @@ import LotList from '../presentational/LotList';
 import { SCENE } from '../redux/constants';
 
 const mapStateToProps = (state) => {
-    let currentLot = state.parkingLots.lots.filter((lot) => {
-        return lot.id === state.parkingLots.selectedParkingLot;
-    })[0];
-
-    let name = currentLot === undefined ? "" : currentLot.name;
-
     return {
-        name: name,
         show: state.scene.current === SCENE.SHOW_PARKING_LOTS,
         lots: state.parkingLots.lots
     };

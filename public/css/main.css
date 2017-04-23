@@ -4305,6 +4305,7 @@ h6,
   align-content: center;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
+  padding: 0 1rem;
   -webkit-transition: transform 0.2s ease-out;
   -moz-transition: transform 0.2s ease-out;
   -ms-transition: transform 0.2s ease-out;
@@ -4316,18 +4317,6 @@ h6,
   @media print, screen and (min-width: 64em) {
     .lot-wrapper {
       justify-content: space-around; } }
-  .lot-wrapper .current-lot-name {
-    position: absolute;
-    bottom: -25%;
-    font-family: "HiQRough", sans-serif;
-    font-size: 6rem;
-    font-weight: 700;
-    color: #fe0070;
-    text-align: center;
-    text-transform: uppercase;
-    display: block;
-    text-shadow: 3px 3px 0 #ffe50d;
-    flex-basis: 100%; }
   .lot-wrapper .lot {
     -webkit-background-size: cover;
     background-size: cover;
@@ -4340,9 +4329,9 @@ h6,
     border-radius: 10px;
     padding: 3rem 0;
     cursor: pointer;
-    flex-grow: 0;
+    flex-grow: 1;
     flex-shrink: 0;
-    flex-basis: 100%;
+    flex-basis: 70%;
     -webkit-transition: all 0.5s ease-out;
     -moz-transition: all 0.5s ease-out;
     -ms-transition: all 0.5s ease-out;
@@ -4353,10 +4342,12 @@ h6,
         background-size: 70%; } }
     @media print, screen and (min-width: 40em) {
       .lot-wrapper .lot {
-        flex-basis: 50%; } }
+        flex-basis: 50%;
+        flex-grow: 0; } }
     @media print, screen and (min-width: 64em) {
       .lot-wrapper .lot {
-        flex-basis: 25%; } }
+        flex-basis: 25%;
+        flex-grow: 0; } }
     .lot-wrapper .lot:hover {
       border-color: #fe0070; }
       @media print, screen and (min-width: 64em) {
@@ -4368,11 +4359,14 @@ h6,
         color: #fe0070; }
     .lot-wrapper .lot h1 {
       font-family: "HiQRough", sans-serif;
-      font-size: 5rem;
+      font-size: 4rem;
       font-weight: 700;
       color: #ffffff;
       text-transform: uppercase;
       text-align: center; }
+      @media print, screen and (min-width: 64em) {
+        .lot-wrapper .lot h1 {
+          font-size: 5rem; } }
   .lot-wrapper.lot-wrapper.hide-lots {
     -webkit-transform: translateY(-100%);
     -moz-transform: translateY(-100%);
@@ -4384,13 +4378,30 @@ h6,
   z-index: 0;
   position: relative; }
 
+.current-lot-name {
+  font-family: "HiQRough", sans-serif;
+  font-size: 4rem;
+  font-weight: 700;
+  color: #fe0070;
+  text-align: center;
+  text-transform: uppercase;
+  display: block;
+  text-shadow: 3px 3px 0 #ffe50d; }
+  @media print, screen and (min-width: 40em) {
+    .current-lot-name {
+      font-size: 5rem; } }
+  @media print, screen and (min-width: 64em) {
+    .current-lot-name {
+      font-size: 6rem; } }
+
 .spots-wrapper {
   position: relative;
   z-index: 0;
-  margin-top: 25%; }
-  @media print, screen and (min-width: 64em) {
-    .spots-wrapper {
-      margin-top: 10%; } }
+  margin-top: 1rem; }
+  .spots-wrapper .name {
+    display: block;
+    text-align: center;
+    font-size: 2rem; }
 
 .spot {
   color: #ffffff;

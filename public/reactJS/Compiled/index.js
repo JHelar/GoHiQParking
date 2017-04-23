@@ -31145,7 +31145,7 @@ var Header = function (_Component) {
                     'header',
                     { id: 'main-header' },
                     _react2.default.createElement(_HeaderButtons.HomeButton, { onClick: function onClick() {
-                            return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
+                            return _this2.onChangeScene(_constants.SCENE.SHOW_SPOTS);
                         } }),
                     _react2.default.createElement(_HeaderButtons.MenuButton, { open: menuOpen, onClick: function onClick() {
                             return _this2.onToggleMenu();
@@ -31154,14 +31154,17 @@ var Header = function (_Component) {
                     _react2.default.createElement(
                         'div',
                         { id: 'menu', className: [menuShow] },
-                        !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
-                                return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
-                            } }),
                         isLogged && _react2.default.createElement(
                             'span',
                             { className: 'user-name uppercase' },
                             userName
                         ),
+                        _react2.default.createElement(_HeaderButtons.LotChoiceButton, { onClick: function onClick() {
+                                return _this2.onChangeScene(_constants.SCENE.SHOW_PARKING_LOTS);
+                            } }),
+                        !isLogged && _react2.default.createElement(_HeaderButtons.LoginButton, { onClick: function onClick() {
+                                return _this2.onChangeScene(_constants.SCENE.SHOW_LOGIN);
+                            } }),
                         isLogged && _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
                                 return dispatch((0, _actions.fetchLogout)());
                             } }),
@@ -31279,14 +31282,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Created by Johnh on 2017-03-19.
  */
 var mapStateToProps = function mapStateToProps(state) {
-    var currentLot = state.parkingLots.lots.filter(function (lot) {
-        return lot.id === state.parkingLots.selectedParkingLot;
-    })[0];
-
-    var name = currentLot === undefined ? "" : currentLot.name;
-
     return {
-        name: name,
         show: state.scene.current === _constants.SCENE.SHOW_PARKING_LOTS,
         lots: state.parkingLots.lots
     };
@@ -31532,10 +31528,11 @@ var mapStateToProps = function mapStateToProps(state) {
     var currentLot = state.parkingLots.lots.filter(function (lot) {
         return lot.id === state.parkingLots.selectedParkingLot;
     })[0];
-
+    var lotName = currentLot === undefined ? "" : currentLot.name;
     var spots = currentLot === undefined ? [] : currentLot.spots;
 
     return {
+        lotName: lotName,
         isLogged: state.user.isLogged,
         spots: spots
     };
@@ -31627,7 +31624,7 @@ exports.default = Error;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.LogoutButton = exports.MenuButton = exports.HomeButton = exports.RegisterButton = exports.LoginButton = undefined;
+exports.LogoutButton = exports.MenuButton = exports.HomeButton = exports.RegisterButton = exports.LotChoiceButton = exports.LoginButton = undefined;
 
 var _react = require("react");
 
@@ -31662,9 +31659,32 @@ LoginButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-// Register
-var RegisterButton = exports.RegisterButton = function RegisterButton(_ref2) {
+// Lotchoice
+var LotChoiceButton = exports.LotChoiceButton = function LotChoiceButton(_ref2) {
     var onClick = _ref2.onClick;
+
+    return _react2.default.createElement(
+        "a",
+        { onClick: onClick, className: "uppercase" },
+        _react2.default.createElement(
+            "span",
+            null,
+            "Lots",
+            _react2.default.createElement(
+                "i",
+                { className: "flavor green" },
+                "Where do you park?"
+            )
+        )
+    );
+};
+LotChoiceButton.propTypes = {
+    onClick: _react.PropTypes.func
+};
+
+// Register
+var RegisterButton = exports.RegisterButton = function RegisterButton(_ref3) {
+    var onClick = _ref3.onClick;
 
     return _react2.default.createElement(
         "a",
@@ -31687,8 +31707,8 @@ RegisterButton.propTypes = {
 };
 
 // Home
-var HomeButton = exports.HomeButton = function HomeButton(_ref3) {
-    var onClick = _ref3.onClick;
+var HomeButton = exports.HomeButton = function HomeButton(_ref4) {
+    var onClick = _ref4.onClick;
 
     return _react2.default.createElement(
         "a",
@@ -31707,9 +31727,9 @@ HomeButton.propTypes = {
 };
 
 // Menubutton
-var MenuButton = exports.MenuButton = function MenuButton(_ref4) {
-    var onClick = _ref4.onClick,
-        open = _ref4.open;
+var MenuButton = exports.MenuButton = function MenuButton(_ref5) {
+    var onClick = _ref5.onClick,
+        open = _ref5.open;
 
     var openClass = open ? "hamburger open" : "hamburger";
     return _react2.default.createElement(
@@ -31739,8 +31759,8 @@ MenuButton.propTypes = {
 };
 
 // Logout
-var LogoutButton = exports.LogoutButton = function LogoutButton(_ref5) {
-    var onClick = _ref5.onClick;
+var LogoutButton = exports.LogoutButton = function LogoutButton(_ref6) {
+    var onClick = _ref6.onClick;
 
     return _react2.default.createElement(
         "a",
@@ -31830,8 +31850,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var LotList = function LotList(_ref) {
     var show = _ref.show,
         lots = _ref.lots,
-        onLotClick = _ref.onLotClick,
-        name = _ref.name;
+        onLotClick = _ref.onLotClick;
 
     var cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
     return _react2.default.createElement(
@@ -31845,12 +31864,7 @@ var LotList = function LotList(_ref) {
                     return onLotClick(lot.id);
                 }
             }));
-        }),
-        _react2.default.createElement(
-            'h1',
-            { className: 'current-lot-name' },
-            name
-        )
+        })
     );
 };
 
@@ -31896,36 +31910,40 @@ var Spot = function Spot(_ref) {
         isLogged = _ref.isLogged;
 
     var buttonTxt = isparked ? "Leave" : "Park";
-    var spotClass = isparked ? "spot small-6 medium-4 large-3 column parked" : "spot small-6 medium-4 large-3 column";
+    var spotClass = isparked ? "spot parked" : "spot";
     return _react2.default.createElement(
         'div',
-        { className: spotClass },
+        { className: 'small-6 medium-4 large-3 column' },
         _react2.default.createElement(
             'span',
             { className: 'name' },
             name
         ),
-        isparked && _react2.default.createElement(
-            'p',
-            null,
-            parkedby,
-            ' - ',
-            (0, _helpers.timeDifference)(new Date(parkedtime))
-        ),
-        canmodify && isparked && _react2.default.createElement(
-            'button',
-            { onClick: onClick, className: 'button-flavor green' },
-            buttonTxt
-        ),
-        canmodify && !isparked && _react2.default.createElement(
-            'button',
-            { onClick: onClick, className: 'button-flavor blue' },
-            buttonTxt
-        ),
-        !isLogged && !isparked && _react2.default.createElement(
-            'p',
-            null,
-            'Login to park'
+        _react2.default.createElement(
+            'div',
+            { className: spotClass },
+            isparked && _react2.default.createElement(
+                'p',
+                null,
+                parkedby,
+                ' - ',
+                (0, _helpers.timeDifference)(new Date(parkedtime))
+            ),
+            canmodify && isparked && _react2.default.createElement(
+                'button',
+                { onClick: onClick, className: 'button-flavor green' },
+                buttonTxt
+            ),
+            canmodify && !isparked && _react2.default.createElement(
+                'button',
+                { onClick: onClick, className: 'button-flavor blue' },
+                buttonTxt
+            ),
+            !isLogged && !isparked && _react2.default.createElement(
+                'p',
+                null,
+                'Login to park'
+            )
         )
     );
 };
@@ -31966,27 +31984,38 @@ var _Spot2 = _interopRequireDefault(_Spot);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SpotsList = function SpotsList(_ref) {
-    var spots = _ref.spots,
+    var lotName = _ref.lotName,
+        spots = _ref.spots,
         isLogged = _ref.isLogged,
         onSpotClick = _ref.onSpotClick;
 
 
     return _react2.default.createElement(
         'main',
-        { className: 'content spots-wrapper row' },
-        spots.map(function (spot) {
-            return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
-                isLogged: isLogged,
-                onClick: function onClick() {
-                    return onSpotClick(spot.id);
-                }
-            }));
-        })
+        null,
+        _react2.default.createElement(
+            'h1',
+            { className: 'current-lot-name' },
+            lotName
+        ),
+        _react2.default.createElement(
+            'div',
+            { className: 'spots-wrapper row align-spaced' },
+            spots.map(function (spot) {
+                return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
+                    isLogged: isLogged,
+                    onClick: function onClick() {
+                        return onSpotClick(spot.id);
+                    }
+                }));
+            })
+        )
     );
 };
 
 SpotsList.propTypes = {
     onSpotClick: _react.PropTypes.func,
+    lotName: _react.PropTypes.string.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,

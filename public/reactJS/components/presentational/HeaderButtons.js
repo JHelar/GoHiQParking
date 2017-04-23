@@ -19,6 +19,21 @@ LoginButton.propTypes = {
     onClick: PropTypes.func
 };
 
+// Lotchoice
+export const LotChoiceButton = ({ onClick }) => {
+    return (
+        <a onClick={onClick} className="uppercase">
+            <span>
+                Lots
+                <i className="flavor green">Where do you park?</i>
+            </span>
+        </a>
+    );
+};
+LotChoiceButton.propTypes = {
+    onClick: PropTypes.func
+};
+
 // Register
 export const RegisterButton = ({ onClick }) => {
     return(

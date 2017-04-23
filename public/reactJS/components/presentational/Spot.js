@@ -6,26 +6,28 @@ import { timeDifference } from '../../../general/helpers';
 
 const Spot = ({onClick, id, name, isparked, canmodify, parkedby, parkedtime, isLogged}) => {
     let buttonTxt = isparked ? "Leave" : "Park";
-    let spotClass = isparked ? "spot small-6 medium-4 large-3 column parked" : "spot small-6 medium-4 large-3 column";
+    let spotClass = isparked ? "spot parked" : "spot";
     return(
-        <div className={spotClass}>
+        <div className="small-6 medium-4 large-3 column">
             <span className="name">{name}</span>
-            {isparked &&
-            <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
-            }
-            {(canmodify && isparked) &&
-            <button onClick={onClick} className="button-flavor green">
-                { buttonTxt }
-            </button>
-            }
-            {(canmodify && !isparked) &&
-            <button onClick={onClick} className="button-flavor blue">
-                { buttonTxt }
-            </button>
-            }
-            {(!isLogged && !isparked) &&
-                <p>Login to park</p>
-            }
+            <div className={spotClass}>
+                {isparked &&
+                <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
+                }
+                {(canmodify && isparked) &&
+                <button onClick={onClick} className="button-flavor green">
+                    { buttonTxt }
+                </button>
+                }
+                {(canmodify && !isparked) &&
+                <button onClick={onClick} className="button-flavor blue">
+                    { buttonTxt }
+                </button>
+                }
+                {(!isLogged && !isparked) &&
+                    <p>Login to park</p>
+                }
+            </div>
         </div>
     );
 };

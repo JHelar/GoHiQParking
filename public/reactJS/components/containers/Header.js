@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { changeScene, fetchUser, receiveLogin, fetchLogout, toggleMenu } from '../redux/actions';
 import { SCENE } from '../redux/constants';
-import { LoginButton, RegisterButton, HomeButton, LogoutButton, MenuButton } from '../presentational/HeaderButtons';
+import { LoginButton, RegisterButton, HomeButton, LogoutButton, MenuButton, LotChoiceButton } from '../presentational/HeaderButtons';
 import Error from '../presentational/Error';
 
 class Header extends Component {
@@ -36,15 +36,16 @@ class Header extends Component {
                     <Error {...error}/>
                 }
                 <header id="main-header">
-                    <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
+                    <HomeButton onClick={() => this.onChangeScene(SCENE.SHOW_SPOTS)}/>
                     <MenuButton open={menuOpen} onClick={() => this.onToggleMenu()}
                     />
                     <div id="menu" className={[menuShow]}>
-                        {!isLogged &&
-                        <LoginButton onClick={() => this.onChangeScene(SCENE.SHOW_LOGIN)}/>
-                        }
                         {isLogged &&
                         <span className="user-name uppercase">{ userName }</span>
+                        }
+                        <LotChoiceButton onClick={() => this.onChangeScene(SCENE.SHOW_PARKING_LOTS)}/>
+                        {!isLogged &&
+                        <LoginButton onClick={() => this.onChangeScene(SCENE.SHOW_LOGIN)}/>
                         }
                         {isLogged &&
                         <LogoutButton onClick={() => dispatch(fetchLogout()) } />
