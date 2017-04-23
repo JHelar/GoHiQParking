@@ -1,9 +1,10 @@
 /**
  * Created by Johnh on 2017-04-02.
  */
-import {toggleSpot, fetchToggleSpot } from '../redux/actions';
+import {toggleSpot, fetchToggleSpot, changeScene } from '../redux/actions';
 import { connect } from 'react-redux';
 import SpotList from '../presentational/SpotList';
+import { SCENE } from '../redux/constants';
 
 const mapStateToProps = (state) => {
     let currentLot = state.parkingLots.lots.filter((lot) => {
@@ -21,6 +22,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        onLoginClick: () => dispatch(changeScene(SCENE.SHOW_LOGIN)),
         onSpotClick: (id) => {
             dispatch(toggleSpot(id));
             dispatch(fetchToggleSpot(id));

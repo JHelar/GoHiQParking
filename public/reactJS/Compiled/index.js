@@ -31522,8 +31522,13 @@ var _SpotList = require('../presentational/SpotList');
 
 var _SpotList2 = _interopRequireDefault(_SpotList);
 
+var _constants = require('../redux/constants');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/**
+ * Created by Johnh on 2017-04-02.
+ */
 var mapStateToProps = function mapStateToProps(state) {
     var currentLot = state.parkingLots.lots.filter(function (lot) {
         return lot.id === state.parkingLots.selectedParkingLot;
@@ -31536,13 +31541,13 @@ var mapStateToProps = function mapStateToProps(state) {
         isLogged: state.user.isLogged,
         spots: spots
     };
-}; /**
-    * Created by Johnh on 2017-04-02.
-    */
-
+};
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
+        onLoginClick: function onLoginClick() {
+            return dispatch((0, _actions.changeScene)(_constants.SCENE.SHOW_LOGIN));
+        },
         onSpotClick: function onSpotClick(id) {
             dispatch((0, _actions.toggleSpot)(id));
             dispatch((0, _actions.fetchToggleSpot)(id));
@@ -31552,7 +31557,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
 
-},{"../presentational/SpotList":535,"../redux/actions":536,"react-redux":471}],529:[function(require,module,exports){
+},{"../presentational/SpotList":535,"../redux/actions":536,"../redux/constants":538,"react-redux":471}],529:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31901,6 +31906,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var Spot = function Spot(_ref) {
     var onClick = _ref.onClick,
+        onLoginClick = _ref.onLoginClick,
         id = _ref.id,
         name = _ref.name,
         isparked = _ref.isparked,
@@ -31940,8 +31946,8 @@ var Spot = function Spot(_ref) {
                 buttonTxt
             ),
             !isLogged && !isparked && _react2.default.createElement(
-                'p',
-                null,
+                'button',
+                { onClick: onLoginClick },
                 'Login to park'
             )
         )
@@ -31950,6 +31956,7 @@ var Spot = function Spot(_ref) {
 
 Spot.propTypes = {
     onClick: _react.PropTypes.func,
+    onLoginClick: _react.PropTypes.func,
     id: _react.PropTypes.number.isRequired,
     name: _react.PropTypes.string.isRequired,
     isparked: _react.PropTypes.bool.isRequired,
@@ -31987,7 +31994,8 @@ var SpotsList = function SpotsList(_ref) {
     var lotName = _ref.lotName,
         spots = _ref.spots,
         isLogged = _ref.isLogged,
-        onSpotClick = _ref.onSpotClick;
+        onSpotClick = _ref.onSpotClick,
+        onLoginClick = _ref.onLoginClick;
 
 
     return _react2.default.createElement(
@@ -32006,7 +32014,8 @@ var SpotsList = function SpotsList(_ref) {
                     isLogged: isLogged,
                     onClick: function onClick() {
                         return onSpotClick(spot.id);
-                    }
+                    },
+                    onLoginClick: onLoginClick
                 }));
             })
         )
@@ -32015,6 +32024,7 @@ var SpotsList = function SpotsList(_ref) {
 
 SpotsList.propTypes = {
     onSpotClick: _react.PropTypes.func,
+    onLoginClick: _react.PropTypes.func,
     lotName: _react.PropTypes.string.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,

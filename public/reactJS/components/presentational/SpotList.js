@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import Spot from '../presentational/Spot';
 
-const SpotsList = ({lotName, spots, isLogged, onSpotClick}) => {
+const SpotsList = ({lotName, spots, isLogged, onSpotClick, onLoginClick}) => {
 
     return (<main>
         <h1 className="current-lot-name">{lotName}</h1>
@@ -14,6 +14,7 @@ const SpotsList = ({lotName, spots, isLogged, onSpotClick}) => {
                 { ...spot }
                 isLogged={isLogged}
                 onClick={() => onSpotClick(spot.id)}
+                onLoginClick={onLoginClick}
             />
         )}
         </div>
@@ -22,6 +23,7 @@ const SpotsList = ({lotName, spots, isLogged, onSpotClick}) => {
 
 SpotsList.propTypes = {
     onSpotClick: PropTypes.func,
+    onLoginClick: PropTypes.func,
     lotName: PropTypes.string.isRequired,
     spots: PropTypes.arrayOf(PropTypes.shape({
             id: PropTypes.number.isRequired,
