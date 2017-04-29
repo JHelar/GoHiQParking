@@ -3,11 +3,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 )
 
 const EVENT_TYPE_UPDATE = "update"
 const EVENT_TYPE_PUSH_NOTIFICATION = "notification"
 const EVENT_TYPE_MESSAGE = ""
+
+var portRegex *regexp.Regexp
+
+
+func init(){
+	portRegex = regexp.MustCompile(`:[0-9]+$`)
+}
 
 type Message struct {
 	ClientOrigin string
@@ -57,7 +65,7 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 	rw.Header().Set("Access-Control-Allow-Origin", "*")
 
 	messageChan := make(chan Message)
-	clientOrign := req.RemoteAddr
+	clientOrign := portRegex.ReplaceAllString(req.RemoteAddr, "")
 
 	broker.newClients <- messageChan
 	defer func() {
@@ -75,7 +83,8 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 		select{
 		case msg := <- messageChan:
 			//Do not send events to same client.
-			if(msg.ClientOrigin != clientOrign){
+			log.Printf("%s != %s", portRegex.ReplaceAllString(msg.ClientOrigin, ""), clientOrign)
+			if(portRegex.ReplaceAllString(msg.ClientOrigin, "") != clientOrign){
 				fmt.Fprintf(rw, "event:%s%s\ndata:%s\n\n", msg.EventType, msg.EventChannel, msg.Message)
 			}
 			flusher.Flush()

@@ -6,13 +6,14 @@ import Spot from '../presentational/Spot';
 
 const SpotsList = ({lotName, spots, isLogged, onSpotClick, onLoginClick}) => {
 
-    return (<main>
+    return (spots !== undefined && <main>
         <h1 className="current-lot-name">{lotName}</h1>
         <div className="spots-wrapper row align-spaced">
         {spots.map(spot =>
             <Spot
                 { ...spot }
                 isLogged={isLogged}
+                key={spot.id}
                 onClick={() => onSpotClick(spot.id)}
                 onLoginClick={onLoginClick}
             />

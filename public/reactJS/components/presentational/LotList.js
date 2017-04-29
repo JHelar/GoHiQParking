@@ -20,7 +20,6 @@ const LotList = ({ show, lots, onLotClick }) => {
 LotList.propTypes = {
     onLotClick: PropTypes.func,
     show: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired,
     lots: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,

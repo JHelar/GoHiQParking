@@ -208,7 +208,7 @@ export function getGoogleStaticMap(location){
 }
 
 export function timeDifference(previous) {
-    var current = Date.now()
+    var current = Date.now();
 
     var msPerMinute = 60 * 1000;
     var msPerHour = msPerMinute * 60;

@@ -30771,6 +30771,97 @@ function symbolObservablePonyfill(root) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _isomorphicFetch = require("isomorphic-fetch");
+
+var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var GET_LOTS_PATH = "api/lot/getAll"; /**
+                                       * Created by Johnh on 2017-04-29.
+                                       */
+
+var LOT_FILL_PATH = "api/lot/fill";
+var SPOT_TOGGLE_PATH = "api/spot/toggle";
+var GET_USER_PATH = "api/user/get";
+var LOGIN_USER_PATH = "api/user/login";
+var REGISTER_USER_PATH = "api/user/register";
+var LOGOUT_USER_PATH = "api/user/logout";
+var SPOT_EVENT_PATH = "/event/spot";
+
+var eventSource = new EventSource(SPOT_EVENT_PATH);
+var updateLotName = null;
+var event = {
+    addListener: function addListener(name, success, error) {
+        eventSource.addEventListener(name, function (e) {
+            var data = JSON.parse(e.data);
+            if (!data.error) success(data);else {
+                error(data);
+            }
+        }, false);
+    },
+    removeListener: function removeListener(name) {
+        eventSource.removeEventListener(name);
+    }
+};
+
+var Client = {
+    getLots: function getLots() {
+        return get(GET_LOTS_PATH);
+    },
+    fillLot: function fillLot(lotId, sessionKey) {
+        return post(LOT_FILL_PATH, { id: lotId, sessionKey: sessionKey });
+    },
+    toggleSpot: function toggleSpot(spotId, sessionKey) {
+        return post(SPOT_TOGGLE_PATH, { id: spotId, sessionKey: sessionKey });
+    },
+    getUser: function getUser(sessionKey) {
+        return post(GET_USER_PATH, { sessionKey: sessionKey });
+    },
+    logIn: function logIn(usernameEmail, password) {
+        return post(LOGIN_USER_PATH, { usernameemail: usernameEmail, password: password });
+    },
+    register: function register(username, email, password) {
+        return post(REGISTER_USER_PATH, { username: username, email: email, password: password });
+    },
+    logOut: function logOut(sessionKey) {
+        return post(LOGOUT_USER_PATH, { sessionKey: sessionKey });
+    },
+    updateLotListener: function updateLotListener(lotId, success, error) {
+        var newName = "update" + lotId.toString();
+        if (updateLotName === null) {
+            event.addListener(newName, success, error);
+        } else if (updateLotName !== newName) {
+            event.removeListener(updateLotName);
+            event.addListener(newName, success, error);
+        }
+    }
+};
+
+exports.default = Client;
+
+
+var post = function post(url, body) {
+    return (0, _isomorphicFetch2.default)(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+};
+
+var get = function get(url) {
+    return (0, _isomorphicFetch2.default)(url);
+};
+
+},{"isomorphic-fetch":322}],521:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.createCookie = createCookie;
 exports.getCookie = getCookie;
 exports.deleteCookie = deleteCookie;
@@ -30974,7 +31065,7 @@ function timeDifference(previous) {
     }
 }
 
-},{}],521:[function(require,module,exports){
+},{}],522:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31053,7 +31144,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":536,"./Header":522,"./LotsContainer":524,"./SceneSwapper":527,"react":501,"react-redux":471}],522:[function(require,module,exports){
+},{"../redux/actions":537,"./Header":523,"./LotsContainer":525,"./SceneSwapper":528,"react":501,"react-redux":471}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31204,7 +31295,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":530,"../presentational/HeaderButtons":531,"../redux/actions":536,"../redux/constants":538,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../presentational/Error":531,"../presentational/HeaderButtons":532,"../redux/actions":537,"../redux/constants":539,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31259,7 +31350,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":536,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../redux/actions":537,"react":501,"react-redux":471}],525:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31293,6 +31384,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
         onLotClick: function onLotClick(id) {
             dispatch((0, _actions.selectParkingLot)(id));
             dispatch((0, _actions.fetchSpots)(id));
+            dispatch((0, _actions.updateLotListener)(id));
         }
     };
 };
@@ -31301,7 +31393,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":533,"../redux/actions":536,"../redux/constants":538,"react-redux":471}],525:[function(require,module,exports){
+},{"../presentational/LotList":534,"../redux/actions":537,"../redux/constants":539,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31363,7 +31455,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":536,"react":501,"react-redux":471}],526:[function(require,module,exports){
+},{"../redux/actions":537,"react":501,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31424,7 +31516,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":537,"./App":521,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/configureStore":538,"./App":522,"react":501,"react-redux":471}],528:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31507,7 +31599,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":538,"./Login":523,"./Register":525,"./SpotsContainer":528,"react":501,"react-redux":471}],528:[function(require,module,exports){
+},{"../redux/constants":539,"./Login":524,"./Register":526,"./SpotsContainer":529,"react":501,"react-redux":471}],529:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31557,7 +31649,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
 
-},{"../presentational/SpotList":535,"../redux/actions":536,"../redux/constants":538,"react-redux":471}],529:[function(require,module,exports){
+},{"../presentational/SpotList":536,"../redux/actions":537,"../redux/constants":539,"react-redux":471}],530:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31579,7 +31671,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
-},{"./containers/Root":526,"babel-polyfill":1,"react":501,"react-dom":335}],530:[function(require,module,exports){
+},{"./containers/Root":527,"babel-polyfill":1,"react":501,"react-dom":335}],531:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31623,7 +31715,7 @@ Error.propTypes = {
 
 exports.default = Error;
 
-},{"react":501}],531:[function(require,module,exports){
+},{"react":501}],532:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31787,7 +31879,7 @@ LogoutButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-},{"react":501}],532:[function(require,module,exports){
+},{"react":501}],533:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31830,7 +31922,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../../../general/helpers":520,"react":501}],533:[function(require,module,exports){
+},{"../../../general/helpers":521,"react":501}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31876,7 +31968,6 @@ var LotList = function LotList(_ref) {
 LotList.propTypes = {
     onLotClick: _react.PropTypes.func,
     show: _react.PropTypes.bool.isRequired,
-    name: _react.PropTypes.string.isRequired,
     lots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,
@@ -31886,7 +31977,7 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":532,"react":501}],534:[function(require,module,exports){
+},{"./Lot":533,"react":501}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31968,7 +32059,7 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/helpers":520,"react":501}],535:[function(require,module,exports){
+},{"../../../general/helpers":521,"react":501}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31998,7 +32089,7 @@ var SpotsList = function SpotsList(_ref) {
         onLoginClick = _ref.onLoginClick;
 
 
-    return _react2.default.createElement(
+    return spots !== undefined && _react2.default.createElement(
         'main',
         null,
         _react2.default.createElement(
@@ -32012,6 +32103,7 @@ var SpotsList = function SpotsList(_ref) {
             spots.map(function (spot) {
                 return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
                     isLogged: isLogged,
+                    key: spot.id,
                     onClick: function onClick() {
                         return onSpotClick(spot.id);
                     },
@@ -32039,7 +32131,7 @@ SpotsList.propTypes = {
 
 exports.default = SpotsList;
 
-},{"../presentational/Spot":534,"react":501}],536:[function(require,module,exports){
+},{"../presentational/Spot":535,"react":501}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32053,6 +32145,7 @@ exports.fetchParkingLots = fetchParkingLots;
 exports.requestSpots = requestSpots;
 exports.receiveSpots = receiveSpots;
 exports.receiveSpotsError = receiveSpotsError;
+exports.updateLotListener = updateLotListener;
 exports.fetchSpots = fetchSpots;
 exports.requestToggleSpot = requestToggleSpot;
 exports.receiveToggleSpot = receiveToggleSpot;
@@ -32085,6 +32178,10 @@ var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 var _helpers = require('../../../general/helpers');
 
 var _constants = require('./constants');
+
+var _ApiClient = require('../../../general/ApiClient');
+
+var _ApiClient2 = _interopRequireDefault(_ApiClient);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32145,7 +32242,7 @@ function receiveParkingLotsError(json) {
 function fetchParkingLots() {
     return function (dispatch) {
         dispatch(requestParkingLots());
-        return (0, _isomorphicFetch2.default)('api/lot/getAll').then(function (response) {
+        return _ApiClient2.default.getLots().then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveParkingLotsError(json));else dispatch(receiveParkingLots(json));
@@ -32180,19 +32277,24 @@ function receiveSpotsError(parkingLot, json) {
     };
 }
 
+function updateLotListener(parkingLot) {
+    return function (dispatch) {
+        return _ApiClient2.default.updateLotListener(parkingLot, function () {
+            return dispatch(fetchParkingLots(parkingLot));
+        }, function () {
+            return dispatch(receiveSpotsError(parkingLot, { message: "EventStreamError" }));
+        });
+    };
+}
+
 function fetchSpots(parkingLot) {
     return function (dispatch) {
         dispatch(requestSpots(parkingLot));
-        return (0, _isomorphicFetch2.default)('api/lot/fill', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: parkingLot, sessionKey: (0, _helpers.getCookie)("skey") })
-        }).then(function (response) {
+        return _ApiClient2.default.fillLot(parkingLot, (0, _helpers.getCookie)("skey")).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveSpotsError(parkingLot, json));else {
+                //updateLotListener(parkingLot, dispatch);
                 dispatch(receiveSpots(parkingLot, json));
                 dispatch(changeScene(_constants.SCENE.SHOW_SPOTS));
             }
@@ -32229,16 +32331,7 @@ function receiveToggleSpotError(spot, json) {
 function fetchToggleSpot(spot) {
     return function (dispatch) {
         dispatch(requestToggleSpot(spot));
-        return (0, _isomorphicFetch2.default)('api/spot/toggle', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                sessionKey: (0, _helpers.getCookie)("skey"),
-                id: spot
-            })
-        }).then(function (response) {
+        return _ApiClient2.default.toggleSpot(spot, (0, _helpers.getCookie)("skey")).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveToggleSpotError(spot, json));else dispatch(receiveToggleSpot(spot, json));
@@ -32271,12 +32364,7 @@ function receiveLoginError(json) {
 
 function fetchUser(dispatchCallback) {
     return function (dispatch) {
-        return (0, _isomorphicFetch2.default)('api/user/get', {
-            method: 'POST',
-            body: JSON.stringify({
-                sessionKey: (0, _helpers.getCookie)("skey")
-            })
-        }).then(function (response) {
+        return _ApiClient2.default.getUser((0, _helpers.getCookie)("skey")).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveLoginError(json));else {
@@ -32292,16 +32380,7 @@ function fetchUser(dispatchCallback) {
 function fetchLogin(usernameemail, password) {
     return function (dispatch) {
         dispatch(requestLogin());
-        return (0, _isomorphicFetch2.default)('api/user/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                usernameemail: usernameemail,
-                password: password
-            })
-        }).then(function (response) {
+        return _ApiClient2.default.logIn(usernameemail, password).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveLoginError(json));else {
@@ -32337,17 +32416,7 @@ function receiveRegisterError(json) {
 function fetchRegister(username, email, password) {
     return function (dispatch) {
         dispatch(requestRegister());
-        return (0, _isomorphicFetch2.default)('api/user/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password
-            })
-        }).then(function (response) {
+        return _ApiClient2.default.register(username, email, password).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveRegisterError(json));else {
@@ -32382,15 +32451,7 @@ function receiveLogoutError(json) {
 function fetchLogout() {
     return function (dispatch) {
         dispatch(requestLogout());
-        return (0, _isomorphicFetch2.default)('api/user/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                sessionKey: (0, _helpers.getCookie)("skey")
-            })
-        }).then(function (response) {
+        return _ApiClient2.default.logOut((0, _helpers.getCookie)("skey")).then(function (response) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveLogoutError(json));else {
@@ -32443,7 +32504,7 @@ function toggleMapReveal() {
     };
 }
 
-},{"../../../general/helpers":520,"./constants":538,"isomorphic-fetch":322}],537:[function(require,module,exports){
+},{"../../../general/ApiClient":520,"../../../general/helpers":521,"./constants":539,"isomorphic-fetch":322}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32477,7 +32538,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":539,"redux":513,"redux-logger":506,"redux-thunk":507}],538:[function(require,module,exports){
+},{"./reducers":540,"redux":513,"redux-logger":506,"redux-thunk":507}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32495,7 +32556,7 @@ var SCENE = exports.SCENE = {
     SPOTS_FETCHED: "SPOTS_FETCHED_SCENE"
 };
 
-},{}],539:[function(require,module,exports){
+},{}],540:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32761,4 +32822,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":536,"./constants":538,"redux":513}]},{},[529]);
+},{"./actions":537,"./constants":539,"redux":513}]},{},[530]);

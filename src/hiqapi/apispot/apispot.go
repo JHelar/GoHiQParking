@@ -112,7 +112,7 @@ func pushListener(){
 		for {
 			select {
 			case parkingLot := <- checkSpots:
-				//Check if we need to push a notification.
+			//Check if we need to push a notification.
 				if spots := spot.GetFreeSpots(db, parkingLot);len(spots) <= 0 {
 					spotBroker.Notifier <- hiqeventstream.Message{Message:hiqjson.NO_SPOTS_MSG, EventType:hiqeventstream.EVENT_TYPE_PUSH_NOTIFICATION, EventChannel:fmt.Sprintf("%d", parkingLot)}
 				}else{
@@ -134,6 +134,6 @@ func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 
 	master.RegisterEventStream("spot", spotBroker.ServeHTTP)
 
-	pushListener()
+	//pushListener()
 	log.Printf("%v Registred.",FLARE)
 }

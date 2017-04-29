@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import { createCookie, getCookie, deleteCookie } from '../../../general/helpers';
 import { SCENE } from './constants';
+import Client from '../../../general/ApiClient';
 
 // API ACTIONS
 // Get parking lots
@@ -59,7 +60,7 @@ export function receiveParkingLotsError(json) {
 export function fetchParkingLots(){
 	return dispatch => {
 		dispatch(requestParkingLots());
-		return fetch('api/lot/getAll')
+		return Client.getLots()
 			.then(response => response.json())
 			.then(json => {
 				if(json.error) dispatch(receiveParkingLotsError(json));
@@ -96,20 +97,24 @@ export function receiveSpotsError(parkingLot, json) {
 	};
 }
 
+export function updateLotListener(parkingLot) {
+    return dispatch => {
+        return Client.updateLotListener(parkingLot,
+            () => dispatch(fetchParkingLots(parkingLot)),
+            () => dispatch(receiveSpotsError(parkingLot, {message: "EventStreamError"}))
+        )
+    }
+}
+
 export function fetchSpots(parkingLot) {
 	return dispatch => {
 		dispatch(requestSpots(parkingLot));
-		return fetch('api/lot/fill',{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({id: parkingLot, sessionKey: getCookie("skey")})
-			})
+		return Client.fillLot(parkingLot, getCookie("skey"))
 			.then(response => response.json())
 			.then(json => {
 				if(json.error) dispatch(receiveSpotsError(parkingLot, json));
 				else{
+                    //updateLotListener(parkingLot, dispatch);
 				    dispatch(receiveSpots(parkingLot, json));
                     dispatch(changeScene(SCENE.SHOW_SPOTS));
 				}
@@ -147,16 +152,7 @@ export function receiveToggleSpotError(spot, json) {
 export function fetchToggleSpot(spot){
 	return dispatch => {
 		dispatch(requestToggleSpot(spot));
-		return fetch('api/spot/toggle', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-				    sessionKey: getCookie("skey"),
-					id:spot
-				})
-			})
+		return Client.toggleSpot(spot, getCookie("skey"))
 			.then(response => response.json())
 			.then(json => {
 				if(json.error) dispatch(receiveToggleSpotError(spot, json));
@@ -191,12 +187,7 @@ export function receiveLoginError(json) {
 
 export function fetchUser(dispatchCallback) {
     return dispatch => {
-        return fetch('api/user/get', {
-                method:'POST',
-                body: JSON.stringify({
-                    sessionKey: getCookie("skey")
-                })
-            })
+        return Client.getUser(getCookie("skey"))
             .then(response => response.json())
             .then(json => {
                 if(json.error) dispatch(receiveLoginError(json));
@@ -214,16 +205,7 @@ export function fetchUser(dispatchCallback) {
 export function fetchLogin(usernameemail, password) {
     return dispatch => {
         dispatch(requestLogin());
-        return fetch('api/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    usernameemail: usernameemail,
-                    password: password
-                })
-            })
+        return Client.logIn(usernameemail, password)
             .then(response => response.json())
             .then(json => {
                 if(json.error) dispatch(receiveLoginError(json));
@@ -262,17 +244,7 @@ export function receiveRegisterError(json) {
 export function fetchRegister(username, email, password) {
     return dispatch => {
         dispatch(requestRegister());
-        return fetch('api/user/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: username,
-                    email: email,
-                    password: password
-                })
-            })
+        return Client.register(username, email, password)
             .then(response => response.json())
             .then(json => {
                 if(json.error) dispatch(receiveRegisterError(json));
@@ -310,15 +282,7 @@ export function receiveLogoutError(json) {
 export function fetchLogout() {
     return dispatch => {
         dispatch(requestLogout());
-        return fetch('api/user/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    sessionKey: getCookie("skey")
-                })
-            })
+        return Client.logOut(getCookie("skey"))
             .then(response => response.json())
             .then(json => {
                 if(json.error) dispatch(receiveLogoutError(json));
