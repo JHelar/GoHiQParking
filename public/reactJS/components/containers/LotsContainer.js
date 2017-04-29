@@ -2,7 +2,7 @@
  * Created by Johnh on 2017-03-19.
  */
 import { connect } from 'react-redux';
-import { fetchSpots, selectParkingLot, updateLotListener } from '../redux/actions';
+import { fetchSpots, selectParkingLot, updateLotListener, changeScene } from '../redux/actions';
 import LotList from '../presentational/LotList';
 import { SCENE } from '../redux/constants';
 
@@ -19,6 +19,7 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(selectParkingLot(id));
             dispatch(fetchSpots(id));
             dispatch(updateLotListener(id))
+            dispatch(changeScene(SCENE.SHOW_SPOTS));
         }
     }
 };

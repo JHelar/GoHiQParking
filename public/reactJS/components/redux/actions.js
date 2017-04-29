@@ -100,7 +100,7 @@ export function receiveSpotsError(parkingLot, json) {
 export function updateLotListener(parkingLot) {
     return dispatch => {
         return Client.updateLotListener(parkingLot,
-            () => dispatch(fetchParkingLots(parkingLot)),
+            () => dispatch(fetchSpots(parkingLot)),
             () => dispatch(receiveSpotsError(parkingLot, {message: "EventStreamError"}))
         )
     }
@@ -114,9 +114,7 @@ export function fetchSpots(parkingLot) {
 			.then(json => {
 				if(json.error) dispatch(receiveSpotsError(parkingLot, json));
 				else{
-                    //updateLotListener(parkingLot, dispatch);
 				    dispatch(receiveSpots(parkingLot, json));
-                    dispatch(changeScene(SCENE.SHOW_SPOTS));
 				}
 			})
             .catch(function(ex) {

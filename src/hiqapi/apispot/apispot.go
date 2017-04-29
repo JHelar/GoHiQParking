@@ -74,7 +74,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					ok = spot.Update(db, s)
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
-					checkSpots <- s.ParkingLot
+					//checkSpots <- s.ParkingLot
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
@@ -90,7 +90,7 @@ func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
 					ok = spot.Update(db, s)
 					getAllFromLot(w, r, myUser, s.ParkingLot)
 					//Send a spot check flag, and event update.
-					checkSpots <- s.ParkingLot
+					//checkSpots <- s.ParkingLot
 					spotBroker.Notifier <- hiqeventstream.Message{ClientOrigin:r.RemoteAddr, Message:hiqjson.GENERAL_UPDATE_MSG, EventType:hiqeventstream.EVENT_TYPE_UPDATE, EventChannel:fmt.Sprintf("%d",s.ParkingLot)}
 
 				}else{
@@ -125,7 +125,7 @@ func pushListener(){
 
 func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 	spotBroker = hiqeventstream.NewServer()
-	checkSpots = make(chan int)
+	//checkSpots = make(chan int)
 
 	db = hiqdb
 	log.Printf("%v Registring.", FLARE)

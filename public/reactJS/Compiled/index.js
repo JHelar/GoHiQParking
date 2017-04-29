@@ -7047,6 +7047,7 @@ function focusNode(node) {
 
 module.exports = focusNode;
 },{}],307:[function(require,module,exports){
+(function (global){
 'use strict';
 
 /**
@@ -7073,7 +7074,7 @@ module.exports = focusNode;
  * @return {?DOMElement}
  */
 function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || (typeof document !== 'undefined' ? document : undefined);
+  doc = doc || global.document;
   if (typeof doc === 'undefined') {
     return null;
   }
@@ -7085,6 +7086,7 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],308:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -31385,6 +31387,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
             dispatch((0, _actions.selectParkingLot)(id));
             dispatch((0, _actions.fetchSpots)(id));
             dispatch((0, _actions.updateLotListener)(id));
+            dispatch((0, _actions.changeScene)(_constants.SCENE.SHOW_SPOTS));
         }
     };
 };
@@ -32280,7 +32283,7 @@ function receiveSpotsError(parkingLot, json) {
 function updateLotListener(parkingLot) {
     return function (dispatch) {
         return _ApiClient2.default.updateLotListener(parkingLot, function () {
-            return dispatch(fetchParkingLots(parkingLot));
+            return dispatch(fetchSpots(parkingLot));
         }, function () {
             return dispatch(receiveSpotsError(parkingLot, { message: "EventStreamError" }));
         });
@@ -32294,9 +32297,7 @@ function fetchSpots(parkingLot) {
             return response.json();
         }).then(function (json) {
             if (json.error) dispatch(receiveSpotsError(parkingLot, json));else {
-                //updateLotListener(parkingLot, dispatch);
                 dispatch(receiveSpots(parkingLot, json));
-                dispatch(changeScene(_constants.SCENE.SHOW_SPOTS));
             }
         }).catch(function (ex) {
             dispatch(receiveSpotsError(parkingLot, { message: "Exception: " + ex }));

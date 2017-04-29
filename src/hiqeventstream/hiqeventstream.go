@@ -83,7 +83,7 @@ func (broker *Broker) ServeHTTP(rw http.ResponseWriter, req *http.Request){
 		select{
 		case msg := <- messageChan:
 			//Do not send events to same client.
-			log.Printf("%s != %s", portRegex.ReplaceAllString(msg.ClientOrigin, ""), clientOrign)
+			//log.Printf("%s != %s", portRegex.ReplaceAllString(msg.ClientOrigin, ""), clientOrign)
 			if(portRegex.ReplaceAllString(msg.ClientOrigin, "") != clientOrign){
 				fmt.Fprintf(rw, "event:%s%s\ndata:%s\n\n", msg.EventType, msg.EventChannel, msg.Message)
 			}
@@ -108,7 +108,6 @@ func (broker *Broker) listen()  {
 			for clientMessageChan, _ := range broker.clients{
 				clientMessageChan <- event
 			}
-
 		}
 	}
 }
