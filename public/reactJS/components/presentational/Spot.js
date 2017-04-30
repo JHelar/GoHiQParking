@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import { timeDifference } from '../../../general/helpers';
 
-const Spot = ({onClick, onLoginClick, id, name, isparked, canmodify, parkedby, parkedtime, isLogged}) => {
+const Spot = ({onInfoClick, onClick, onLoginClick, id, name, isparked, canmodify, parkedby, parkedtime, isLogged}) => {
     let buttonTxt = isparked ? "Leave" : "Park";
     let spotClass = isparked ? "spot parked" : "spot";
     return(
@@ -28,11 +28,13 @@ const Spot = ({onClick, onLoginClick, id, name, isparked, canmodify, parkedby, p
                     <button onClick={onLoginClick}>Login to park</button>
                 }
             </div>
+            <button onClick={onInfoClick}>Show info</button>
         </div>
     );
 };
 
 Spot.propTypes = {
+    onInfoClick: PropTypes.func,
     onClick: PropTypes.func,
     onLoginClick: PropTypes.func,
     id: PropTypes.number.isRequired,

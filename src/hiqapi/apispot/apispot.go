@@ -12,6 +12,7 @@ import (
 	"time"
 	"hiqeventstream"
 	"reflect"
+	"hiqdb/spotinfo"
 )
 var db *hiqdb.HiQDb
 //General event stream for view updates
@@ -53,11 +54,25 @@ func getAllFromLot(w http.ResponseWriter, r *http.Request, myUser *user.User, lo
 		if myUser != nil{
 			jspot.CanModify = (!s.IsParked && (userSpot == nil)) || (userSpot != nil && userSpot.ID == s.ID)
 		}
-
 		jspots = append(jspots, jspot)
 	}
 	jsonResp := hiqjson.AsJson(jspots)
 	fmt.Fprintf(w, jsonResp)
+}
+
+func getInfo(w http.ResponseWriter, r *http.Request, myUser *user.User)  {
+	var s spot.Spot
+	hiqjson.Parse(r.Body, &s)
+	if ok := spot.Get(db, &s); ok {
+		// ToDo: Complete.
+		if si, err := spotinfo.GetBySpotID(db, s.ID); err == nil {
+			fmt.Fprintf(w, hiqjson.AsJson(si.AsJson().(spotinfo.JSpotInfo)))
+		}else{
+			fmt.Fprintf(w, hiqjson.NO_SPOT_INFO_MSG)
+		}
+	}else {
+		fmt.Fprintf(w, hiqjson.GENERAL_ERROR_MSG)
+	}
 }
 
 func toggle(w http.ResponseWriter, r *http.Request, myUser *user.User){
@@ -131,7 +146,7 @@ func Register(hiqdb *hiqdb.HiQDb, master *hiqapi.ApiMaster){
 	log.Printf("%v Registring.", FLARE)
 	master.Register("spot/getAll", getAll)
 	master.Register("spot/toggle", toggle)
-
+	master.Register("spot/info", getInfo)
 	master.RegisterEventStream("spot", spotBroker.ServeHTTP)
 
 	//pushListener()

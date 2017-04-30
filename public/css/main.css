@@ -4441,4 +4441,20 @@ h6,
 .map-reveal.show .map {
   height: 150px; }
 
+.spotInfo {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 10;
+  top: 0; }
+  .spotInfo.display {
+    display: block;
+    height: 100%; }
+  .spotInfo > div {
+    width: 50em;
+    background-color: #ffffff;
+    top: 180px;
+    position: relative;
+    margin: 0 auto; }
+
 /*# sourceMappingURL=main.css.map */

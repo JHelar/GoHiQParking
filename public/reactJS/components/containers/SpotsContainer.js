@@ -1,7 +1,7 @@
 /**
  * Created by Johnh on 2017-04-02.
  */
-import {toggleSpot, fetchToggleSpot, changeScene } from '../redux/actions';
+import {toggleSpot, fetchToggleSpot, changeScene, fetchSpotInfo, showSpotInfo } from '../redux/actions';
 import { connect } from 'react-redux';
 import SpotList from '../presentational/SpotList';
 import { SCENE } from '../redux/constants';
@@ -22,6 +22,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        onInfoClick: (id) => {
+            dispatch(fetchSpotInfo(id));
+            dispatch(showSpotInfo(id));
+        },
         onLoginClick: () => dispatch(changeScene(SCENE.SHOW_LOGIN)),
         onSpotClick: (id) => {
             dispatch(toggleSpot(id));

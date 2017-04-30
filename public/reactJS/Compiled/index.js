@@ -7047,7 +7047,6 @@ function focusNode(node) {
 
 module.exports = focusNode;
 },{}],307:[function(require,module,exports){
-(function (global){
 'use strict';
 
 /**
@@ -7074,7 +7073,7 @@ module.exports = focusNode;
  * @return {?DOMElement}
  */
 function getActiveElement(doc) /*?DOMElement*/{
-  doc = doc || global.document;
+  doc = doc || (typeof document !== 'undefined' ? document : undefined);
   if (typeof doc === 'undefined') {
     return null;
   }
@@ -7086,7 +7085,6 @@ function getActiveElement(doc) /*?DOMElement*/{
 }
 
 module.exports = getActiveElement;
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],308:[function(require,module,exports){
 (function (process){
 'use strict';
@@ -30786,6 +30784,7 @@ var GET_LOTS_PATH = "api/lot/getAll"; /**
 
 var LOT_FILL_PATH = "api/lot/fill";
 var SPOT_TOGGLE_PATH = "api/spot/toggle";
+var SPOT_INFO_PATH = "api/spot/info";
 var GET_USER_PATH = "api/user/get";
 var LOGIN_USER_PATH = "api/user/login";
 var REGISTER_USER_PATH = "api/user/register";
@@ -30817,6 +30816,9 @@ var Client = {
     },
     toggleSpot: function toggleSpot(spotId, sessionKey) {
         return post(SPOT_TOGGLE_PATH, { id: spotId, sessionKey: sessionKey });
+    },
+    spotInfo: function spotInfo(spotId) {
+        return post(SPOT_INFO_PATH, { id: spotId });
     },
     getUser: function getUser(sessionKey) {
         return post(GET_USER_PATH, { sessionKey: sessionKey });
@@ -31094,6 +31096,10 @@ var _LotsContainer = require('./LotsContainer');
 
 var _LotsContainer2 = _interopRequireDefault(_LotsContainer);
 
+var _SpotInfoContainer = require('./SpotInfoContainer');
+
+var _SpotInfoContainer2 = _interopRequireDefault(_SpotInfoContainer);
+
 var _actions = require('../redux/actions');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -31132,7 +31138,8 @@ var App = function (_Component) {
                 { className: '' },
                 _react2.default.createElement(_Header2.default, null),
                 _react2.default.createElement(_LotsContainer2.default, null),
-                _react2.default.createElement(_SceneSwapper2.default, null)
+                _react2.default.createElement(_SceneSwapper2.default, null),
+                _react2.default.createElement(_SpotInfoContainer2.default, null)
             );
         }
     }]);
@@ -31146,7 +31153,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":537,"./Header":523,"./LotsContainer":525,"./SceneSwapper":528,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../redux/actions":539,"./Header":523,"./LotsContainer":525,"./SceneSwapper":528,"./SpotInfoContainer":529,"react":501,"react-redux":471}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31297,7 +31304,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":531,"../presentational/HeaderButtons":532,"../redux/actions":537,"../redux/constants":539,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../presentational/Error":532,"../presentational/HeaderButtons":533,"../redux/actions":539,"../redux/constants":541,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31352,7 +31359,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":537,"react":501,"react-redux":471}],525:[function(require,module,exports){
+},{"../redux/actions":539,"react":501,"react-redux":471}],525:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31396,7 +31403,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":534,"../redux/actions":537,"../redux/constants":539,"react-redux":471}],526:[function(require,module,exports){
+},{"../presentational/LotList":535,"../redux/actions":539,"../redux/constants":541,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31458,7 +31465,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":537,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/actions":539,"react":501,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31519,7 +31526,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":538,"./App":522,"react":501,"react-redux":471}],528:[function(require,module,exports){
+},{"../redux/configureStore":540,"./App":522,"react":501,"react-redux":471}],528:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31602,7 +31609,67 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":539,"./Login":524,"./Register":526,"./SpotsContainer":529,"react":501,"react-redux":471}],529:[function(require,module,exports){
+},{"../redux/constants":541,"./Login":524,"./Register":526,"./SpotsContainer":530,"react":501,"react-redux":471}],529:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _actions = require('../redux/actions');
+
+var _reactRedux = require('react-redux');
+
+var _SpotInfoReveal = require('../presentational/SpotInfoReveal');
+
+var _SpotInfoReveal2 = _interopRequireDefault(_SpotInfoReveal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+    var currentLot = state.parkingLots.lots.filter(function (lot) {
+        return lot.id === state.parkingLots.selectedParkingLot;
+    })[0];
+
+    var currentSpotInfo = null;
+    if (currentLot !== null && currentLot !== undefined && currentLot.spots !== undefined) {
+        currentSpotInfo = currentLot.spots.filter(function (spot) {
+            return spot.id === state.scene.showSpotInfo.spotId;
+        })[0];
+        if (currentSpotInfo !== null && currentSpotInfo !== undefined && currentSpotInfo.spotinfo !== undefined) {
+            return {
+                show: state.scene.showSpotInfo.show,
+                spotId: currentSpotInfo.id,
+                spotInfo: {
+                    name: currentSpotInfo.name,
+                    description: currentSpotInfo.spotinfo.description,
+                    longitude: currentSpotInfo.spotinfo.longitude,
+                    latitude: currentSpotInfo.spotinfo.latitude
+                }
+            };
+        }
+    }
+    return {
+        show: false,
+        spotId: 0,
+        spotInfo: currentSpotInfo
+    };
+}; /**
+    * Created by Johnh on 2017-04-30.
+    */
+
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+    return {
+        onClose: function onClose() {
+            dispatch((0, _actions.hideSpotInfo)());
+        }
+    };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotInfoReveal2.default);
+
+},{"../presentational/SpotInfoReveal":537,"../redux/actions":539,"react-redux":471}],530:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31640,6 +31707,10 @@ var mapStateToProps = function mapStateToProps(state) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
+        onInfoClick: function onInfoClick(id) {
+            dispatch((0, _actions.fetchSpotInfo)(id));
+            dispatch((0, _actions.showSpotInfo)(id));
+        },
         onLoginClick: function onLoginClick() {
             return dispatch((0, _actions.changeScene)(_constants.SCENE.SHOW_LOGIN));
         },
@@ -31652,7 +31723,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
 
-},{"../presentational/SpotList":536,"../redux/actions":537,"../redux/constants":539,"react-redux":471}],530:[function(require,module,exports){
+},{"../presentational/SpotList":538,"../redux/actions":539,"../redux/constants":541,"react-redux":471}],531:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31674,7 +31745,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
-},{"./containers/Root":527,"babel-polyfill":1,"react":501,"react-dom":335}],531:[function(require,module,exports){
+},{"./containers/Root":527,"babel-polyfill":1,"react":501,"react-dom":335}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31718,7 +31789,7 @@ Error.propTypes = {
 
 exports.default = Error;
 
-},{"react":501}],532:[function(require,module,exports){
+},{"react":501}],533:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31882,7 +31953,7 @@ LogoutButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-},{"react":501}],533:[function(require,module,exports){
+},{"react":501}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31925,7 +31996,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../../../general/helpers":521,"react":501}],534:[function(require,module,exports){
+},{"../../../general/helpers":521,"react":501}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31980,7 +32051,7 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":533,"react":501}],535:[function(require,module,exports){
+},{"./Lot":534,"react":501}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31999,7 +32070,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * Created by Johnh on 2017-03-19.
  */
 var Spot = function Spot(_ref) {
-    var onClick = _ref.onClick,
+    var onInfoClick = _ref.onInfoClick,
+        onClick = _ref.onClick,
         onLoginClick = _ref.onLoginClick,
         id = _ref.id,
         name = _ref.name,
@@ -32044,11 +32116,17 @@ var Spot = function Spot(_ref) {
                 { onClick: onLoginClick },
                 'Login to park'
             )
+        ),
+        _react2.default.createElement(
+            'button',
+            { onClick: onInfoClick },
+            'Show info'
         )
     );
 };
 
 Spot.propTypes = {
+    onInfoClick: _react.PropTypes.func,
     onClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
     id: _react.PropTypes.number.isRequired,
@@ -32062,7 +32140,69 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/helpers":521,"react":501}],536:[function(require,module,exports){
+},{"../../../general/helpers":521,"react":501}],537:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SpotInfoReveal = function SpotInfoReveal(_ref) {
+    var onClose = _ref.onClose,
+        show = _ref.show,
+        spotId = _ref.spotId,
+        spotInfo = _ref.spotInfo;
+
+    var displayClass = show ? "spotInfo display" : "spotInfo";
+    return _react2.default.createElement(
+        "div",
+        { className: displayClass },
+        spotInfo !== null && spotInfo !== undefined && _react2.default.createElement(
+            "div",
+            null,
+            _react2.default.createElement(
+                "h2",
+                null,
+                spotInfo.name
+            ),
+            _react2.default.createElement(
+                "p",
+                null,
+                spotInfo.description
+            ),
+            _react2.default.createElement(
+                "button",
+                { onClick: onClose },
+                "St\xE4ng"
+            )
+        )
+    );
+}; /**
+    * Created by Johnh on 2017-04-30.
+    */
+
+
+SpotInfoReveal.propTypes = {
+    onClose: _react.PropTypes.func,
+    show: _react.PropTypes.bool.isRequired,
+    spotId: _react.PropTypes.number.isRequired,
+    spotInfo: _react.PropTypes.shape({
+        name: _react.PropTypes.string.isRequired,
+        description: _react.PropTypes.string.isRequired,
+        longitude: _react.PropTypes.number.isRequired,
+        latitude: _react.PropTypes.number.isRequired
+    })
+};
+
+exports.default = SpotInfoReveal;
+
+},{"react":501}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32089,6 +32229,7 @@ var SpotsList = function SpotsList(_ref) {
         spots = _ref.spots,
         isLogged = _ref.isLogged,
         onSpotClick = _ref.onSpotClick,
+        _onInfoClick = _ref.onInfoClick,
         onLoginClick = _ref.onLoginClick;
 
 
@@ -32110,7 +32251,10 @@ var SpotsList = function SpotsList(_ref) {
                     onClick: function onClick() {
                         return onSpotClick(spot.id);
                     },
-                    onLoginClick: onLoginClick
+                    onLoginClick: onLoginClick,
+                    onInfoClick: function onInfoClick() {
+                        return _onInfoClick(spot.id);
+                    }
                 }));
             })
         )
@@ -32120,6 +32264,7 @@ var SpotsList = function SpotsList(_ref) {
 SpotsList.propTypes = {
     onSpotClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
+    onInfoClick: _react.PropTypes.func,
     lotName: _react.PropTypes.string.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
@@ -32134,13 +32279,13 @@ SpotsList.propTypes = {
 
 exports.default = SpotsList;
 
-},{"../presentational/Spot":535,"react":501}],537:[function(require,module,exports){
+},{"../presentational/Spot":536,"react":501}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.TOGGLE_MAP_REVEAL = exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
+exports.SHOW_SPOT_INFO = exports.HIDE_SPOT_INFO = exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOT_INFO_ERROR = exports.FETCH_SPOT_INFO_SUCCESS = exports.FETCH_SPOT_INFO_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
 exports.requestParkingLots = requestParkingLots;
 exports.receiveParkingLots = receiveParkingLots;
 exports.receiveParkingLotsError = receiveParkingLotsError;
@@ -32148,8 +32293,11 @@ exports.fetchParkingLots = fetchParkingLots;
 exports.requestSpots = requestSpots;
 exports.receiveSpots = receiveSpots;
 exports.receiveSpotsError = receiveSpotsError;
-exports.updateLotListener = updateLotListener;
 exports.fetchSpots = fetchSpots;
+exports.requestSpotInfo = requestSpotInfo;
+exports.receiveSpotInfo = receiveSpotInfo;
+exports.receiveSpotInfoError = receiveSpotInfoError;
+exports.fetchSpotInfo = fetchSpotInfo;
 exports.requestToggleSpot = requestToggleSpot;
 exports.receiveToggleSpot = receiveToggleSpot;
 exports.receiveToggleSpotError = receiveToggleSpotError;
@@ -32172,11 +32320,9 @@ exports.selectParkingLot = selectParkingLot;
 exports.toggleSpot = toggleSpot;
 exports.changeScene = changeScene;
 exports.toggleMenu = toggleMenu;
-exports.toggleMapReveal = toggleMapReveal;
-
-var _isomorphicFetch = require('isomorphic-fetch');
-
-var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
+exports.showSpotInfo = showSpotInfo;
+exports.hideSpotInfo = hideSpotInfo;
+exports.updateLotListener = updateLotListener;
 
 var _helpers = require('../../../general/helpers');
 
@@ -32197,6 +32343,10 @@ var FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_ERROR = 'FETCH_PARKING
 var FETCH_SPOTS_REQUEST = exports.FETCH_SPOTS_REQUEST = 'FETCH_SPOTS_REQUEST';
 var FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_SUCCESS = 'FETCH_SPOTS_SUCCESS';
 var FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_ERROR = 'FETCH_SPOTS_ERROR';
+
+var FETCH_SPOT_INFO_REQUEST = exports.FETCH_SPOT_INFO_REQUEST = 'FETCH_SPOT_INFO_REQUEST';
+var FETCH_SPOT_INFO_SUCCESS = exports.FETCH_SPOT_INFO_SUCCESS = 'FETCH_SPOT_INFO_SUCCESS';
+var FETCH_SPOT_INFO_ERROR = exports.FETCH_SPOT_INFO_ERROR = 'FETCH_SPOT_INFO_ERROR';
 
 var FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_TOGGLE_SPOT_REQUEST = 'FETCH_TOGGLE_SPOT_REQUEST';
 var FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_SUCCESS = 'FETCH_TOGGLE_SPOT_SUCCESS';
@@ -32219,7 +32369,8 @@ var SELECT_PARKING_LOT = exports.SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 var TOGGLE_SPOT = exports.TOGGLE_SPOT = 'TOGGLE_SPOT';
 var CHANGE_SCENE = exports.CHANGE_SCENE = 'CHANGE_SCENE';
 var TOGGLE_MENU = exports.TOGGLE_MENU = 'TOGGLE_MENU';
-var TOGGLE_MAP_REVEAL = exports.TOGGLE_MAP_REVEAL = 'TOGGLE_MAP_REVEAL';
+var HIDE_SPOT_INFO = exports.HIDE_SPOT_INFO = 'HIDE_SPOT_INFO';
+var SHOW_SPOT_INFO = exports.SHOW_SPOT_INFO = 'SHOW_SPOT_INFO';
 
 function requestParkingLots() {
     return {
@@ -32280,16 +32431,6 @@ function receiveSpotsError(parkingLot, json) {
     };
 }
 
-function updateLotListener(parkingLot) {
-    return function (dispatch) {
-        return _ApiClient2.default.updateLotListener(parkingLot, function () {
-            return dispatch(fetchSpots(parkingLot));
-        }, function () {
-            return dispatch(receiveSpotsError(parkingLot, { message: "EventStreamError" }));
-        });
-    };
-}
-
 function fetchSpots(parkingLot) {
     return function (dispatch) {
         dispatch(requestSpots(parkingLot));
@@ -32305,6 +32446,44 @@ function fetchSpots(parkingLot) {
     };
 }
 
+// SPOT INFO
+function requestSpotInfo(spotId) {
+    return {
+        type: FETCH_SPOT_INFO_REQUEST,
+        spotId: spotId
+    };
+}
+
+function receiveSpotInfo(spotId, json) {
+    return {
+        type: FETCH_SPOT_INFO_SUCCESS,
+        spotinfo: json.data,
+        received_at: Date.now(),
+        spotId: spotId
+    };
+}
+
+function receiveSpotInfoError(spotId, json) {
+    return {
+        type: FETCH_SPOT_INFO_ERROR,
+        error_msg: json.message,
+        spotId: spotId
+    };
+}
+
+function fetchSpotInfo(spotId) {
+    return function (dispatch) {
+        dispatch(requestSpotInfo(spotId));
+        return _ApiClient2.default.spotInfo(spotId).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.error) dispatch(receiveSpotInfoError(spotId, json));else dispatch(receiveSpotInfo(spotId, json));
+        }).catch(function (ex) {
+            dispatch(receiveSpotInfoError(spotId, { message: "Exception: " + ex }));
+        });
+    };
+}
+
 // POST Toggle
 function requestToggleSpot(spot) {
     return {
@@ -32316,7 +32495,9 @@ function requestToggleSpot(spot) {
 function receiveToggleSpot(spot, json) {
     return {
         type: FETCH_TOGGLE_SPOT_SUCCESS,
-        spots: json.data,
+        spot: json.data.filter(function (s) {
+            return s.id === spot;
+        })[0],
         received_at: Date.now()
     };
 }
@@ -32465,6 +32646,7 @@ function fetchLogout() {
         });
     };
 }
+
 // USER ACTIONS
 function showParkingLots() {
     return {
@@ -32499,13 +32681,31 @@ function toggleMenu() {
     };
 }
 
-function toggleMapReveal() {
+function showSpotInfo(spotId) {
     return {
-        type: TOGGLE_MAP_REVEAL
+        type: SHOW_SPOT_INFO,
+        spotId: spotId
     };
 }
 
-},{"../../../general/ApiClient":520,"../../../general/helpers":521,"./constants":539,"isomorphic-fetch":322}],538:[function(require,module,exports){
+function hideSpotInfo() {
+    return {
+        type: HIDE_SPOT_INFO
+    };
+}
+
+// UPDATE LISTENER
+function updateLotListener(parkingLot) {
+    return function (dispatch) {
+        return _ApiClient2.default.updateLotListener(parkingLot, function () {
+            return dispatch(fetchSpots(parkingLot));
+        }, function () {
+            return dispatch(receiveSpotsError(parkingLot, { message: "EventStreamError" }));
+        });
+    };
+}
+
+},{"../../../general/ApiClient":520,"../../../general/helpers":521,"./constants":541}],540:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32539,7 +32739,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":540,"redux":513,"redux-logger":506,"redux-thunk":507}],539:[function(require,module,exports){
+},{"./reducers":542,"redux":513,"redux-logger":506,"redux-thunk":507}],541:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32557,11 +32757,11 @@ var SCENE = exports.SCENE = {
     SPOTS_FETCHED: "SPOTS_FETCHED_SCENE"
 };
 
-},{}],540:[function(require,module,exports){
+},{}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-	value: true
+    value: true
 });
 
 var _redux = require('redux');
@@ -32571,256 +32771,301 @@ var _constants = require('./constants');
 var _actions = require('./actions');
 
 // Reducers
+function spot() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        id: 0,
+        name: "spot",
+        isparked: false,
+        parkedby: 0,
+        parkedtime: Date.now(),
+        canmodify: false,
+        spotinfo: null
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+        case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
+            if (state.id === action.spot.id) return Object.assign({}, state, action.spot);else return Object.assign({}, state, {
+                canmodify: !action.spot.isparked
+            });
+        case _actions.FETCH_SPOT_INFO_SUCCESS:
+            return Object.assign({}, state, {
+                spotinfo: action.spotinfo
+            });
+        default:
+            return state;
+    }
+}
 
 function lot() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-		id: 0,
-		name: "",
-		location: "",
-		didInvalidate: false,
-		isFetching: false,
-		lastUpdate: Date.now(),
-		spots: []
-	};
-	var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        id: 0,
+        name: "",
+        location: "",
+        didInvalidate: false,
+        isFetching: false,
+        lastUpdate: Date.now(),
+        spots: []
+    };
+    var action = arguments[1];
 
-	switch (action.type) {
-		case _actions.TOGGLE_SPOT:
-			return Object.assign({}, state, {
-				didInvalidate: true
-			});
-		case _actions.FETCH_SPOTS_REQUEST:
-			return Object.assign({}, state, {
-				isFetching: true,
-				didInvalidate: false
-			});
-		case _actions.FETCH_SPOTS_SUCCESS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				didInvalidate: false,
-				lastUpdate: action.received_at,
-				spots: action.spots
-			});
-		case _actions.FETCH_SPOTS_ERROR:
-			return Object.assign({}, state, {
-				isFetching: false,
-				didInvalidate: false
-			});
-		case _actions.FETCH_TOGGLE_SPOT_REQUEST:
-			return Object.assign({}, state, {
-				isFetching: true,
-				didInvalidate: false
-			});
-		case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				didInvalidate: false,
-				spots: state.spots.map(function (spot, _) {
-					return Object.assign({}, spot, action.spots.filter(function (s) {
-						return s.id === spot.id;
-					})[0]);
-				}),
-				lastUpdate: action.received_at
-			});
-		case _actions.FETCH_TOGGLE_SPOT_ERROR:
-			return Object.assign({}, state, {
-				isFetching: false,
-				didInvalidate: false
-			});
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case _actions.TOGGLE_SPOT:
+            return Object.assign({}, state, {
+                didInvalidate: true
+            });
+        case _actions.FETCH_SPOTS_REQUEST:
+            return Object.assign({}, state, {
+                isFetching: true,
+                didInvalidate: false
+            });
+        case _actions.FETCH_SPOTS_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                lastUpdate: action.received_at,
+                spots: action.spots
+            });
+        case _actions.FETCH_SPOTS_ERROR:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false
+            });
+        case _actions.FETCH_TOGGLE_SPOT_REQUEST:
+            return Object.assign({}, state, {
+                isFetching: true,
+                didInvalidate: false
+            });
+        case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                spots: state.spots.map(function (spot_state, _) {
+                    return Object.assign({}, spot_state, spot(spot_state, action));
+                }),
+                lastUpdate: action.received_at
+            });
+        case _actions.FETCH_TOGGLE_SPOT_ERROR:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false
+            });
+        case _actions.FETCH_SPOT_INFO_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                didInvalidate: false,
+                spots: state.spots.map(function (spot_state, _) {
+                    if (spot_state.id === action.spotinfo.spotid) return Object.assign({}, spot_state, spot(spot_state, action));
+                    return spot_state;
+                }),
+                lastUpdate: action.received_at
+            });
+        default:
+            return state;
+    }
 }
 function parkingLots() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-		isFetching: false,
-		didInvalidate: false,
-		lastUpdate: Date.now(),
-		selectedParkingLot: 0,
-		lots: []
-	};
-	var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        isFetching: false,
+        didInvalidate: false,
+        lastUpdate: Date.now(),
+        selectedParkingLot: 0,
+        lots: []
+    };
+    var action = arguments[1];
 
-	switch (action.type) {
-		case _actions.SELECT_PARKING_LOT:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				selectedParkingLot: action.parkingLot
-			});
-		case _actions.SHOW_PARKING_LOTS:
-			return Object.assign({}, state, {
-				didInvalidate: true
-			});
-		case _actions.FETCH_PARKING_LOTS_REQUEST:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: true
-			});
-		case _actions.FETCH_PARKING_LOTS_SUCCESS:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				lots: action.parking_lots,
-				lastUpdate: action.received_at
-			});
-		case _actions.FETCH_PARKING_LOTS_ERROR:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false
-			});
-		case _actions.FETCH_SPOTS_REQUEST:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				selectedParkingLot: action.parkingLot,
-				lots: state.lots.map(function (lot_state, _) {
-					if (lot_state.id === action.parkingLot) {
-						return Object.assign({}, lot_state, lot(lot_state, action));
-					}
-					return lot_state;
-				})
-			});
-		case _actions.FETCH_SPOTS_SUCCESS:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				lots: state.lots.map(function (lot_state, _) {
-					return Object.assign({}, lot_state, lot(lot_state, action));
-				})
-			});
-		case _actions.FETCH_SPOTS_ERROR:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				lots: state.lots.map(function (lot_state, _) {
-					if (lot_state.id === action.parkingLot) {
-						return Object.assign({}, lot_state, lot(lot_state, action));
-					}
-					return lot_state;
-				})
-			});
-		case _actions.TOGGLE_SPOT:
-		case _actions.FETCH_TOGGLE_SPOT_REQUEST:
-		case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				lots: state.lots.map(function (lot_state, _) {
-					if (lot_state.id === state.selectedParkingLot) {
-						return Object.assign({}, lot_state, lot(lot_state, action));
-					}
-					return lot_state;
-				})
-			});
-		case _actions.FETCH_TOGGLE_SPOT_ERROR:
-			return Object.assign({}, state, {
-				didInvalidate: false,
-				isFetching: false,
-				lots: state.lots.map(function (lot_state, _) {
-					if (lot_state.id === state.selectedParkingLot) {
-						return Object.assign({}, lot_state, lot(lot_state, action));
-					}
-					return lot_state;
-				})
-			});
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case _actions.SELECT_PARKING_LOT:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                selectedParkingLot: action.parkingLot
+            });
+        case _actions.SHOW_PARKING_LOTS:
+            return Object.assign({}, state, {
+                didInvalidate: true
+            });
+        case _actions.FETCH_PARKING_LOTS_REQUEST:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: true
+            });
+        case _actions.FETCH_PARKING_LOTS_SUCCESS:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                lots: action.parking_lots,
+                lastUpdate: action.received_at
+            });
+        case _actions.FETCH_PARKING_LOTS_ERROR:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false
+            });
+        case _actions.FETCH_SPOTS_REQUEST:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                selectedParkingLot: action.parkingLot,
+                lots: state.lots.map(function (lot_state, _) {
+                    if (lot_state.id === action.parkingLot) {
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
+            });
+        case _actions.FETCH_SPOTS_SUCCESS:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                lots: state.lots.map(function (lot_state, _) {
+                    if (lot_state.id === action.parkingLot) return Object.assign({}, lot_state, lot(lot_state, action));
+                    return lot_state;
+                })
+            });
+        case _actions.FETCH_SPOTS_ERROR:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                lots: state.lots.map(function (lot_state, _) {
+                    if (lot_state.id === action.parkingLot) {
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
+            });
+        case _actions.TOGGLE_SPOT:
+        case _actions.FETCH_TOGGLE_SPOT_REQUEST:
+        case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
+        case _actions.FETCH_SPOT_INFO_SUCCESS:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                lots: state.lots.map(function (lot_state, _) {
+                    if (lot_state.id === state.selectedParkingLot) {
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
+            });
+        case _actions.FETCH_TOGGLE_SPOT_ERROR:
+            return Object.assign({}, state, {
+                didInvalidate: false,
+                isFetching: false,
+                lots: state.lots.map(function (lot_state, _) {
+                    if (lot_state.id === state.selectedParkingLot) {
+                        return Object.assign({}, lot_state, lot(lot_state, action));
+                    }
+                    return lot_state;
+                })
+            });
+        default:
+            return state;
+    }
 }
 
 function scene() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menuOpen: false, showMapReveal: false, current: _constants.SCENE.SHOW_PARKING_LOTS };
-	var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { menuOpen: false, showSpotInfo: { spotId: 0, show: false }, current: _constants.SCENE.SHOW_PARKING_LOTS };
+    var action = arguments[1];
 
-	switch (action.type) {
-		case _actions.CHANGE_SCENE:
-			return Object.assign({}, state, {
-				current: action.scene,
-				menuOpen: false
-			});
-		case _actions.TOGGLE_MENU:
-			return Object.assign({}, state, {
-				menuOpen: !state.menuOpen
-			});
-		case _actions.TOGGLE_MAP_REVEAL:
-			return Object.assign({}, state, {
-				showMapReveal: !state.showMapReveal
-			});
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case _actions.CHANGE_SCENE:
+            return Object.assign({}, state, {
+                current: action.scene,
+                menuOpen: false
+            });
+        case _actions.TOGGLE_MENU:
+            return Object.assign({}, state, {
+                menuOpen: !state.menuOpen
+            });
+        case _actions.HIDE_SPOT_INFO:
+            return Object.assign({}, state, {
+                showSpotInfo: {
+                    show: false
+                }
+            });
+        case _actions.SHOW_SPOT_INFO:
+            return Object.assign({}, state, {
+                showSpotInfo: {
+                    show: true,
+                    spotId: action.spotId
+                }
+            });
+        default:
+            return state;
+    }
 }
 
 function user() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-		isLogged: false
-	};
-	var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        isLogged: false
+    };
+    var action = arguments[1];
 
-	switch (action.type) {
-		case _actions.REGISTER_REQUEST:
-		case _actions.LOGIN_REQUEST:
-		case _actions.LOGOUT_REQUEST:
-			return Object.assign({}, state, {
-				isFetching: true,
-				isLogged: false
-			});
-		case _actions.REGISTER_SUCCESS:
-		case _actions.LOGIN_SUCCESS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				isLogged: true,
-				name: action.user.username
-			});
-		case _actions.REGISTER_ERROR:
-		case _actions.LOGIN_ERROR:
-		case _actions.LOGOUT_SUCCESS:
-			return Object.assign({}, state, {
-				isFetching: false,
-				isLogged: false
-			});
-		case _actions.LOGOUT_ERROR:
-			return Object.assign({}, state, {
-				isFetching: false,
-				isLogged: true
-			});
-		default:
-			return state;
-	}
+    switch (action.type) {
+        case _actions.REGISTER_REQUEST:
+        case _actions.LOGIN_REQUEST:
+        case _actions.LOGOUT_REQUEST:
+            return Object.assign({}, state, {
+                isFetching: true,
+                isLogged: false
+            });
+        case _actions.REGISTER_SUCCESS:
+        case _actions.LOGIN_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: true,
+                name: action.user.username
+            });
+        case _actions.REGISTER_ERROR:
+        case _actions.LOGIN_ERROR:
+        case _actions.LOGOUT_SUCCESS:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: false
+            });
+        case _actions.LOGOUT_ERROR:
+            return Object.assign({}, state, {
+                isFetching: false,
+                isLogged: true
+            });
+        default:
+            return state;
+    }
 }
 
 function error() {
-	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-		status: false
-	};
-	var action = arguments[1];
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        status: false
+    };
+    var action = arguments[1];
 
-	switch (action.type) {
-		case _actions.FETCH_PARKING_LOTS_ERROR:
-		case _actions.FETCH_SPOTS_ERROR:
-		case _actions.FETCH_TOGGLE_SPOT_ERROR:
-		case _actions.REGISTER_ERROR:
-		case _actions.LOGIN_ERROR:
-		case _actions.LOGOUT_ERROR:
-			return Object.assign({}, state, {
-				status: true,
-				message: action.error_msg,
-				type: action.type
-			});
-		default:
-			return Object.assign({}, state, {
-				status: false
-			});
-	}
+    switch (action.type) {
+        case _actions.FETCH_PARKING_LOTS_ERROR:
+        case _actions.FETCH_SPOTS_ERROR:
+        case _actions.FETCH_TOGGLE_SPOT_ERROR:
+        case _actions.REGISTER_ERROR:
+        case _actions.LOGIN_ERROR:
+        case _actions.LOGOUT_ERROR:
+        case _actions.FETCH_SPOT_INFO_ERROR:
+            return Object.assign({}, state, {
+                status: true,
+                message: action.error_msg,
+                type: action.type
+            });
+        default:
+            return Object.assign({}, state, {
+                status: false
+            });
+    }
 }
 
 var rootReducer = (0, _redux.combineReducers)({
-	error: error,
-	user: user,
-	scene: scene,
-	parkingLots: parkingLots
+    error: error,
+    user: user,
+    scene: scene,
+    parkingLots: parkingLots
 });
 
 exports.default = rootReducer;
 
-},{"./actions":537,"./constants":539,"redux":513}]},{},[530]);
+},{"./actions":539,"./constants":541,"redux":513}]},{},[531]);

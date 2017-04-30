@@ -9,6 +9,7 @@ import (
 	"hiqdb/session"
 	"hiqdb/user"
 	"time"
+	"hiqdb/spotinfo"
 )
 
 type JSpot struct {
@@ -50,6 +51,11 @@ var GENERAL_ERROR_MSG = jsonMust(json.MarshalIndent(JResponse{
 	Message:"Something went wrong, try again later!",
 },"",""))
 
+var NO_SPOT_INFO_MSG = jsonMust(json.MarshalIndent(JResponse{
+	Error:false,
+	Message:"Spot has no info",
+}, "", ""))
+
 var GENERAL_UPDATE_MSG,_ = json.Marshal(JResponse{
 	Error:false,
 	Message:"UPDATE",
@@ -64,6 +70,7 @@ var FREE_SPOT_MSG,_ = json.Marshal(JResponse{
 	Error:false,
 	Message:"A spot just opened up.",
 })
+
 
 func AsJson(data interface{}) string {
 	dataVal := reflect.ValueOf(data)
@@ -117,6 +124,7 @@ func asJson(data interface{}) interface{}{
 	case JResponse:
 		return data
 	case JSpot:
+	case spotinfo.JSpotInfo:
 		return data
 	case error:
 		return JResponse{Error:true, Message:data.(error).Error()}
@@ -128,6 +136,7 @@ func asJson(data interface{}) interface{}{
 			return data
 		}
 	}
+	return nil
 }
 
 func toJson(data interface{}) string {

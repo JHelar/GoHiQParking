@@ -6,6 +6,7 @@ import fetch from 'isomorphic-fetch';
 const GET_LOTS_PATH = "api/lot/getAll";
 const LOT_FILL_PATH = "api/lot/fill";
 const SPOT_TOGGLE_PATH = "api/spot/toggle";
+const SPOT_INFO_PATH = "api/spot/info";
 const GET_USER_PATH = "api/user/get";
 const LOGIN_USER_PATH = "api/user/login";
 const REGISTER_USER_PATH = "api/user/register";
@@ -39,6 +40,9 @@ const Client = {
     },
     toggleSpot: (spotId, sessionKey) => {
         return post(SPOT_TOGGLE_PATH, {id: spotId, sessionKey: sessionKey});
+    },
+    spotInfo: (spotId) => {
+        return post(SPOT_INFO_PATH, {id: spotId});
     },
     getUser: (sessionKey) => {
         return post(GET_USER_PATH, {sessionKey: sessionKey});

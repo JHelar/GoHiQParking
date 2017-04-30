@@ -1,4 +1,3 @@
-import fetch from 'isomorphic-fetch';
 import { createCookie, getCookie, deleteCookie } from '../../../general/helpers';
 import { SCENE } from './constants';
 import Client from '../../../general/ApiClient';
@@ -12,6 +11,10 @@ export const FETCH_PARKING_LOTS_ERROR = 'FETCH_PARKING_LOTS_ERROR';
 export const FETCH_SPOTS_REQUEST = 'FETCH_SPOTS_REQUEST';
 export const FETCH_SPOTS_SUCCESS = 'FETCH_SPOTS_SUCCESS';
 export const FETCH_SPOTS_ERROR = 'FETCH_SPOTS_ERROR';
+
+export const FETCH_SPOT_INFO_REQUEST = 'FETCH_SPOT_INFO_REQUEST';
+export const FETCH_SPOT_INFO_SUCCESS = 'FETCH_SPOT_INFO_SUCCESS';
+export const FETCH_SPOT_INFO_ERROR = 'FETCH_SPOT_INFO_ERROR';
 
 export const FETCH_TOGGLE_SPOT_REQUEST = 'FETCH_TOGGLE_SPOT_REQUEST';
 export const FETCH_TOGGLE_SPOT_SUCCESS = 'FETCH_TOGGLE_SPOT_SUCCESS';
@@ -34,7 +37,8 @@ export const SELECT_PARKING_LOT = 'SELECT_PARKING_LOT';
 export const TOGGLE_SPOT = 'TOGGLE_SPOT';
 export const CHANGE_SCENE = 'CHANGE_SCENE';
 export const TOGGLE_MENU = 'TOGGLE_MENU';
-export const TOGGLE_MAP_REVEAL = 'TOGGLE_MAP_REVEAL';
+export const HIDE_SPOT_INFO = 'HIDE_SPOT_INFO';
+export const SHOW_SPOT_INFO = 'SHOW_SPOT_INFO';
 
 export function requestParkingLots() {
 	return {
@@ -97,15 +101,6 @@ export function receiveSpotsError(parkingLot, json) {
 	};
 }
 
-export function updateLotListener(parkingLot) {
-    return dispatch => {
-        return Client.updateLotListener(parkingLot,
-            () => dispatch(fetchSpots(parkingLot)),
-            () => dispatch(receiveSpotsError(parkingLot, {message: "EventStreamError"}))
-        )
-    }
-}
-
 export function fetchSpots(parkingLot) {
 	return dispatch => {
 		dispatch(requestSpots(parkingLot));
@@ -123,6 +118,46 @@ export function fetchSpots(parkingLot) {
 	};
 }
 
+// SPOT INFO
+export function requestSpotInfo(spotId){
+    return {
+        type: FETCH_SPOT_INFO_REQUEST,
+        spotId
+    };
+}
+
+export function receiveSpotInfo(spotId, json) {
+    return {
+        type: FETCH_SPOT_INFO_SUCCESS,
+        spotinfo: json.data,
+        received_at: Date.now(),
+        spotId
+    }
+}
+
+export function receiveSpotInfoError(spotId, json) {
+    return {
+        type: FETCH_SPOT_INFO_ERROR,
+        error_msg: json.message,
+        spotId
+    };
+}
+
+export function fetchSpotInfo(spotId) {
+    return dispatch => {
+        dispatch(requestSpotInfo(spotId));
+        return Client.spotInfo(spotId)
+            .then(response => response.json())
+            .then(json => {
+                if(json.error) dispatch(receiveSpotInfoError(spotId, json));
+                else dispatch(receiveSpotInfo(spotId, json));
+            })
+            .catch((ex) => {
+                dispatch(receiveSpotInfoError(spotId, { message: "Exception: " + ex}));
+            })
+    }
+}
+
 // POST Toggle
 export function requestToggleSpot(spot) {
 	return {
@@ -134,7 +169,7 @@ export function requestToggleSpot(spot) {
 export function receiveToggleSpot(spot, json){
 	return {
 		type: FETCH_TOGGLE_SPOT_SUCCESS,
-		spots: json.data,
+        spot: json.data.filter(s => s.id === spot)[0],
 		received_at: Date.now()
 	}
 }
@@ -296,6 +331,7 @@ export function fetchLogout() {
 
     };
 }
+
 // USER ACTIONS
 export function showParkingLots() {
 	return {
@@ -330,8 +366,26 @@ export function toggleMenu() {
     }
 }
 
-export function toggleMapReveal() {
+export function showSpotInfo(spotId) {
     return {
-        type: TOGGLE_MAP_REVEAL
+        type: SHOW_SPOT_INFO,
+        spotId: spotId
     }
 }
+
+export function hideSpotInfo() {
+    return {
+        type: HIDE_SPOT_INFO
+    }
+}
+
+// UPDATE LISTENER
+export function updateLotListener(parkingLot) {
+    return dispatch => {
+        return Client.updateLotListener(parkingLot,
+            () => dispatch(fetchSpots(parkingLot)),
+            () => dispatch(receiveSpotsError(parkingLot, {message: "EventStreamError"}))
+        )
+    }
+}
+

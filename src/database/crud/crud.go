@@ -103,6 +103,11 @@ func setReflectValues(t reflect.Type, v reflect.Value, values [][]byte){
 						x, _ := strconv.Atoi(val)
 						field.Set(reflect.ValueOf(&x))
 					}
+					break
+				case reflect.Float64:
+					b, _ := strconv.ParseFloat(val, 64)
+					field.SetFloat(b)
+					break
 				default:
 					//field.Set(reflect.Zero(reflect.TypeOf(nil)))
 					log.Printf("Could not determine value type: %v", field.Kind())
@@ -191,7 +196,7 @@ func Read(db *sql.DB, data interface{}, selectName interface{}, selectValue inte
 	case err == sql.ErrNoRows:
 		return false
 	case err != nil:
-		log.Print("Something went wrong in crud Read")
+		log.Printf("Something went wrong in crud Read: %v", err.Error())
 		return false
 	default:
 		break
