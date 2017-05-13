@@ -3813,7 +3813,6 @@ html {
 body {
   margin: 0;
   background: #ffffff;
-  overflow: hidden;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -4006,6 +4005,9 @@ h6,
       line-height: inherit;
       color: #000000; } }
 
+button {
+  cursor: pointer; }
+
 .uppercase {
   text-transform: uppercase; }
 
@@ -4055,11 +4057,15 @@ h6,
     color: #00c493; }
 
 #root {
-  height: 100%; }
-  #root > section {
-    height: 100%;
-    background-image: url("../image/texture-asphalt.jpg");
-    position: relative; }
+  height: 100%;
+  overflow-y: auto;
+  background-image: url("../image/texture-asphalt.jpg");
+  position: relative;
+  background-attachment: fixed; }
+  #root::-webkit-scrollbar {
+    display: none; }
+  #root > section > main {
+    padding-top: 120px; }
 
 .hamburger {
   width: 60px;
@@ -4145,7 +4151,10 @@ h6,
   flex-flow: row nowrap;
   align-items: center;
   height: 120px;
-  padding: 0 5rem; }
+  padding: 0 5rem;
+  position: fixed;
+  width: 100%;
+  z-index: 51; }
   #main-header:before {
     z-index: 20; }
     @media print, screen and (min-width: 40em) {
@@ -4190,7 +4199,7 @@ h6,
     display: block;
     color: #ffffff;
     font-family: "HiQ", sans-serif;
-    font-size: 2rem;
+    font-size: 2.5rem;
     -webkit-transition: color 0.2s ease-out;
     -moz-transition: color 0.2s ease-out;
     -ms-transition: color 0.2s ease-out;
@@ -4397,38 +4406,37 @@ h6,
 .spots-wrapper {
   position: relative;
   z-index: 0;
-  margin-top: 1rem; }
+  margin-top: 1rem;
+  padding: 1rem; }
   .spots-wrapper .name {
     display: block;
     text-align: center;
-    font-size: 2rem; }
+    font-size: 2.5rem;
+    font-family: "Reenie Beanie";
+    color: #ffffff;
+    font-weight: 700; }
+  .spots-wrapper .info {
+    width: 100%;
+    display: block;
+    color: #ffe50d;
+    padding: .5rem 0; }
 
 .spot {
+  margin-bottom: 1rem;
   color: #ffffff;
   border: 1rem solid #ffffff;
   border-radius: 10px 10px 0 0;
   border-bottom: none;
   min-height: 15rem;
   position: relative;
-  background-color: rgba(0, 255, 0, 0.3); }
+  background-color: rgba(0, 255, 0, 0.3);
+  display: flex;
+  justify-content: center; }
   .spot.parked {
     background-color: rgba(255, 0, 0, 0.3); }
-  .spot .name {
+  .spot > button {
     position: absolute;
-    display: block;
-    content: '';
-    width: 100%;
-    height: 100%;
-    -ms-writing-mode: tb-rl;
-    -webkit-writing-mode: vertical-rl;
-    -moz-writing-mode: vertical-rl;
-    -ms-writing-mode: vertical-rl;
-    writing-mode: vertical-rl;
-    -webkit-text-orientation: upright;
-    -moz-text-orientation: upright;
-    -ms-text-orientation: upright;
-    text-orientation: upright;
-    z-index: 0; }
+    bottom: 0; }
 
 .map-reveal .map {
   height: 0;
@@ -4445,11 +4453,10 @@ h6,
   display: none;
   position: absolute;
   width: 100%;
-  height: 10;
+  height: 100%;
   top: 0; }
   .spotInfo.display {
-    display: block;
-    height: 100%; }
+    display: block; }
   .spotInfo > div {
     width: 50em;
     background-color: #ffffff;

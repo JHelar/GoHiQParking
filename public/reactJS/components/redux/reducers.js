@@ -28,7 +28,11 @@ import {
 	CHANGE_SCENE,
     TOGGLE_MENU,
     HIDE_SPOT_INFO,
-    SHOW_SPOT_INFO
+    SHOW_SPOT_INFO,
+    GEOLOCATION_SETUP,
+    SET_SPOT_INTERVAL,
+    UPDATE_SPOT_DISTANCE,
+    REMOVE_SPOT_INTERVAL
 } from './actions';
 
 
@@ -41,7 +45,9 @@ function spot(state = {
     parkedby: 0,
     parkedtime: Date.now(),
     canmodify: false,
-    spotinfo: null
+    spotinfo: null,
+    intervalId: -1,
+    distance: -1
 }, action){
     switch(action.type){
         case FETCH_TOGGLE_SPOT_SUCCESS:
@@ -55,6 +61,17 @@ function spot(state = {
             return Object.assign({}, state, {
                 spotinfo: action.spotinfo
             });
+        case SET_SPOT_INTERVAL:
+            return Object.assign({}, state, {
+               intervalId: action.intervalId
+            });
+        case UPDATE_SPOT_DISTANCE:
+            return Object.assign({}, state, {
+               distance: action.distance
+            });
+        case REMOVE_SPOT_INTERVAL:
+            clearInterval(state.intervalId);
+            return state;
         default:
             return state;
     }
@@ -120,6 +137,16 @@ function lot(state = {
                     return spot_state;
                 }),
                 lastUpdate: action.received_at
+            });
+        case UPDATE_SPOT_DISTANCE:
+        case SET_SPOT_INTERVAL:
+        case REMOVE_SPOT_INTERVAL:
+            return Object.assign({}, state, {
+               spots: state.spots.map((spot_state, _) => {
+                   if(spot_state.id === action.spotId)
+                       return Object.assign({}, spot_state, spot(spot_state, action));
+                   return spot_state;
+               })
             });
 		default:
 			return state;
@@ -196,6 +223,9 @@ function parkingLots(state = {
 		case FETCH_TOGGLE_SPOT_REQUEST:
 		case FETCH_TOGGLE_SPOT_SUCCESS:
         case FETCH_SPOT_INFO_SUCCESS:
+        case UPDATE_SPOT_DISTANCE:
+        case SET_SPOT_INTERVAL:
+        case REMOVE_SPOT_INTERVAL:
 			return Object.assign({}, state, {
 				didInvalidate: false,
 				isFetching: false,
@@ -252,7 +282,8 @@ function scene(state = {menuOpen: false, showSpotInfo: {spotId: 0, show:false}, 
 }
 
 function user(state = {
-    isLogged: false
+    isLogged: false,
+    canGeoPoll: false,
 }, action) {
     switch(action.type){
         case REGISTER_REQUEST:
@@ -280,6 +311,10 @@ function user(state = {
             return Object.assign({}, state, {
                 isFetching: false,
                 isLogged: true
+            });
+        case GEOLOCATION_SETUP:
+            return Object.assign({}, state, {
+               canGeoPoll: action.canGeoPoll
             });
         default:
             return state;

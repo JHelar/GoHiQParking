@@ -30866,6 +30866,59 @@ var get = function get(url) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+/**
+ * Created by Johnh on 2017-05-13.
+ */
+var GeoClient = {
+    hasPermission: true,
+    updateIntervall: 2000,
+    canGetCoordinates: function canGetCoordinates() {
+        return undefined.hasPermission && !!navigator.geolocation;
+    },
+    error: function error(_error) {
+        switch (_error.code) {
+            case _error.PERMISSION_DENIED:
+            case _error.POSITION_UNAVAILABLE:
+            case _error.TIMEOUT:
+            case _error.UNKNOWN_ERR:
+                undefined.hasPermission = false;
+        }
+    },
+    getDistance: function getDistance(pos, callback) {
+        var _this = this;
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+            callback(calculateDistance(pos, { long: position.coords.longitude, lat: position.coords.latitude }));
+        }, function (err) {
+            _this.error(err);callback(-1);
+        });
+    }
+};
+
+var calculateDistance = function calculateDistance(pos1, pos2) {
+    var R = 6371e3; // metres
+    var φ1 = toRadians(pos1.lat);
+    var φ2 = toRadians(pos2.lat);
+    var Δφ = toRadians(pos2.lat - pos1.lat);
+    var Δλ = toRadians(pos2.long - pos1.long);
+
+    var a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+};
+
+var toRadians = function toRadians(num) {
+    return num * (Math.PI / 180);
+};
+
+exports.default = GeoClient;
+
+},{}],522:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.createCookie = createCookie;
 exports.getCookie = getCookie;
 exports.deleteCookie = deleteCookie;
@@ -31069,7 +31122,7 @@ function timeDifference(previous) {
     }
 }
 
-},{}],522:[function(require,module,exports){
+},{}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31102,6 +31155,10 @@ var _SpotInfoContainer2 = _interopRequireDefault(_SpotInfoContainer);
 
 var _actions = require('../redux/actions');
 
+var _GeoClient = require('../../../general/GeoClient');
+
+var _GeoClient2 = _interopRequireDefault(_GeoClient);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31128,6 +31185,9 @@ var App = function (_Component) {
             var dispatch = this.props.dispatch;
 
             dispatch((0, _actions.fetchParkingLots)());
+            _GeoClient2.default.getDistance({ long: 0, lat: 0 }, function (dist) {
+                return dispatch((0, _actions.geoLocationSetUp)(dist));
+            });
         }
     }, {
         key: 'render',
@@ -31153,7 +31213,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../redux/actions":539,"./Header":523,"./LotsContainer":525,"./SceneSwapper":528,"./SpotInfoContainer":529,"react":501,"react-redux":471}],523:[function(require,module,exports){
+},{"../../../general/GeoClient":521,"../redux/actions":540,"./Header":524,"./LotsContainer":526,"./SceneSwapper":529,"./SpotInfoContainer":530,"react":501,"react-redux":471}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31304,7 +31364,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":532,"../presentational/HeaderButtons":533,"../redux/actions":539,"../redux/constants":541,"react":501,"react-redux":471}],524:[function(require,module,exports){
+},{"../presentational/Error":533,"../presentational/HeaderButtons":534,"../redux/actions":540,"../redux/constants":542,"react":501,"react-redux":471}],525:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31359,7 +31419,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":539,"react":501,"react-redux":471}],525:[function(require,module,exports){
+},{"../redux/actions":540,"react":501,"react-redux":471}],526:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31403,7 +31463,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":535,"../redux/actions":539,"../redux/constants":541,"react-redux":471}],526:[function(require,module,exports){
+},{"../presentational/LotList":536,"../redux/actions":540,"../redux/constants":542,"react-redux":471}],527:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31465,7 +31525,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":539,"react":501,"react-redux":471}],527:[function(require,module,exports){
+},{"../redux/actions":540,"react":501,"react-redux":471}],528:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31526,7 +31586,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":540,"./App":522,"react":501,"react-redux":471}],528:[function(require,module,exports){
+},{"../redux/configureStore":541,"./App":523,"react":501,"react-redux":471}],529:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31609,7 +31669,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":541,"./Login":524,"./Register":526,"./SpotsContainer":530,"react":501,"react-redux":471}],529:[function(require,module,exports){
+},{"../redux/constants":542,"./Login":525,"./Register":527,"./SpotsContainer":531,"react":501,"react-redux":471}],530:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31669,7 +31729,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotInfoReveal2.default);
 
-},{"../presentational/SpotInfoReveal":537,"../redux/actions":539,"react-redux":471}],530:[function(require,module,exports){
+},{"../presentational/SpotInfoReveal":538,"../redux/actions":540,"react-redux":471}],531:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31701,12 +31761,31 @@ var mapStateToProps = function mapStateToProps(state) {
     return {
         lotName: lotName,
         isLogged: state.user.isLogged,
-        spots: spots
+        canGeoPoll: state.user.canGeoPoll,
+        spots: spots !== undefined ? spots.map(function (spot, _) {
+            return {
+                id: spot.id,
+                name: spot.name,
+                isparked: spot.isparked,
+                canmodify: spot.canmodify,
+                parkedby: spot.parkedby,
+                parkedtime: spot.parkedtime,
+                distance: spot.distance,
+                pos: spot.spotinfo !== null && spot.spotinfo !== undefined ? { long: spot.spotinfo.longitude, lat: spot.spotinfo.latitude } : undefined
+            };
+        }) : []
     };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
+        onSetupSpotInterval: function onSetupSpotInterval(id, pos) {
+            dispatch((0, _actions.fetchSpotInfo)(id));
+            dispatch((0, _actions.setupSpotInterval)(id, pos));
+        },
+        onRemoveSpotInterval: function onRemoveSpotInterval(id) {
+            dispatch((0, _actions.removeSpotInterval)(id));
+        },
         onInfoClick: function onInfoClick(id) {
             dispatch((0, _actions.fetchSpotInfo)(id));
             dispatch((0, _actions.showSpotInfo)(id));
@@ -31723,7 +31802,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
 
-},{"../presentational/SpotList":538,"../redux/actions":539,"../redux/constants":541,"react-redux":471}],531:[function(require,module,exports){
+},{"../presentational/SpotList":539,"../redux/actions":540,"../redux/constants":542,"react-redux":471}],532:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -31745,7 +31824,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
-},{"./containers/Root":527,"babel-polyfill":1,"react":501,"react-dom":335}],532:[function(require,module,exports){
+},{"./containers/Root":528,"babel-polyfill":1,"react":501,"react-dom":335}],533:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31789,7 +31868,7 @@ Error.propTypes = {
 
 exports.default = Error;
 
-},{"react":501}],533:[function(require,module,exports){
+},{"react":501}],534:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31953,7 +32032,7 @@ LogoutButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-},{"react":501}],534:[function(require,module,exports){
+},{"react":501}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31996,7 +32075,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../../../general/helpers":521,"react":501}],535:[function(require,module,exports){
+},{"../../../general/helpers":522,"react":501}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32051,12 +32130,14 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":534,"react":501}],536:[function(require,module,exports){
+},{"./Lot":535,"react":501}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -32064,71 +32145,129 @@ var _react2 = _interopRequireDefault(_react);
 
 var _helpers = require('../../../general/helpers');
 
+var _GeoClient = require('../../../general/GeoClient');
+
+var _GeoClient2 = _interopRequireDefault(_GeoClient);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Created by Johnh on 2017-03-19.
- */
-var Spot = function Spot(_ref) {
-    var onInfoClick = _ref.onInfoClick,
-        onClick = _ref.onClick,
-        onLoginClick = _ref.onLoginClick,
-        id = _ref.id,
-        name = _ref.name,
-        isparked = _ref.isparked,
-        canmodify = _ref.canmodify,
-        parkedby = _ref.parkedby,
-        parkedtime = _ref.parkedtime,
-        isLogged = _ref.isLogged;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    var buttonTxt = isparked ? "Leave" : "Park";
-    var spotClass = isparked ? "spot parked" : "spot";
-    return _react2.default.createElement(
-        'div',
-        { className: 'small-6 medium-4 large-3 column' },
-        _react2.default.createElement(
-            'span',
-            { className: 'name' },
-            name
-        ),
-        _react2.default.createElement(
-            'div',
-            { className: spotClass },
-            isparked && _react2.default.createElement(
-                'p',
-                null,
-                parkedby,
-                ' - ',
-                (0, _helpers.timeDifference)(new Date(parkedtime))
-            ),
-            canmodify && isparked && _react2.default.createElement(
-                'button',
-                { onClick: onClick, className: 'button-flavor green' },
-                buttonTxt
-            ),
-            canmodify && !isparked && _react2.default.createElement(
-                'button',
-                { onClick: onClick, className: 'button-flavor blue' },
-                buttonTxt
-            ),
-            !isLogged && !isparked && _react2.default.createElement(
-                'button',
-                { onClick: onLoginClick },
-                'Login to park'
-            )
-        ),
-        _react2.default.createElement(
-            'button',
-            { onClick: onInfoClick },
-            'Show info'
-        )
-    );
-};
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by Johnh on 2017-03-19.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+var Spot = function (_Component) {
+    _inherits(Spot, _Component);
+
+    function Spot(props) {
+        _classCallCheck(this, Spot);
+
+        return _possibleConstructorReturn(this, (Spot.__proto__ || Object.getPrototypeOf(Spot)).call(this, props));
+    }
+
+    _createClass(Spot, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _props = this.props,
+                canGeoPoll = _props.canGeoPoll,
+                onSetupSpotInterval = _props.onSetupSpotInterval;
+
+            if (canGeoPoll) {
+                onSetupSpotInterval();
+            }
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            var _props2 = this.props,
+                canGeoPoll = _props2.canGeoPoll,
+                onRemoveSpotInterval = _props2.onRemoveSpotInterval;
+
+            if (canGeoPoll) onRemoveSpotInterval();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _props3 = this.props,
+                onInfoClick = _props3.onInfoClick,
+                onClick = _props3.onClick,
+                onLoginClick = _props3.onLoginClick,
+                canGeoPoll = _props3.canGeoPoll,
+                distance = _props3.distance,
+                name = _props3.name,
+                isparked = _props3.isparked,
+                canmodify = _props3.canmodify,
+                parkedby = _props3.parkedby,
+                parkedtime = _props3.parkedtime,
+                isLogged = _props3.isLogged;
+
+            var buttonTxt = isparked ? "Leave" : "Park";
+            var spotClass = isparked ? "spot parked" : "spot";
+            return _react2.default.createElement(
+                'div',
+                { className: 'small-12 medium-4 large-3 column' },
+                _react2.default.createElement(
+                    'span',
+                    { className: 'name' },
+                    name
+                ),
+                _react2.default.createElement(
+                    'button',
+                    { onClick: onInfoClick, className: 'info' },
+                    'Show info'
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: spotClass },
+                    isparked && _react2.default.createElement(
+                        'p',
+                        null,
+                        parkedby,
+                        ' - ',
+                        (0, _helpers.timeDifference)(new Date(parkedtime))
+                    ),
+                    canGeoPoll && _react2.default.createElement(
+                        'p',
+                        null,
+                        distance
+                    ),
+                    canmodify && isparked && _react2.default.createElement(
+                        'button',
+                        { onClick: onClick, className: 'button-flavor green' },
+                        buttonTxt
+                    ),
+                    canmodify && !isparked && _react2.default.createElement(
+                        'button',
+                        { onClick: onClick, className: 'button-flavor blue' },
+                        buttonTxt
+                    ),
+                    !isLogged && !isparked && _react2.default.createElement(
+                        'button',
+                        { onClick: onLoginClick },
+                        'Login to park'
+                    )
+                )
+            );
+        }
+    }]);
+
+    return Spot;
+}(_react.Component);
+
+;
 
 Spot.propTypes = {
+    onRemoveSpotInterval: _react.PropTypes.func,
+    onSetupSpotInterval: _react.PropTypes.func,
     onInfoClick: _react.PropTypes.func,
     onClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
+    canGeoPoll: _react.PropTypes.bool.isRequired,
+    distance: _react.PropTypes.number,
     id: _react.PropTypes.number.isRequired,
     name: _react.PropTypes.string.isRequired,
     isparked: _react.PropTypes.bool.isRequired,
@@ -32140,7 +32279,7 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/helpers":521,"react":501}],537:[function(require,module,exports){
+},{"../../../general/GeoClient":521,"../../../general/helpers":522,"react":501}],538:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32202,7 +32341,7 @@ SpotInfoReveal.propTypes = {
 
 exports.default = SpotInfoReveal;
 
-},{"react":501}],538:[function(require,module,exports){
+},{"react":501}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32227,7 +32366,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var SpotsList = function SpotsList(_ref) {
     var lotName = _ref.lotName,
         spots = _ref.spots,
+        canGeoPoll = _ref.canGeoPoll,
         isLogged = _ref.isLogged,
+        onRemoveSpotInterval = _ref.onRemoveSpotInterval,
+        onSetupSpotInterval = _ref.onSetupSpotInterval,
         onSpotClick = _ref.onSpotClick,
         _onInfoClick = _ref.onInfoClick,
         onLoginClick = _ref.onLoginClick;
@@ -32246,8 +32388,15 @@ var SpotsList = function SpotsList(_ref) {
             { className: 'spots-wrapper row align-spaced' },
             spots.map(function (spot) {
                 return _react2.default.createElement(_Spot2.default, _extends({}, spot, {
+                    canGeoPoll: canGeoPoll,
                     isLogged: isLogged,
                     key: spot.id,
+                    onRemoveSpotIntervall: function onRemoveSpotIntervall() {
+                        return onRemoveSpotInterval(spot.id);
+                    },
+                    onSetUpSpotIntervall: function onSetUpSpotIntervall() {
+                        return onSetupSpotInterval(spot.id, spot.pos);
+                    },
                     onClick: function onClick() {
                         return onSpotClick(spot.id);
                     },
@@ -32262,30 +32411,38 @@ var SpotsList = function SpotsList(_ref) {
 };
 
 SpotsList.propTypes = {
+    onSetupSpotInterval: _react.PropTypes.func,
+    onRemoveSpotInterval: _react.PropTypes.func,
     onSpotClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
     onInfoClick: _react.PropTypes.func,
     lotName: _react.PropTypes.string.isRequired,
+    canGeoPoll: _react.PropTypes.bool.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
         id: _react.PropTypes.number.isRequired,
         name: _react.PropTypes.string.isRequired,
         isparked: _react.PropTypes.bool.isRequired,
         canmodify: _react.PropTypes.bool.isRequired,
         parkedby: _react.PropTypes.string.isRequired,
-        parkedtime: _react.PropTypes.string.isRequired
+        parkedtime: _react.PropTypes.string.isRequired,
+        distance: _react.PropTypes.number,
+        pos: _react.PropTypes.shape({
+            long: _react.PropTypes.number,
+            lat: _react.PropTypes.number
+        })
     }).isRequired),
     isLogged: _react.PropTypes.bool.isRequired
 };
 
 exports.default = SpotsList;
 
-},{"../presentational/Spot":536,"react":501}],539:[function(require,module,exports){
+},{"../presentational/Spot":537,"react":501}],540:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.SHOW_SPOT_INFO = exports.HIDE_SPOT_INFO = exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOT_INFO_ERROR = exports.FETCH_SPOT_INFO_SUCCESS = exports.FETCH_SPOT_INFO_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
+exports.REMOVE_SPOT_INTERVAL = exports.SET_SPOT_INTERVAL = exports.UPDATE_SPOT_DISTANCE = exports.GEOLOCATION_SETUP = exports.SHOW_SPOT_INFO = exports.HIDE_SPOT_INFO = exports.TOGGLE_MENU = exports.CHANGE_SCENE = exports.TOGGLE_SPOT = exports.SELECT_PARKING_LOT = exports.SHOW_PARKING_LOTS = exports.LOGOUT_ERROR = exports.LOGOUT_SUCCESS = exports.LOGOUT_REQUEST = exports.REGISTER_ERROR = exports.REGISTER_SUCCESS = exports.REGISTER_REQUEST = exports.LOGIN_ERROR = exports.LOGIN_SUCCESS = exports.LOGIN_REQUEST = exports.FETCH_TOGGLE_SPOT_ERROR = exports.FETCH_TOGGLE_SPOT_SUCCESS = exports.FETCH_TOGGLE_SPOT_REQUEST = exports.FETCH_SPOT_INFO_ERROR = exports.FETCH_SPOT_INFO_SUCCESS = exports.FETCH_SPOT_INFO_REQUEST = exports.FETCH_SPOTS_ERROR = exports.FETCH_SPOTS_SUCCESS = exports.FETCH_SPOTS_REQUEST = exports.FETCH_PARKING_LOTS_ERROR = exports.FETCH_PARKING_LOTS_SUCCESS = exports.FETCH_PARKING_LOTS_REQUEST = undefined;
 exports.requestParkingLots = requestParkingLots;
 exports.receiveParkingLots = receiveParkingLots;
 exports.receiveParkingLotsError = receiveParkingLotsError;
@@ -32323,6 +32480,11 @@ exports.toggleMenu = toggleMenu;
 exports.showSpotInfo = showSpotInfo;
 exports.hideSpotInfo = hideSpotInfo;
 exports.updateLotListener = updateLotListener;
+exports.geoLocationSetUp = geoLocationSetUp;
+exports.updateSpotDistance = updateSpotDistance;
+exports.setSpotInterval = setSpotInterval;
+exports.setupSpotInterval = setupSpotInterval;
+exports.removeSpotInterval = removeSpotInterval;
 
 var _helpers = require('../../../general/helpers');
 
@@ -32331,6 +32493,14 @@ var _constants = require('./constants');
 var _ApiClient = require('../../../general/ApiClient');
 
 var _ApiClient2 = _interopRequireDefault(_ApiClient);
+
+var _GeoClient = require('../../../general/GeoClient');
+
+var _GeoClient2 = _interopRequireDefault(_GeoClient);
+
+var _Root = require('../containers/Root');
+
+var _Root2 = _interopRequireDefault(_Root);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32371,6 +32541,10 @@ var CHANGE_SCENE = exports.CHANGE_SCENE = 'CHANGE_SCENE';
 var TOGGLE_MENU = exports.TOGGLE_MENU = 'TOGGLE_MENU';
 var HIDE_SPOT_INFO = exports.HIDE_SPOT_INFO = 'HIDE_SPOT_INFO';
 var SHOW_SPOT_INFO = exports.SHOW_SPOT_INFO = 'SHOW_SPOT_INFO';
+var GEOLOCATION_SETUP = exports.GEOLOCATION_SETUP = 'GEOLOCATION_SETUP';
+var UPDATE_SPOT_DISTANCE = exports.UPDATE_SPOT_DISTANCE = 'UPDATE_SPOT_DISTANCE';
+var SET_SPOT_INTERVAL = exports.SET_SPOT_INTERVAL = 'SET_SPOT_INTERVAL';
+var REMOVE_SPOT_INTERVAL = exports.REMOVE_SPOT_INTERVAL = 'REMOVE_SPOT_INTERVAL';
 
 function requestParkingLots() {
     return {
@@ -32705,7 +32879,48 @@ function updateLotListener(parkingLot) {
     };
 }
 
-},{"../../../general/ApiClient":520,"../../../general/helpers":521,"./constants":541}],540:[function(require,module,exports){
+function geoLocationSetUp(dist) {
+    return {
+        type: GEOLOCATION_SETUP,
+        canGeoPoll: dist > -1
+    };
+}
+
+function updateSpotDistance(id, dist) {
+    return {
+        type: UPDATE_SPOT_DISTANCE,
+        distance: dist,
+        spotId: id
+    };
+}
+
+function setSpotInterval(id, intervalId) {
+    return {
+        type: SET_SPOT_INTERVAL,
+        intervalId: intervalId,
+        spotId: id
+    };
+}
+
+function setupSpotInterval(id, pos) {
+    return function (dispatch) {
+        var intId = setInterval(function () {
+            return _GeoClient2.default.getDistance(pos, function (dist) {
+                return dispatch(updateSpotDistance(id, dist));
+            }, _GeoClient2.default.updateIntervall);
+        });
+        dispatch(setSpotInterval(id, intId));
+    };
+}
+
+function removeSpotInterval(id) {
+    return {
+        type: REMOVE_SPOT_INTERVAL,
+        spotId: id
+    };
+}
+
+},{"../../../general/ApiClient":520,"../../../general/GeoClient":521,"../../../general/helpers":522,"../containers/Root":528,"./constants":542}],541:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32739,7 +32954,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":542,"redux":513,"redux-logger":506,"redux-thunk":507}],541:[function(require,module,exports){
+},{"./reducers":543,"redux":513,"redux-logger":506,"redux-thunk":507}],542:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32757,7 +32972,7 @@ var SCENE = exports.SCENE = {
     SPOTS_FETCHED: "SPOTS_FETCHED_SCENE"
 };
 
-},{}],542:[function(require,module,exports){
+},{}],543:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32779,7 +32994,9 @@ function spot() {
         parkedby: 0,
         parkedtime: Date.now(),
         canmodify: false,
-        spotinfo: null
+        spotinfo: null,
+        intervalId: -1,
+        distance: -1
     };
     var action = arguments[1];
 
@@ -32792,6 +33009,17 @@ function spot() {
             return Object.assign({}, state, {
                 spotinfo: action.spotinfo
             });
+        case _actions.SET_SPOT_INTERVAL:
+            return Object.assign({}, state, {
+                intervalId: action.intervalId
+            });
+        case _actions.UPDATE_SPOT_DISTANCE:
+            return Object.assign({}, state, {
+                distance: action.distance
+            });
+        case _actions.REMOVE_SPOT_INTERVAL:
+            clearInterval(state.intervalId);
+            return state;
         default:
             return state;
     }
@@ -32859,6 +33087,15 @@ function lot() {
                     return spot_state;
                 }),
                 lastUpdate: action.received_at
+            });
+        case _actions.UPDATE_SPOT_DISTANCE:
+        case _actions.SET_SPOT_INTERVAL:
+        case _actions.REMOVE_SPOT_INTERVAL:
+            return Object.assign({}, state, {
+                spots: state.spots.map(function (spot_state, _) {
+                    if (spot_state.id === action.spotId) return Object.assign({}, spot_state, spot(spot_state, action));
+                    return spot_state;
+                })
             });
         default:
             return state;
@@ -32937,6 +33174,9 @@ function parkingLots() {
         case _actions.FETCH_TOGGLE_SPOT_REQUEST:
         case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
         case _actions.FETCH_SPOT_INFO_SUCCESS:
+        case _actions.UPDATE_SPOT_DISTANCE:
+        case _actions.SET_SPOT_INTERVAL:
+        case _actions.REMOVE_SPOT_INTERVAL:
             return Object.assign({}, state, {
                 didInvalidate: false,
                 isFetching: false,
@@ -32997,7 +33237,8 @@ function scene() {
 
 function user() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        isLogged: false
+        isLogged: false,
+        canGeoPoll: false
     };
     var action = arguments[1];
 
@@ -33027,6 +33268,10 @@ function user() {
             return Object.assign({}, state, {
                 isFetching: false,
                 isLogged: true
+            });
+        case _actions.GEOLOCATION_SETUP:
+            return Object.assign({}, state, {
+                canGeoPoll: action.canGeoPoll
             });
         default:
             return state;
@@ -33068,4 +33313,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":539,"./constants":541,"redux":513}]},{},[531]);
+},{"./actions":540,"./constants":542,"redux":513}]},{},[532]);

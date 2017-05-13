@@ -18,7 +18,7 @@ const mapDispatchToProps = (dispatch) => {
         onLotClick: (id) => {
             dispatch(selectParkingLot(id));
             dispatch(fetchSpots(id));
-            dispatch(updateLotListener(id))
+            dispatch(updateLotListener(id));
             dispatch(changeScene(SCENE.SHOW_SPOTS));
         }
     }

@@ -1,6 +1,8 @@
 import { createCookie, getCookie, deleteCookie } from '../../../general/helpers';
 import { SCENE } from './constants';
 import Client from '../../../general/ApiClient';
+import GeoClient from '../../../general/GeoClient';
+import configure from '../containers/Root';
 
 // API ACTIONS
 // Get parking lots
@@ -39,6 +41,10 @@ export const CHANGE_SCENE = 'CHANGE_SCENE';
 export const TOGGLE_MENU = 'TOGGLE_MENU';
 export const HIDE_SPOT_INFO = 'HIDE_SPOT_INFO';
 export const SHOW_SPOT_INFO = 'SHOW_SPOT_INFO';
+export const GEOLOCATION_SETUP = 'GEOLOCATION_SETUP';
+export const UPDATE_SPOT_DISTANCE = 'UPDATE_SPOT_DISTANCE';
+export const SET_SPOT_INTERVAL = 'SET_SPOT_INTERVAL';
+export const REMOVE_SPOT_INTERVAL = 'REMOVE_SPOT_INTERVAL';
 
 export function requestParkingLots() {
 	return {
@@ -389,3 +395,39 @@ export function updateLotListener(parkingLot) {
     }
 }
 
+export function geoLocationSetUp(dist) {
+    return {
+        type: GEOLOCATION_SETUP,
+        canGeoPoll: dist > -1
+    };
+}
+
+export function updateSpotDistance(id, dist) {
+    return {
+        type: UPDATE_SPOT_DISTANCE,
+        distance: dist,
+        spotId: id
+    };
+}
+
+export function setSpotInterval(id, intervalId) {
+    return {
+        type: SET_SPOT_INTERVAL,
+        intervalId: intervalId,
+        spotId: id
+    };
+}
+
+export function setupSpotInterval(id, pos) {
+    return dispatch => {
+        let intId = setInterval(() => GeoClient.getDistance(pos, (dist) => dispatch(updateSpotDistance(id, dist)), GeoClient.updateIntervall));
+        dispatch(setSpotInterval(id, intId));
+    }
+}
+
+export function removeSpotInterval(id) {
+    return {
+        type: REMOVE_SPOT_INTERVAL,
+        spotId: id
+    }
+}

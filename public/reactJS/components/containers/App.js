@@ -7,7 +7,8 @@ import SceneSwapper from './SceneSwapper';
 import Header from './Header';
 import LotsContanier from './LotsContainer';
 import SpotInfoContainer from './SpotInfoContainer';
-import { fetchParkingLots } from '../redux/actions';
+import { fetchParkingLots, geoLocationSetUp } from '../redux/actions';
+import GeoClient from '../../../general/GeoClient';
 
 class App extends Component {
     constructor(props){
@@ -17,6 +18,7 @@ class App extends Component {
     componentDidMount(){
         const { dispatch } = this.props;
         dispatch(fetchParkingLots());
+        GeoClient.getDistance({long: 0, lat: 0}, (dist) => dispatch(geoLocationSetUp(dist)));
     }
 
     render(){

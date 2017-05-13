@@ -11,7 +11,7 @@ html{
 body {
   margin: 0;
   background: $white;
-  overflow: hidden;
+
   @include box-size();
   @include font($font-size-1, $font-family-robotolight);
 }
@@ -103,6 +103,11 @@ h6,
   }
 }
 
+button{
+  cursor: pointer;
+}
+
+
 .uppercase {
   text-transform: uppercase;
 }
@@ -165,11 +170,16 @@ h6,
 // Root
 #root {
   height: 100%;
-  > section {
-    height: 100%;
-    background-image: url('../image/texture-asphalt.jpg');
-    position: relative;
+  overflow-y: auto;
+  background-image: url('../image/texture-asphalt.jpg');
+  position: relative;
+  background-attachment: fixed;
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  > section > main {
+    padding-top: 120px;
   }
 }
 
@@ -268,6 +278,9 @@ h6,
   align-items: center;
   height: 120px;
   padding: 0 5rem;
+  position: fixed;
+  width:  100%;
+  z-index: 51;
 
   &:before{
     z-index: 20;
@@ -323,7 +336,7 @@ h6,
     display: block;
     color: $white;
     font-family: $font-family-hiq;
-    font-size: $font-size-2;
+    font-size: $font-size-25;
     @include transition(color);
     position: relative;
     z-index: 55;
@@ -538,14 +551,26 @@ h6,
   position: relative;
   z-index: 0;
   margin-top: 1rem;
+  padding: 1rem;
 
   .name {
     display: block;
     text-align: center;
-    font-size: $font-size-2;
+    font-size: $font-size-25;
+    font-family: $font-family-reeniebeanie;
+    color: $white;
+    font-weight: 700;
+  }
+
+  .info {
+    width: 100%;
+    display: block;
+    color: $yellow;
+    padding: .5rem 0;
   }
 }
 .spot {
+  margin-bottom: 1rem;
   color: $white;
   border: $border-size solid $white;
   border-radius: $border-radius $border-radius 0 0;
@@ -555,17 +580,15 @@ h6,
   position: relative;
 
   background-color: rgba(0, 255, 0, 0.3);
+
+  display: flex;
+  justify-content: center;
   &.parked{
     background-color: rgba(255, 0, 0, 0.3);
   }
-  .name {
+  > button {
     position: absolute;
-    display: block;
-    content: '';
-    width: 100%;
-    height: 100%;
-    @include text-orientation(upright);
-    z-index: 0;
+    bottom: 0;
   }
 }
 

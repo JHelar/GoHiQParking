@@ -1,7 +1,7 @@
 /**
  * Created by Johnh on 2017-04-02.
  */
-import {toggleSpot, fetchToggleSpot, changeScene, fetchSpotInfo, showSpotInfo } from '../redux/actions';
+import {toggleSpot, fetchToggleSpot, changeScene, fetchSpotInfo, showSpotInfo, setupSpotInterval, removeSpotInterval  } from '../redux/actions';
 import { connect } from 'react-redux';
 import SpotList from '../presentational/SpotList';
 import { SCENE } from '../redux/constants';
@@ -16,12 +16,31 @@ const mapStateToProps = (state) => {
     return {
         lotName: lotName,
         isLogged: state.user.isLogged,
-        spots: spots
+        canGeoPoll: state.user.canGeoPoll,
+        spots: spots !== undefined ? spots.map((spot, _) => {
+            return {
+                id: spot.id,
+                name: spot.name,
+                isparked: spot.isparked,
+                canmodify: spot.canmodify,
+                parkedby: spot.parkedby,
+                parkedtime: spot.parkedtime,
+                distance: spot.distance,
+                pos: spot.spotinfo !== null && spot.spotinfo !== undefined ? { long: spot.spotinfo.longitude, lat: spot.spotinfo.latitude } : undefined
+            }
+        }) : []
     };
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        onSetupSpotInterval: (id, pos) => {
+            dispatch(fetchSpotInfo(id));
+            dispatch(setupSpotInterval(id, pos));
+        },
+        onRemoveSpotInterval: (id) => {
+            dispatch(removeSpotInterval(id));
+        },
         onInfoClick: (id) => {
             dispatch(fetchSpotInfo(id));
             dispatch(showSpotInfo(id));

@@ -1,6 +1,7 @@
 /**
  * Created by Johnh on 2017-04-29.
  */
+
 import fetch from 'isomorphic-fetch';
 
 const GET_LOTS_PATH = "api/lot/getAll";
