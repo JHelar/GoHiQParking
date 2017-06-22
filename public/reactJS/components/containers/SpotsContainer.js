@@ -36,10 +36,8 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onSetupSpotInterval: (id, pos) => {
             dispatch(fetchSpotInfo(id));
-            dispatch(setupSpotInterval(id, pos));
         },
         onRemoveSpotInterval: (id) => {
-            dispatch(removeSpotInterval(id));
         },
         onInfoClick: (id) => {
             dispatch(fetchSpotInfo(id));

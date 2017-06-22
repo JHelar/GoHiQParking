@@ -12,18 +12,6 @@ class Spot extends Component {
         super(props);
     }
 
-    componentDidMount(){
-        const { canGeoPoll, onSetupSpotInterval } = this.props;
-        if(canGeoPoll) {
-            onSetupSpotInterval();
-        }
-    }
-    componentWillUnmount(){
-        const { canGeoPoll, onRemoveSpotInterval} = this.props;
-        if(canGeoPoll)
-            onRemoveSpotInterval();
-    }
-
     render() {
         const { onInfoClick, onClick, onLoginClick, canGeoPoll, distance, name, isparked, canmodify, parkedby, parkedtime, isLogged } = this.props;
         let buttonTxt = isparked ? "Leave" : "Park";

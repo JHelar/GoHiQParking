@@ -61,4 +61,4 @@ db/hiqparking.db
 server.log
 server_pid.txt
 server_start.txt
-db/
+db/*.db

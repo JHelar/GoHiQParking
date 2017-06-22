@@ -1,7 +1,7 @@
-@import "variables";
-@import "mixins";
-@import '../../node_modules/foundation-sites/scss/util/mixins';
-@import "../../node_modules/foundation-sites/scss/foundation";
+@import "variables.scss";
+@import "mixins.scss";
+@import '../../node_modules/foundation-sites/scss/util/mixins.scss';
+@import "../../node_modules/foundation-sites/scss/foundation.scss";
 
 @include foundation-everything(true);
 
@@ -456,12 +456,8 @@ button{
     -webkit-background-size:cover;
     background-size:cover;
     background-position: center center;
-    background-attachment: fixed;
     background-repeat: no-repeat;
 
-    @include breakpoint(large){
-      background-size: 70%;
-    }
     position: relative;
     z-index: 10;
     border: $border-size solid $white;
@@ -487,12 +483,11 @@ button{
       flex-grow: 0;
     }
 
-    @include transition(all, .5s);
+    @include transition(all, .2s);
 
     &:hover {
       @include breakpoint(large) {
-        -webkit-background-size: 100%;
-        background-size: 100%;
+        transform: scale(1.2);
       }
 
       border-color: $pink;
@@ -623,5 +618,26 @@ button{
     top: 180px;
     position: relative;
     margin: 0 auto;
+  }
+}
+
+.login,
+.register {
+  > h1 {
+    text-align: center;
+    text-transform: uppercase;
+    @include transition(font-size);
+    @include breakpoint(small){
+      @include font($font-size-2, $font-family-hiqrough, $white);
+    }
+    @include breakpoint(medium){
+      @include font($font-size-4, $font-family-hiqrough, $white);
+    }
+    @include breakpoint(large) {
+      @include font($font-size-6, $font-family-hiqrough, $white);
+    }
+  }
+  > form {
+    @include grid-row(12);
   }
 }

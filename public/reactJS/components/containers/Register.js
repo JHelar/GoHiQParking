@@ -14,7 +14,7 @@ let Register = ({ dispatch }) => {
     let inputPassword;
 
     return(
-        <main className="content">
+        <main className="content register">
             <h1>Register</h1>
             <form onSubmit={e => {
                 e.preventDefault();

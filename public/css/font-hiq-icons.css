@@ -4,6 +4,7 @@
   src: url("../font/HiQ-Icons.eot?#iefix") format("embedded-opentype"), url("../font/HiQ-Icons.woff") format("woff"), url("../font/HiQ-Icons.ttf") format("truetype");
   font-weight: 500;
   font-style: normal; }
+
 [class^="icon-"], [class*=" icon-"] {
   font-family: 'HiQIcons' !important;
   speak: none;
@@ -47,5 +48,3 @@
   content: "\e907";
   margin-left: -1.0234375em;
   color: #e42980; }
-
-/*# sourceMappingURL=font-hiq.css.map */
