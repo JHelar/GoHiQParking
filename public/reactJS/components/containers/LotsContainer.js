@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { fetchSpots, selectParkingLot, updateLotListener, changeScene } from '../redux/actions';
 import LotList from '../presentational/LotList';
 import { SCENE } from '../redux/constants';
+import { createCookie } from "../../../general/helpers";
 
 const mapStateToProps = (state) => {
     return {
@@ -16,6 +17,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         onLotClick: (id) => {
+            createCookie("dlot", id);
             dispatch(selectParkingLot(id));
             dispatch(fetchSpots(id));
             dispatch(updateLotListener(id));

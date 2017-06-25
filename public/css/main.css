@@ -3962,8 +3962,39 @@ button {
   background-attachment: fixed; }
   #root::-webkit-scrollbar {
     display: none; }
-  #root > section > main {
-    padding-top: 120px; }
+  #root > section {
+    height: 100%; }
+    #root > section > main {
+      padding-top: 120px; }
+
+footer {
+  position: absolute;
+  bottom: 0; }
+  footer > small {
+    -webkit-transition: font-size 0.2s ease-out;
+    -moz-transition: font-size 0.2s ease-out;
+    -ms-transition: font-size 0.2s ease-out;
+    -o-transition: font-size 0.2s ease-out;
+    transition: font-size 0.2s ease-out;
+    font-size: 0.8rem;
+    font-family: "RobotoLight", sans-serif;
+    font-weight: 400;
+    line-height: inherit;
+    color: #ffffff; }
+    @media print, screen and (min-width: 40em) {
+      footer > small {
+        font-size: 1rem;
+        font-family: "RobotoLight", sans-serif;
+        font-weight: 400;
+        line-height: inherit;
+        color: #ffffff; } }
+    @media print, screen and (min-width: 64em) {
+      footer > small {
+        font-size: 1rem;
+        font-family: "RobotoLight", sans-serif;
+        font-weight: 400;
+        line-height: inherit;
+        color: #ffffff; } }
 
 .hamburger {
   width: 60px;
@@ -4217,6 +4248,20 @@ button {
   -ms-transition: transform 0.2s ease-out;
   -o-transition: transform 0.2s ease-out;
   transition: transform 0.2s ease-out; }
+  .lot-wrapper > span:first-child {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem; }
+    .lot-wrapper > span:first-child > h1 {
+      font-family: "HiQRough", sans-serif;
+      font-weight: 700;
+      color: #ffffff;
+      position: relative;
+      text-align: center;
+      display: block; }
+      @media print, screen and (min-width: 40em) {
+        .lot-wrapper > span:first-child > h1 {
+          font-size: 5rem; } }
   @media print, screen and (min-width: 40em) {
     .lot-wrapper {
       justify-content: center; } }
@@ -4403,3 +4448,96 @@ button {
   .login > form::after,
   .register > form::after {
     clear: both; }
+  .login > form [type=color], .login > form [type=date], .login > form [type=datetime-local], .login > form [type=datetime], .login > form [type=email], .login > form [type=month], .login > form [type=number], .login > form [type=password], .login > form [type=search], .login > form [type=tel], .login > form [type=text], .login > form [type=time], .login > form [type=url], .login > form [type=week], .login > form textarea,
+  .register > form [type=color],
+  .register > form [type=date],
+  .register > form [type=datetime-local],
+  .register > form [type=datetime],
+  .register > form [type=email],
+  .register > form [type=month],
+  .register > form [type=number],
+  .register > form [type=password],
+  .register > form [type=search],
+  .register > form [type=tel],
+  .register > form [type=text],
+  .register > form [type=time],
+  .register > form [type=url],
+  .register > form [type=week],
+  .register > form textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 3rem;
+    margin: 0 0 1rem;
+    padding: .5rem;
+    border: none;
+    border-bottom: 4px solid #eaeaea;
+    background-color: #fff;
+    box-shadow: none;
+    font-family: RobotoBold,sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #000;
+    -webkit-transition: box-shadow 0.25s ease-out;
+    -moz-transition: box-shadow 0.25s ease-out;
+    -ms-transition: box-shadow 0.25s ease-out;
+    -o-transition: box-shadow 0.25s ease-out;
+    transition: box-shadow 0.25s ease-out; }
+
+.button {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 1rem;
+  padding: .85em 1em;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 0;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  -ms-transition: all 0.25s ease-out;
+  -o-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out; }
+  .button.pink {
+    background: #fe0070;
+    box-shadow: 4px 4px 0 #c50052; }
+    .button.pink:hover, .button.pink:focus {
+      background: #c50052; }
+
+.error-frame {
+  position: absolute;
+  padding: 1rem;
+  bottom: 20%;
+  left: 25%;
+  z-index: 16;
+  border-radius: 5px;
+  box-shadow: 4px 4px 0 #ffe50d;
+  background: #fe0070;
+  -webkit-transition: font-size 0.2s ease-out;
+  -moz-transition: font-size 0.2s ease-out;
+  -ms-transition: font-size 0.2s ease-out;
+  -o-transition: font-size 0.2s ease-out;
+  transition: font-size 0.2s ease-out;
+  font-size: 1rem;
+  font-family: "RobotoLight", sans-serif;
+  font-weight: 500;
+  line-height: inherit;
+  color: #ffffff; }
+  @media print, screen and (min-width: 40em) {
+    .error-frame {
+      font-size: 2rem;
+      font-family: "RobotoLight", sans-serif;
+      font-weight: 500;
+      line-height: inherit;
+      color: #ffffff; } }
+  @media print, screen and (min-width: 64em) {
+    .error-frame {
+      font-size: 2rem;
+      font-family: "RobotoLight", sans-serif;
+      font-weight: 500;
+      line-height: inherit;
+      color: #ffffff; } }

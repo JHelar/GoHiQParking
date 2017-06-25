@@ -178,8 +178,28 @@ button{
   &::-webkit-scrollbar {
     display: none;
   }
-  > section > main {
-    padding-top: 120px;
+  > section {
+    height: 100%;
+    > main {
+      padding-top: 120px;
+    }
+  }
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  > small {
+    @include transition(font-size);
+    @include breakpoint(small){
+      @include font($font-size-08, $font-family-robotolight, $white);
+    }
+    @include breakpoint(medium){
+      @include font($font-size-1, $font-family-robotolight, $white);
+    }
+    @include breakpoint(large) {
+      @include font($font-size-1, $font-family-robotolight, $white);
+    }
   }
 }
 
@@ -441,7 +461,23 @@ button{
   background-color: rgba(0, 0, 0, 0.8);
   padding: 0 1rem;
 
+  > span:first-child {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+    > h1 {
+      font-family: $font-family-hiqrough;
+      font-weight: 700;
+      color: $white;
+      position: relative;
+      text-align: center;
+      display: block;
 
+      @include breakpoint(medium){
+        font-size: $font-size-5;
+      } 
+    }
+  }
   @include breakpoint(medium){
     justify-content: center;
   }
@@ -639,5 +675,73 @@ button{
   }
   > form {
     @include grid-row(12);
+
+    [type=color], [type=date], [type=datetime-local], [type=datetime], [type=email], [type=month], [type=number], [type=password], [type=search], [type=tel], [type=text], [type=time], [type=url], [type=week], textarea {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        height: 3rem;
+        margin: 0 0 1rem;
+        padding: .5rem;
+        border: none;
+        border-bottom: 4px solid #eaeaea;
+        background-color: #fff;
+        box-shadow: none;
+        font-family: RobotoBold,sans-serif;
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: #000;
+        @include transition(box-shadow, .25s);
+    }
   }
+}
+
+.button {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0 1rem;
+    padding: .85em 1em;
+    -webkit-appearance: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    font-size: $font-size-1;
+    font-weight: 500;
+    
+    @include transition(all, .25s);
+
+    &.pink {
+      background: $pink;
+      box-shadow: 4px 4px 0 $pink-dark;
+
+      &:hover,
+      &:focus {
+        background: $pink-dark;
+      } 
+    }
+}
+
+.error-frame {
+  position: absolute;
+  padding: 1rem;
+  bottom: 20%;
+  left: 25%;
+  z-index: 16;
+  border-radius: 5px;
+  box-shadow: 4px 4px 0 $yellow;
+  background: $pink;
+  
+  @include transition(font-size);
+  @include breakpoint(small){
+    @include font($font-size-1, $font-family-robotolight, $white, 500);
+  }
+  @include breakpoint(medium){
+    @include font($font-size-2, $font-family-robotolight, $white, 500);
+  }
+  @include breakpoint(large) {
+    @include font($font-size-2, $font-family-robotolight, $white, 500);
+  }
+
 }

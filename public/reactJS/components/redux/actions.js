@@ -232,12 +232,26 @@ export function fetchUser(dispatchCallback) {
                 if(json.error) dispatch(receiveLoginError(json));
                 else {
                     dispatch(dispatchCallback(json));
-                    dispatch(changeScene(SCENE.SHOW_PARKING_LOTS));
                 }
             })
             .catch(function (ex) {
                 dispatch(receiveLoginError({message: "fetchUser: " + ex}));
             })
+    };
+}
+
+export function setDefaultScene(){
+    return dispatch => {
+        let dlot = parseInt(getCookie("dlot")) | 0;
+        if(dlot !== undefined || dlot !== null){
+            dispatch(selectParkingLot(dlot));
+            dispatch(fetchSpots(dlot));
+            dispatch(updateLotListener(dlot));
+            dispatch(changeScene(SCENE.SHOW_SPOTS));
+        }
+        else{
+            dispatch(changeScene(SCENE.SHOW_PARKING_LOTS));
+        }
     };
 }
 
@@ -251,6 +265,7 @@ export function fetchLogin(usernameemail, password) {
                 else {
                     createCookie("skey", json.data.sessionkey, 360);
                     dispatch(fetchUser(receiveLogin));
+                    dispatch(setDefaultScene());
                 }
             })
             .catch(function(ex) {
@@ -290,6 +305,7 @@ export function fetchRegister(username, email, password) {
                 else {
                     createCookie("skey", json.data.sessionkey, 360);
                     dispatch(fetchUser(receiveRegister));
+                    dispatch(setDefaultScene());
                 }
             })
             .catch(function(ex) {
@@ -431,3 +447,4 @@ export function removeSpotInterval(id) {
         spotId: id
     }
 }
+

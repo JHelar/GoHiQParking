@@ -6,7 +6,10 @@ import React, { PropTypes } from 'react';
 
 const LotList = ({ show, lots, onLotClick }) => {
     let cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
-    return (<header className={cn}>
+    return (<div className={cn}>
+        <span>
+            <h1 className="uppercase">Parkinglots</h1>
+        </span>
         {lots.map(lot =>
             <Lot
                 key={ lot.id }
@@ -14,7 +17,7 @@ const LotList = ({ show, lots, onLotClick }) => {
                 onClick={ () => onLotClick(lot.id) }
             />
         )}
-    </header>);
+    </div>);
 };
 
 LotList.propTypes = {

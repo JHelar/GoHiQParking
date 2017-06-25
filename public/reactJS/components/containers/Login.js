@@ -22,7 +22,7 @@ let Login = ({ dispatch }) => {
                 <input ref={node => {
                     inputPassword = node;
                 }} type="password"/>
-                <button type="submit" >Login</button>
+                <button type="submit" className="button pink">Login</button>
             </form>
         </main>
     );

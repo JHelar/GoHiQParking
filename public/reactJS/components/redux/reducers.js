@@ -55,7 +55,7 @@ function spot(state = {
                 return Object.assign({}, state, action.spot);
             else
                 return Object.assign({}, state, {
-                    canmodify: !action.spot.isparked,
+                    canmodify: !state.isparked,
                 });
         case FETCH_SPOT_INFO_SUCCESS:
             return Object.assign({}, state, {

@@ -31674,7 +31674,7 @@ var GeoClient = {
     hasPermission: true,
     updateIntervall: 2000,
     canGetCoordinates: function canGetCoordinates() {
-        return undefined.hasPermission && !!navigator.geolocation;
+        return this.hasPermission && !!navigator.geolocation;
     },
     error: function error(_error) {
         switch (_error.code) {
@@ -31682,7 +31682,7 @@ var GeoClient = {
             case _error.POSITION_UNAVAILABLE:
             case _error.TIMEOUT:
             case _error.UNKNOWN_ERR:
-                undefined.hasPermission = false;
+                this.hasPermission = false;
         }
     },
     getDistance: function getDistance(pos, callback) {
@@ -31950,6 +31950,10 @@ var _LotsContainer = require('./LotsContainer');
 
 var _LotsContainer2 = _interopRequireDefault(_LotsContainer);
 
+var _Footer = require('../presentational/Footer');
+
+var _Footer2 = _interopRequireDefault(_Footer);
+
 var _SpotInfoContainer = require('./SpotInfoContainer');
 
 var _SpotInfoContainer2 = _interopRequireDefault(_SpotInfoContainer);
@@ -31986,6 +31990,8 @@ var App = function (_Component) {
             var dispatch = this.props.dispatch;
 
             dispatch((0, _actions.fetchParkingLots)());
+            dispatch((0, _actions.fetchUser)(_actions.receiveLogin));
+            dispatch((0, _actions.setDefaultScene)());
             _GeoClient2.default.getDistance({ long: 0, lat: 0 }, function (dist) {
                 return dispatch((0, _actions.geoLocationSetUp)(dist));
             });
@@ -31996,11 +32002,12 @@ var App = function (_Component) {
             // ToDo: Add event stream!!
             return _react2.default.createElement(
                 'section',
-                { className: '' },
+                null,
                 _react2.default.createElement(_Header2.default, null),
                 _react2.default.createElement(_LotsContainer2.default, null),
                 _react2.default.createElement(_SceneSwapper2.default, null),
-                _react2.default.createElement(_SpotInfoContainer2.default, null)
+                _react2.default.createElement(_SpotInfoContainer2.default, null),
+                _react2.default.createElement(_Footer2.default, null)
             );
         }
     }]);
@@ -32014,7 +32021,7 @@ App.propTypes = {
 
 exports.default = (0, _reactRedux.connect)()(App);
 
-},{"../../../general/GeoClient":529,"../redux/actions":548,"./Header":532,"./LotsContainer":534,"./SceneSwapper":537,"./SpotInfoContainer":538,"react":509,"react-redux":478}],532:[function(require,module,exports){
+},{"../../../general/GeoClient":529,"../presentational/Footer":542,"../redux/actions":549,"./Header":532,"./LotsContainer":534,"./SceneSwapper":537,"./SpotInfoContainer":538,"react":509,"react-redux":478}],532:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32068,8 +32075,6 @@ var Header = function (_Component) {
         key: 'componentDidMount',
         value: function componentDidMount() {
             var dispatch = this.props.dispatch;
-
-            dispatch((0, _actions.fetchUser)(_actions.receiveLogin));
         }
     }, {
         key: 'onToggleMenu',
@@ -32165,7 +32170,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(Header);
 
-},{"../presentational/Error":541,"../presentational/HeaderButtons":542,"../redux/actions":548,"../redux/constants":550,"react":509,"react-redux":478}],533:[function(require,module,exports){
+},{"../presentational/Error":541,"../presentational/HeaderButtons":543,"../redux/actions":549,"../redux/constants":551,"react":509,"react-redux":478}],533:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32210,7 +32215,7 @@ var Login = function Login(_ref) {
                 }, type: 'password' }),
             _react2.default.createElement(
                 'button',
-                { type: 'submit' },
+                { type: 'submit', className: 'button pink' },
                 'Login'
             )
         )
@@ -32220,7 +32225,7 @@ var Login = function Login(_ref) {
     */
 exports.default = (0, _reactRedux.connect)()(Login);
 
-},{"../redux/actions":548,"react":509,"react-redux":478}],534:[function(require,module,exports){
+},{"../redux/actions":549,"react":509,"react-redux":478}],534:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32237,21 +32242,24 @@ var _LotList2 = _interopRequireDefault(_LotList);
 
 var _constants = require('../redux/constants');
 
+var _helpers = require('../../../general/helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Created by Johnh on 2017-03-19.
- */
 var mapStateToProps = function mapStateToProps(state) {
     return {
         show: state.scene.current === _constants.SCENE.SHOW_PARKING_LOTS,
         lots: state.parkingLots.lots
     };
-};
+}; /**
+    * Created by Johnh on 2017-03-19.
+    */
+
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
         onLotClick: function onLotClick(id) {
+            (0, _helpers.createCookie)("dlot", id);
             dispatch((0, _actions.selectParkingLot)(id));
             dispatch((0, _actions.fetchSpots)(id));
             dispatch((0, _actions.updateLotListener)(id));
@@ -32264,7 +32272,7 @@ var LotsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps
 
 exports.default = LotsContainer;
 
-},{"../presentational/LotList":544,"../redux/actions":548,"../redux/constants":550,"react-redux":478}],535:[function(require,module,exports){
+},{"../../../general/helpers":530,"../presentational/LotList":545,"../redux/actions":549,"../redux/constants":551,"react-redux":478}],535:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32307,13 +32315,13 @@ var Register = function Register(_ref) {
                 }, type: 'text', placeholder: 'Username' }),
             _react2.default.createElement('input', { ref: function ref(node) {
                     inputPassword = node;
-                }, type: 'password', placeholder: 'password' }),
+                }, type: 'password', placeholder: 'Password' }),
             _react2.default.createElement('input', { ref: function ref(node) {
                     inputEmail = node;
-                }, type: 'email', placeholder: 'email' }),
+                }, type: 'email', placeholder: 'Email' }),
             _react2.default.createElement(
                 'button',
-                { type: 'submit' },
+                { type: 'submit', className: 'button pink' },
                 'Register'
             )
         )
@@ -32326,7 +32334,7 @@ var Register = function Register(_ref) {
  */
 exports.default = (0, _reactRedux.connect)()(Register);
 
-},{"../redux/actions":548,"react":509,"react-redux":478}],536:[function(require,module,exports){
+},{"../redux/actions":549,"react":509,"react-redux":478}],536:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32387,7 +32395,7 @@ var Root = function (_Component) {
 
 exports.default = Root;
 
-},{"../redux/configureStore":549,"./App":531,"react":509,"react-redux":478}],537:[function(require,module,exports){
+},{"../redux/configureStore":550,"./App":531,"react":509,"react-redux":478}],537:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32470,7 +32478,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(SceneSwapper);
 
-},{"../redux/constants":550,"./Login":533,"./Register":535,"./SpotsContainer":539,"react":509,"react-redux":478}],538:[function(require,module,exports){
+},{"../redux/constants":551,"./Login":533,"./Register":535,"./SpotsContainer":539,"react":509,"react-redux":478}],538:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32530,7 +32538,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotInfoReveal2.default);
 
-},{"../presentational/SpotInfoReveal":546,"../redux/actions":548,"react-redux":478}],539:[function(require,module,exports){
+},{"../presentational/SpotInfoReveal":547,"../redux/actions":549,"react-redux":478}],539:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32600,7 +32608,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_SpotList2.default);
 
-},{"../presentational/SpotList":547,"../redux/actions":548,"../redux/constants":550,"react-redux":478}],540:[function(require,module,exports){
+},{"../presentational/SpotList":548,"../redux/actions":549,"../redux/constants":551,"react-redux":478}],540:[function(require,module,exports){
 'use strict';
 
 require('babel-polyfill');
@@ -32623,13 +32631,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 (0, _reactDom.render)(_react2.default.createElement(_Root2.default, null), document.getElementById('root'));
 
 },{"./containers/Root":536,"babel-polyfill":1,"react":509,"react-dom":342}],541:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -32640,17 +32648,17 @@ var Error = function Error(_ref) {
         message = _ref.message;
 
     return _react2.default.createElement(
-        'section',
-        null,
+        "section",
+        { className: "error-frame" },
         _react2.default.createElement(
-            'p',
+            "p",
             null,
             _react2.default.createElement(
-                'strong',
+                "strong",
                 null,
                 type
             ),
-            ': ',
+            ": ",
             message
         )
     );
@@ -32667,6 +32675,37 @@ Error.propTypes = {
 exports.default = Error;
 
 },{"react":509}],542:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Spot = require('../presentational/Spot');
+
+var _Spot2 = _interopRequireDefault(_Spot);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Footer = function Footer() {
+    return _react2.default.createElement(
+        'footer',
+        null,
+        _react2.default.createElement(
+            'small',
+            null,
+            'HiQ parking 2017'
+        )
+    );
+};
+
+exports.default = Footer;
+
+},{"../presentational/Spot":546,"react":509}],543:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32830,7 +32869,7 @@ LogoutButton.propTypes = {
     onClick: _react.PropTypes.func
 };
 
-},{"react":509}],543:[function(require,module,exports){
+},{"react":509}],544:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32873,7 +32912,7 @@ Lot.propTypes = {
 
 exports.default = Lot;
 
-},{"../../../general/helpers":530,"react":509}],544:[function(require,module,exports){
+},{"../../../general/helpers":530,"react":509}],545:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -32902,8 +32941,17 @@ var LotList = function LotList(_ref) {
 
     var cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
     return _react2.default.createElement(
-        'header',
+        'div',
         { className: cn },
+        _react2.default.createElement(
+            'span',
+            null,
+            _react2.default.createElement(
+                'h1',
+                { className: 'uppercase' },
+                'Parkinglots'
+            )
+        ),
         lots.map(function (lot) {
             return _react2.default.createElement(_Lot2.default, _extends({
                 key: lot.id
@@ -32928,7 +32976,7 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":543,"react":509}],545:[function(require,module,exports){
+},{"./Lot":544,"react":509}],546:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33057,7 +33105,7 @@ Spot.propTypes = {
 
 exports.default = Spot;
 
-},{"../../../general/GeoClient":529,"../../../general/helpers":530,"react":509}],546:[function(require,module,exports){
+},{"../../../general/GeoClient":529,"../../../general/helpers":530,"react":509}],547:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -33119,7 +33167,7 @@ SpotInfoReveal.propTypes = {
 
 exports.default = SpotInfoReveal;
 
-},{"react":509}],547:[function(require,module,exports){
+},{"react":509}],548:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33214,7 +33262,7 @@ SpotsList.propTypes = {
 
 exports.default = SpotsList;
 
-},{"../presentational/Spot":545,"react":509}],548:[function(require,module,exports){
+},{"../presentational/Spot":546,"react":509}],549:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33241,6 +33289,7 @@ exports.requestLogin = requestLogin;
 exports.receiveLogin = receiveLogin;
 exports.receiveLoginError = receiveLoginError;
 exports.fetchUser = fetchUser;
+exports.setDefaultScene = setDefaultScene;
 exports.fetchLogin = fetchLogin;
 exports.requestRegister = requestRegister;
 exports.receiveRegister = receiveRegister;
@@ -33503,11 +33552,24 @@ function fetchUser(dispatchCallback) {
         }).then(function (json) {
             if (json.error) dispatch(receiveLoginError(json));else {
                 dispatch(dispatchCallback(json));
-                dispatch(changeScene(_constants.SCENE.SHOW_PARKING_LOTS));
             }
         }).catch(function (ex) {
             dispatch(receiveLoginError({ message: "fetchUser: " + ex }));
         });
+    };
+}
+
+function setDefaultScene() {
+    return function (dispatch) {
+        var dlot = parseInt((0, _helpers.getCookie)("dlot")) | 0;
+        if (dlot !== undefined || dlot !== null) {
+            dispatch(selectParkingLot(dlot));
+            dispatch(fetchSpots(dlot));
+            dispatch(updateLotListener(dlot));
+            dispatch(changeScene(_constants.SCENE.SHOW_SPOTS));
+        } else {
+            dispatch(changeScene(_constants.SCENE.SHOW_PARKING_LOTS));
+        }
     };
 }
 
@@ -33520,6 +33582,7 @@ function fetchLogin(usernameemail, password) {
             if (json.error) dispatch(receiveLoginError(json));else {
                 (0, _helpers.createCookie)("skey", json.data.sessionkey, 360);
                 dispatch(fetchUser(receiveLogin));
+                dispatch(setDefaultScene());
             }
         }).catch(function (ex) {
             dispatch(receiveLoginError({ message: "fetchLogin: " + ex }));
@@ -33556,6 +33619,7 @@ function fetchRegister(username, email, password) {
             if (json.error) dispatch(receiveRegisterError(json));else {
                 (0, _helpers.createCookie)("skey", json.data.sessionkey, 360);
                 dispatch(fetchUser(receiveRegister));
+                dispatch(setDefaultScene());
             }
         }).catch(function (ex) {
             dispatch(receiveRegisterError({ message: "fetchRegister: " + ex }));
@@ -33698,7 +33762,7 @@ function removeSpotInterval(id) {
     };
 }
 
-},{"../../../general/ApiClient":528,"../../../general/GeoClient":529,"../../../general/helpers":530,"../containers/Root":536,"./constants":550}],549:[function(require,module,exports){
+},{"../../../general/ApiClient":528,"../../../general/GeoClient":529,"../../../general/helpers":530,"../containers/Root":536,"./constants":551}],550:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33732,7 +33796,7 @@ function configureStore(preloadedState) {
     return { store: store, unsub: unsub };
 }
 
-},{"./reducers":551,"redux":521,"redux-logger":514,"redux-thunk":515}],550:[function(require,module,exports){
+},{"./reducers":552,"redux":521,"redux-logger":514,"redux-thunk":515}],551:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33750,7 +33814,7 @@ var SCENE = exports.SCENE = {
     SPOTS_FETCHED: "SPOTS_FETCHED_SCENE"
 };
 
-},{}],551:[function(require,module,exports){
+},{}],552:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33781,7 +33845,7 @@ function spot() {
     switch (action.type) {
         case _actions.FETCH_TOGGLE_SPOT_SUCCESS:
             if (state.id === action.spot.id) return Object.assign({}, state, action.spot);else return Object.assign({}, state, {
-                canmodify: !action.spot.isparked
+                canmodify: !state.isparked
             });
         case _actions.FETCH_SPOT_INFO_SUCCESS:
             return Object.assign({}, state, {
@@ -34091,4 +34155,4 @@ var rootReducer = (0, _redux.combineReducers)({
 
 exports.default = rootReducer;
 
-},{"./actions":548,"./constants":550,"redux":521}]},{},[540]);
+},{"./actions":549,"./constants":551,"redux":521}]},{},[540]);

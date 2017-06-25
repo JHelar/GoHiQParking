@@ -4,10 +4,10 @@
 const GeoClient = {
     hasPermission: true,
     updateIntervall: 2000,
-    canGetCoordinates: () => {
+    canGetCoordinates: function() {
         return this.hasPermission && !(!navigator.geolocation);
     },
-    error: (error) => {
+    error: function(error) {
         switch(error.code){
             case error.PERMISSION_DENIED:
             case error.POSITION_UNAVAILABLE:

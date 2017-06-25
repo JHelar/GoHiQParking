@@ -17,7 +17,6 @@ class Header extends Component {
     }
     componentDidMount(){
         const { dispatch } = this.props;
-        dispatch(fetchUser(receiveLogin));
     }
     onToggleMenu(){
         const { dispatch } = this.props;

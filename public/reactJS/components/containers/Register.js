@@ -25,11 +25,11 @@ let Register = ({ dispatch }) => {
                 }} type="text" placeholder="Username"/>
                 <input ref={node => {
                     inputPassword = node;
-                }} type="password" placeholder="password"/>
+                }} type="password" placeholder="Password"/>
                 <input ref={node => {
                     inputEmail = node;
-                }} type="email" placeholder="email"/>
-                <button type="submit" >Register</button>
+                }} type="email" placeholder="Email"/>
+                <button type="submit" className="button pink">Register</button>
             </form>
         </main>
     );

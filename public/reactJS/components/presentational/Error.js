@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 
 const Error = ({ type, message }) => {
     return(
-        <section>
+        <section className="error-frame">
             <p><strong>{ type }</strong>: { message }</p>
         </section>
     );
