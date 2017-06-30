@@ -3916,10 +3916,21 @@ button {
 .button-flavor {
   font-family: "Reenie Beanie";
   font-size: 2rem;
-  font-weight: 700; }
+  font-weight: 700;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -ms-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out; }
   @media print, screen and (min-width: 64em) {
     .button-flavor {
-      font-size: 3rem; } }
+      font-size: 2.5rem; }
+      .button-flavor:hover {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        transform: scale(1.2); } }
   .button-flavor.pink {
     color: #fe0070; }
   .button-flavor.blue {
@@ -3932,18 +3943,13 @@ button {
 .flavor {
   position: absolute;
   font-family: "Reenie Beanie";
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  bottom: -15px;
-  right: 5px;
-  -webkit-transform: rotate(-15deg);
-  -moz-transform: rotate(-15deg);
-  -ms-transform: rotate(-15deg);
-  -o-transform: rotate(-15deg);
-  transform: rotate(-15deg); }
+  bottom: -18px;
+  right: 5px; }
   @media print, screen and (min-width: 64em) {
     .flavor {
-      bottom: -30px;
+      bottom: -15px;
       font-size: 3rem; } }
   .flavor.pink {
     color: #fe0070; }
@@ -4074,6 +4080,31 @@ footer {
       -o-transform: rotate(45deg);
       transform: rotate(45deg); }
 
+.logo,
+.home-button {
+  display: inline-block;
+  color: #ffffff;
+  font-family: "HiQ", sans-serif;
+  font-size: 2.5rem;
+  -webkit-transition: color 0.2s ease-out;
+  -moz-transition: color 0.2s ease-out;
+  -ms-transition: color 0.2s ease-out;
+  -o-transition: color 0.2s ease-out;
+  transition: color 0.2s ease-out;
+  position: relative;
+  z-index: 55; }
+  .logo:hover,
+  .home-button:hover {
+    color: #ffffff; }
+  @media print, screen and (min-width: 40em) {
+    .logo,
+    .home-button {
+      font-size: 3rem; } }
+  @media print, screen and (min-width: 64em) {
+    .logo,
+    .home-button {
+      font-size: 5rem; } }
+
 #main-header {
   justify-content: space-between;
   display: flex;
@@ -4123,24 +4154,6 @@ footer {
         background: url("../image/bg-top-right-screen.png") no-repeat center;
         width: 518px;
         height: 143px; } }
-  #main-header .home-button {
-    display: block;
-    color: #ffffff;
-    font-family: "HiQ", sans-serif;
-    font-size: 2.5rem;
-    -webkit-transition: color 0.2s ease-out;
-    -moz-transition: color 0.2s ease-out;
-    -ms-transition: color 0.2s ease-out;
-    -o-transition: color 0.2s ease-out;
-    transition: color 0.2s ease-out;
-    position: relative;
-    z-index: 55; }
-    @media print, screen and (min-width: 40em) {
-      #main-header .home-button {
-        font-size: 3rem; } }
-    @media print, screen and (min-width: 64em) {
-      #main-header .home-button {
-        font-size: 5rem; } }
   #main-header .menu-button {
     display: block;
     z-index: 55; }
@@ -4237,12 +4250,12 @@ footer {
   height: 100%;
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: space-around;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 0 1rem;
+  padding: 120px 1.5rem 0 1.5rem;
   -webkit-transition: transform 0.2s ease-out;
   -moz-transition: transform 0.2s ease-out;
   -ms-transition: transform 0.2s ease-out;
@@ -4264,10 +4277,14 @@ footer {
           font-size: 5rem; } }
   @media print, screen and (min-width: 40em) {
     .lot-wrapper {
-      justify-content: center; } }
+      justify-content: center;
+      align-items: center;
+      align-content: center; } }
   @media print, screen and (min-width: 64em) {
     .lot-wrapper {
-      justify-content: space-around; } }
+      justify-content: space-around;
+      align-items: center;
+      align-content: center; } }
   .lot-wrapper .lot {
     -webkit-background-size: cover;
     background-size: cover;
@@ -4299,6 +4316,10 @@ footer {
       border-color: #fe0070; }
       @media print, screen and (min-width: 64em) {
         .lot-wrapper .lot:hover {
+          -webkit-transform: scale(1.2);
+          -moz-transform: scale(1.2);
+          -ms-transform: scale(1.2);
+          -o-transform: scale(1.2);
           transform: scale(1.2); } }
       .lot-wrapper .lot:hover h1 {
         text-shadow: 3px 3px 0 #ffe50d;
@@ -4541,3 +4562,43 @@ footer {
       font-weight: 500;
       line-height: inherit;
       color: #ffffff; } }
+
+.lot-texts,
+.welcometext {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center; }
+  .lot-texts > p,
+  .welcometext > p {
+    font-size: 2rem;
+    font-family: "Reenie Beanie";
+    font-weight: 400;
+    line-height: inherit;
+    color: #ffffff; }
+    @media print, screen and (min-width: 40em) {
+      .lot-texts > p,
+      .welcometext > p {
+        font-size: 4rem;
+        font-family: "Reenie Beanie";
+        font-weight: 400;
+        line-height: inherit;
+        color: #ffffff; } }
+
+.welcometext > h1 {
+  font-size: 3rem;
+  font-family: "HiQRough", sans-serif;
+  font-weight: 400;
+  line-height: inherit;
+  color: #ffffff;
+  text-transform: uppercase; }
+  @media print, screen and (min-width: 64em) {
+    .welcometext > h1 {
+      font-size: 4rem;
+      font-family: "HiQRough", sans-serif;
+      font-weight: 400;
+      line-height: inherit;
+      color: #ffffff; } }
+  .welcometext > h1 > .logo {
+    text-transform: none;
+    margin-left: 1rem; }

@@ -19,7 +19,6 @@ class Spot extends Component {
         return (
             <div className="small-12 medium-4 large-3 column">
                 <span className="name">{name}</span>
-                <button onClick={onInfoClick} className="info">Show info</button>
                 <div className={spotClass}>
                     {isparked &&
                     <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
@@ -38,7 +37,7 @@ class Spot extends Component {
                     </button>
                     }
                     {(!isLogged && !isparked) &&
-                    <button onClick={onLoginClick}>Login to park</button>
+                    <button className="button-flavor pink" onClick={onLoginClick}>Login to park</button>
                     }
                 </div>
             </div>

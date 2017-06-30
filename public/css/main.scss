@@ -120,14 +120,20 @@ button{
   font-family: $font-family-reeniebeanie;
   font-size: $font-size-2;
   font-weight: 700;
+  @include transition(all);
 
 
   @include breakpoint(large){
-    font-size: $font-size-3;
-  }
+    font-size: $font-size-25;
 
+    &:hover {
+      @include scale(1.2);
+    }
+  }
+  
   &.pink {
     color: $pink;
+    
   }
   &.blue {
     color: $blue;
@@ -142,17 +148,16 @@ button{
 .flavor {
   position: absolute;
   font-family: $font-family-reeniebeanie;
-  font-size: $font-size-2;
+  font-size: $font-size-15;
   font-weight: 700;
-  bottom: -15px;
+  bottom: -18px;
   right: 5px;
-  @include rotate(-15deg);
 
   @include breakpoint(large){
-    bottom: -30px;
+    bottom: -15px;
     font-size: $font-size-3;
   }
-
+  
   &.pink {
     color: $pink;
   }
@@ -291,6 +296,26 @@ footer {
 }
 
 // Header
+.logo,
+.home-button{
+  display: inline-block;
+  color: $white;
+  font-family: $font-family-hiq;
+  font-size: $font-size-25;
+  @include transition(color);
+  position: relative;
+  z-index: 55;
+
+  &:hover {
+    color: $white;
+  }
+  @include breakpoint(medium){
+    font-size: $font-size-3;
+  }
+  @include breakpoint(large){
+    font-size: $font-size-5;
+  }
+}
 #main-header {
   justify-content: space-between;
   display: flex;
@@ -349,24 +374,6 @@ footer {
       background: url('../image/bg-top-right-screen.png') no-repeat center;
       width: 518px;
       height: 143px;
-    }
-  }
-
-  .home-button{
-    display: block;
-    color: $white;
-    font-family: $font-family-hiq;
-    font-size: $font-size-25;
-    @include transition(color);
-    position: relative;
-    z-index: 55;
-
-
-    @include breakpoint(medium){
-      font-size: $font-size-3;
-    }
-    @include breakpoint(large){
-      font-size: $font-size-5;
     }
   }
   .menu-button {
@@ -454,12 +461,13 @@ footer {
   height: 100%;
   display: flex;
   flex-flow: row wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: space-around;
+
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 0 1rem;
+  padding: 120px 1.5rem 0 1.5rem;
 
   > span:first-child {
     display: block;
@@ -480,10 +488,14 @@ footer {
   }
   @include breakpoint(medium){
     justify-content: center;
+    align-items: center;
+    align-content: center;
   }
 
   @include breakpoint(large){
     justify-content: space-around;
+    align-items: center;
+    align-content: center;  
   }
 
   @include transition(transform);
@@ -523,7 +535,7 @@ footer {
 
     &:hover {
       @include breakpoint(large) {
-        transform: scale(1.2);
+        @include scale(1.2);
       }
 
       border-color: $pink;
@@ -744,4 +756,34 @@ footer {
     @include font($font-size-2, $font-family-robotolight, $white, 500);
   }
 
+}
+.lot-texts,
+.welcometext {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  
+  > p {
+    @include font($font-size-2, $font-family-reeniebeanie, $white);
+    @include breakpoint(medium){
+      @include font($font-size-4, $font-family-reeniebeanie, $white);
+    }
+  }
+}
+
+.welcometext {
+  > h1 {
+    @include font($font-size-3, $font-family-hiqrough, $white);
+    text-transform: uppercase;
+
+    @include breakpoint(large){
+      @include font($font-size-4, $font-family-hiqrough, $white);
+    }
+    
+    > .logo {
+      text-transform: none;
+      margin-left: 1rem;
+    }
+  }
 }

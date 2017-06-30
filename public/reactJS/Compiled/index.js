@@ -32932,6 +32932,8 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _helpers = require('../../../general/helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var LotList = function LotList(_ref) {
@@ -32940,16 +32942,36 @@ var LotList = function LotList(_ref) {
         onLotClick = _ref.onLotClick;
 
     var cn = show ? "lot-wrapper" : "lot-wrapper hide-lots";
+    var isFirstTimer = (0, _helpers.getCookie)('dlot') <= 0;
     return _react2.default.createElement(
         'div',
         { className: cn },
         _react2.default.createElement(
-            'span',
-            null,
+            'div',
+            { className: 'lot-texts' },
+            isFirstTimer && _react2.default.createElement(
+                'div',
+                { className: 'welcometext' },
+                _react2.default.createElement(
+                    'h1',
+                    null,
+                    'Welcome to ',
+                    _react2.default.createElement(
+                        'span',
+                        { className: 'logo' },
+                        'HiQ',
+                        _react2.default.createElement(
+                            'i',
+                            { className: 'flavor pink' },
+                            'Parking'
+                        )
+                    )
+                )
+            ),
             _react2.default.createElement(
-                'h1',
-                { className: 'uppercase' },
-                'Parkinglots'
+                'p',
+                null,
+                'Where do you want to park?'
             )
         ),
         lots.map(function (lot) {
@@ -32976,7 +32998,7 @@ LotList.propTypes = {
 
 exports.default = LotList;
 
-},{"./Lot":544,"react":509}],546:[function(require,module,exports){
+},{"../../../general/helpers":530,"./Lot":544,"react":509}],546:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -33042,11 +33064,6 @@ var Spot = function (_Component) {
                     name
                 ),
                 _react2.default.createElement(
-                    'button',
-                    { onClick: onInfoClick, className: 'info' },
-                    'Show info'
-                ),
-                _react2.default.createElement(
                     'div',
                     { className: spotClass },
                     isparked && _react2.default.createElement(
@@ -33073,7 +33090,7 @@ var Spot = function (_Component) {
                     ),
                     !isLogged && !isparked && _react2.default.createElement(
                         'button',
-                        { onClick: onLoginClick },
+                        { className: 'button-flavor pink', onClick: onLoginClick },
                         'Login to park'
                     )
                 )
@@ -33562,7 +33579,8 @@ function fetchUser(dispatchCallback) {
 function setDefaultScene() {
     return function (dispatch) {
         var dlot = parseInt((0, _helpers.getCookie)("dlot")) | 0;
-        if (dlot !== undefined || dlot !== null) {
+        console.log("Default lot: ", dlot);
+        if (dlot !== undefined && dlot !== null && dlot > 0) {
             dispatch(selectParkingLot(dlot));
             dispatch(fetchSpots(dlot));
             dispatch(updateLotListener(dlot));
