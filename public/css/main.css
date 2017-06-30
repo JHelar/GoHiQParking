@@ -3943,9 +3943,9 @@ button {
 .flavor {
   position: absolute;
   font-family: "Reenie Beanie";
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  bottom: -18px;
+  bottom: 0;
   right: 5px; }
   @media print, screen and (min-width: 64em) {
     .flavor {
@@ -4085,7 +4085,7 @@ footer {
   display: inline-block;
   color: #ffffff;
   font-family: "HiQ", sans-serif;
-  font-size: 2.5rem;
+  font-size: 4rem;
   -webkit-transition: color 0.2s ease-out;
   -moz-transition: color 0.2s ease-out;
   -ms-transition: color 0.2s ease-out;
@@ -4096,10 +4096,6 @@ footer {
   .logo:hover,
   .home-button:hover {
     color: #ffffff; }
-  @media print, screen and (min-width: 40em) {
-    .logo,
-    .home-button {
-      font-size: 3rem; } }
   @media print, screen and (min-width: 64em) {
     .logo,
     .home-button {
@@ -4111,10 +4107,13 @@ footer {
   flex-flow: row nowrap;
   align-items: center;
   height: 120px;
-  padding: 0 5rem;
+  padding: 1rem 5rem;
   position: fixed;
   width: 100%;
   z-index: 51; }
+  @media print, screen and (min-width: 40em) {
+    #main-header {
+      align-items: flex-start; } }
   #main-header:before {
     z-index: 20; }
     @media print, screen and (min-width: 40em) {
@@ -4157,6 +4156,9 @@ footer {
   #main-header .menu-button {
     display: block;
     z-index: 55; }
+    @media print, screen and (min-width: 64em) {
+      #main-header .menu-button {
+        margin-top: 1rem; } }
     #main-header .menu-button .hamburger {
       display: inline-block; }
       @media print, screen and (min-width: 64em) {
@@ -4197,11 +4199,11 @@ footer {
   flex-flow: column;
   justify-content: space-around;
   z-index: 50;
-  -webkit-transform: translateY(-100vh);
-  -moz-transform: translateY(-100vh);
-  -ms-transform: translateY(-100vh);
-  -o-transform: translateY(-100vh);
-  transform: translateY(-100vh);
+  -webkit-transform: translateY(-200vh);
+  -moz-transform: translateY(-200vh);
+  -ms-transform: translateY(-200vh);
+  -o-transform: translateY(-200vh);
+  transform: translateY(-200vh);
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   -ms-transition: all 0.2s ease-out;
@@ -4335,11 +4337,11 @@ footer {
         .lot-wrapper .lot h1 {
           font-size: 5rem; } }
   .lot-wrapper.lot-wrapper.hide-lots {
-    -webkit-transform: translateY(-100%);
-    -moz-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
-    -o-transform: translateY(-100%);
-    transform: translateY(-100%); }
+    -webkit-transform: translateY(-200vh);
+    -moz-transform: translateY(-200vh);
+    -ms-transform: translateY(-200vh);
+    -o-transform: translateY(-200vh);
+    transform: translateY(-200vh); }
 
 .content {
   z-index: 0;
@@ -4389,12 +4391,29 @@ footer {
   position: relative;
   background-color: rgba(0, 255, 0, 0.3);
   display: flex;
-  justify-content: center; }
+  flex-direction: column;
+  justify-content: flex-end;
+  align-content: center;
+  align-items: center; }
   .spot.parked {
     background-color: rgba(255, 0, 0, 0.3); }
-  .spot > button {
-    position: absolute;
-    bottom: 0; }
+  .spot > .parked-by > .user-name {
+    font-size: 2rem;
+    font-family: "RobotoBold", sans-serif;
+    font-weight: 400;
+    line-height: inherit;
+    color: #ffffff;
+    display: block;
+    text-align: center; }
+  .spot > .parked-by > .time {
+    font-size: 1.5rem;
+    font-family: "HiQRough", sans-serif;
+    font-weight: 400;
+    line-height: inherit;
+    color: #ffe50d;
+    text-transform: uppercase;
+    text-align: center;
+    display: block; }
 
 .map-reveal .map {
   height: 0;

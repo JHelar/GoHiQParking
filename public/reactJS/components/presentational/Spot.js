@@ -21,7 +21,7 @@ class Spot extends Component {
                 <span className="name">{name}</span>
                 <div className={spotClass}>
                     {isparked &&
-                    <p>{parkedby} - {timeDifference(new Date(parkedtime))}</p>
+                    <p className="parked-by"><span className="user-name">{parkedby}</span> <span className="time">{timeDifference(new Date(parkedtime))}</span></p>
                     }
                     { canGeoPoll &&
                     <p>{distance}</p>

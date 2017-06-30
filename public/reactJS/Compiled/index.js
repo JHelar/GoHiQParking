@@ -33068,10 +33068,18 @@ var Spot = function (_Component) {
                     { className: spotClass },
                     isparked && _react2.default.createElement(
                         'p',
-                        null,
-                        parkedby,
-                        ' - ',
-                        (0, _helpers.timeDifference)(new Date(parkedtime))
+                        { className: 'parked-by' },
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'user-name' },
+                            parkedby
+                        ),
+                        ' ',
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'time' },
+                            (0, _helpers.timeDifference)(new Date(parkedtime))
+                        )
                     ),
                     canGeoPoll && _react2.default.createElement(
                         'p',
