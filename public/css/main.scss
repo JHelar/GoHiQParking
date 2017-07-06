@@ -6,12 +6,21 @@
 @include foundation-everything(true);
 
 html{
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
 }
 body {
   margin: 0;
   background: $white;
-
+  background-image: url('../image/texture-asphalt.jpg');
+  background-attachment: fixed;
+  @include ff-only{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
   @include box-size();
   @include font($font-size-1, $font-family-robotolight);
 }
@@ -176,17 +185,30 @@ button{
 #root {
   height: 100%;
   overflow-y: auto;
-  background-image: url('../image/texture-asphalt.jpg');
   position: relative;
-  background-attachment: fixed;
+
+  @include ff-only{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -17px;
+  }
+  
 
   &::-webkit-scrollbar {
     display: none;
   }
+  -ms-overflow-style: none;  // IE 10+
+
   > section {
-    height: 100%;
+    min-height: 100%;
+    position: relative;
     > main {
-      padding-top: 120px;
+      padding: 150px 1rem 0 1rem;
+      @include breakpoint(medium){
+        padding: 120px 0 0 0;
+      }
     }
   }
 }
@@ -598,7 +620,6 @@ footer {
   position: relative;
   z-index: 0;
   margin-top: 1rem;
-  padding: 1rem;
 
   .name {
     display: block;
@@ -756,17 +777,20 @@ footer {
   position: absolute;
   padding: 1rem;
   bottom: 20%;
-  left: 25%;
+  left: 0;
+  width: 90%;
+  margin-left: 5%;
   z-index: 16;
   border-radius: 5px;
   box-shadow: 4px 4px 0 $yellow;
   background: $pink;
-  
+  @include font($font-size-1, $font-family-robotolight, $white, 500);
+
   @include transition(font-size);
-  @include breakpoint(small){
-    @include font($font-size-1, $font-family-robotolight, $white, 500);
-  }
+  
   @include breakpoint(medium){
+    left: 25%;
+    width: inherit;
     @include font($font-size-2, $font-family-robotolight, $white, 500);
   }
   @include breakpoint(large) {
@@ -782,7 +806,7 @@ footer {
   align-items: center;
   
   > p {
-    @include font($font-size-2, $font-family-reeniebeanie, $white);
+    @include font($font-size-15, $font-family-reeniebeanie, $white);
     @include breakpoint(medium){
       @include font($font-size-4, $font-family-reeniebeanie, $white);
     }

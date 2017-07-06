@@ -31990,7 +31990,6 @@ var App = function (_Component) {
             var dispatch = this.props.dispatch;
 
             dispatch((0, _actions.fetchParkingLots)());
-            dispatch((0, _actions.fetchUser)(_actions.receiveLogin));
             dispatch((0, _actions.setDefaultScene)());
             _GeoClient2.default.getDistance({ long: 0, lat: 0 }, function (dist) {
                 return dispatch((0, _actions.geoLocationSetUp)(dist));
@@ -32134,7 +32133,7 @@ var Header = function (_Component) {
                         isLogged && _react2.default.createElement(_HeaderButtons.LogoutButton, { onClick: function onClick() {
                                 return dispatch((0, _actions.fetchLogout)());
                             } }),
-                        _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
+                        !isLogged && _react2.default.createElement(_HeaderButtons.RegisterButton, { onClick: function onClick() {
                                 return _this2.onChangeScene(_constants.SCENE.SHOW_REGISTER);
                             } })
                     )
@@ -32209,10 +32208,10 @@ var Login = function Login(_ref) {
                 } },
             _react2.default.createElement('input', { ref: function ref(node) {
                     inputNameEmail = node;
-                }, type: 'text' }),
+                }, type: 'text', placeholder: 'Username / Email' }),
             _react2.default.createElement('input', { ref: function ref(node) {
                     inputPassword = node;
-                }, type: 'password' }),
+                }, type: 'password', placeholder: 'Password' }),
             _react2.default.createElement(
                 'button',
                 { type: 'submit', className: 'button pink' },
@@ -33055,9 +33054,10 @@ var Spot = function (_Component) {
 
             var buttonTxt = isparked ? "Leave" : "Park";
             var spotClass = isparked ? "spot parked" : "spot";
+            var spotClick = !isLogged && !isparked ? onLoginClick : isLogged && canmodify ? onClick : null;
             return _react2.default.createElement(
                 'div',
-                { className: 'small-12 medium-4 large-3 column' },
+                { className: 'small-12 medium-4 large-3 column', onClick: spotClick },
                 _react2.default.createElement(
                     'span',
                     { className: 'name' },
@@ -33088,17 +33088,17 @@ var Spot = function (_Component) {
                     ),
                     canmodify && isparked && _react2.default.createElement(
                         'button',
-                        { onClick: onClick, className: 'button-flavor green' },
+                        { className: 'button-flavor green' },
                         buttonTxt
                     ),
                     canmodify && !isparked && _react2.default.createElement(
                         'button',
-                        { onClick: onClick, className: 'button-flavor blue' },
+                        { className: 'button-flavor blue' },
                         buttonTxt
                     ),
                     !isLogged && !isparked && _react2.default.createElement(
                         'button',
-                        { className: 'button-flavor pink', onClick: onLoginClick },
+                        { className: 'button-flavor pink' },
                         'Login to park'
                     )
                 )
@@ -33572,20 +33572,24 @@ function receiveLoginError(json) {
 
 function fetchUser(dispatchCallback) {
     return function (dispatch) {
-        return _ApiClient2.default.getUser((0, _helpers.getCookie)("skey")).then(function (response) {
-            return response.json();
-        }).then(function (json) {
-            if (json.error) dispatch(receiveLoginError(json));else {
-                dispatch(dispatchCallback(json));
-            }
-        }).catch(function (ex) {
-            dispatch(receiveLoginError({ message: "fetchUser: " + ex }));
-        });
+        var skey = (0, _helpers.getCookie)("skey");
+        if (skey !== undefined && skey !== null) {
+            return _ApiClient2.default.getUser(skey).then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                if (json.error) dispatch(receiveLoginError(json));else {
+                    dispatch(dispatchCallback(json));
+                }
+            }).catch(function (ex) {
+                dispatch(receiveLoginError({ message: "fetchUser: " + ex }));
+            });
+        }
     };
 }
 
 function setDefaultScene() {
     return function (dispatch) {
+        dispatch(fetchUser(receiveLogin));
         var dlot = parseInt((0, _helpers.getCookie)("dlot")) | 0;
         console.log("Default lot: ", dlot);
         if (dlot !== undefined && dlot !== null && dlot > 0) {

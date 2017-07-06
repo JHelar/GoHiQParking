@@ -49,7 +49,9 @@ class Header extends Component {
                         {isLogged &&
                         <LogoutButton onClick={() => dispatch(fetchLogout()) } />
                         }
+                        {!isLogged &&
                         <RegisterButton onClick={() => this.onChangeScene(SCENE.SHOW_REGISTER)}/>
+                        }
                     </div>
                 </header>
             </div>

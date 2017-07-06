@@ -74,3 +74,8 @@
   transform: rotate($deg);
 }
 
+@mixin ff-only {
+  @-moz-document url-prefix() {
+      @content;
+  }
+}

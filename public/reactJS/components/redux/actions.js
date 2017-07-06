@@ -226,22 +226,26 @@ export function receiveLoginError(json) {
 
 export function fetchUser(dispatchCallback) {
     return dispatch => {
-        return Client.getUser(getCookie("skey"))
-            .then(response => response.json())
-            .then(json => {
-                if(json.error) dispatch(receiveLoginError(json));
-                else {
-                    dispatch(dispatchCallback(json));
-                }
-            })
-            .catch(function (ex) {
-                dispatch(receiveLoginError({message: "fetchUser: " + ex}));
-            })
+        let skey = getCookie("skey");
+        if(skey !== undefined && skey !== null){
+            return Client.getUser(skey)
+                .then(response => response.json())
+                .then(json => {
+                    if(json.error) dispatch(receiveLoginError(json));
+                    else {
+                        dispatch(dispatchCallback(json));
+                    }
+                })
+                .catch(function (ex) {
+                    dispatch(receiveLoginError({message: "fetchUser: " + ex}));
+                })
+        }
     };
 }
 
 export function setDefaultScene(){
     return dispatch => {
+        dispatch(fetchUser(receiveLogin));
         let dlot = parseInt(getCookie("dlot")) | 0;
         console.log("Default lot: ", dlot);
         if(dlot !== undefined && dlot !== null && dlot > 0){

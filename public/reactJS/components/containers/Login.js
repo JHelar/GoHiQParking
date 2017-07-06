@@ -18,10 +18,10 @@ let Login = ({ dispatch }) => {
             }}>
                 <input ref={node => {
                     inputNameEmail = node;
-                }} type="text"/>
+                }} type="text" placeholder="Username / Email"/>
                 <input ref={node => {
                     inputPassword = node;
-                }} type="password"/>
+                }} type="password" placeholder="Password"/>
                 <button type="submit" className="button pink">Login</button>
             </form>
         </main>

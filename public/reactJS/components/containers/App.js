@@ -19,7 +19,6 @@ class App extends Component {
     componentDidMount(){
         const { dispatch } = this.props;
         dispatch(fetchParkingLots());
-        dispatch(fetchUser(receiveLogin));
         dispatch(setDefaultScene());
         GeoClient.getDistance({long: 0, lat: 0}, (dist) => dispatch(geoLocationSetUp(dist)));
     }

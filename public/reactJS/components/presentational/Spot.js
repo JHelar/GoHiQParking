@@ -16,8 +16,9 @@ class Spot extends Component {
         const { onInfoClick, onClick, onLoginClick, canGeoPoll, distance, name, isparked, canmodify, parkedby, parkedtime, isLogged } = this.props;
         let buttonTxt = isparked ? "Leave" : "Park";
         let spotClass = isparked ? "spot parked" : "spot";
+        let spotClick = !isLogged && !isparked ? onLoginClick : isLogged && canmodify ? onClick : null;
         return (
-            <div className="small-12 medium-4 large-3 column">
+            <div className="small-12 medium-4 large-3 column" onClick={spotClick}>
                 <span className="name">{name}</span>
                 <div className={spotClass}>
                     {isparked &&
@@ -27,17 +28,17 @@ class Spot extends Component {
                     <p>{distance}</p>
                     }
                     {(canmodify && isparked) &&
-                    <button onClick={onClick} className="button-flavor green">
+                    <button className="button-flavor green">
                         { buttonTxt }
                     </button>
                     }
                     {(canmodify && !isparked) &&
-                    <button onClick={onClick} className="button-flavor blue">
+                    <button className="button-flavor blue">
                         { buttonTxt }
                     </button>
                     }
                     {(!isLogged && !isparked) &&
-                    <button className="button-flavor pink" onClick={onLoginClick}>Login to park</button>
+                    <button className="button-flavor pink">Login to park</button>
                     }
                 </div>
             </div>
