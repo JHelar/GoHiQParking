@@ -445,7 +445,7 @@ footer {
   @include transition();
   .user-name,
   a {
-    font-family: $font-family-hiqrough;
+    
     font-size: $font-size-25;
     font-weight: 700;
     color: $white;
@@ -456,8 +456,12 @@ footer {
       font-size: $font-size-5;
     }
   }
-
+  .user-name {
+    font-family: $font-family-robotobold;
+    border-bottom: 2px solid $pink;
+  }
   a {
+    font-family: $font-family-hiqrough;
     @include transition(all, .2s);
     &:hover {
       color: $pink;
@@ -489,11 +493,14 @@ footer {
   flex-flow: row wrap;
   justify-content: flex-start;
   align-items: flex-start;
-  align-content: space-around;
+  align-content: flex-start;
 
+  @include breakpoint(medium){
+    align-content: space-around;
+  }
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 120px 1.5rem 0 1.5rem;
+  padding: 140px 1.5rem 0 1.5rem;
 
   > span:first-child {
     display: block;
@@ -616,11 +623,31 @@ footer {
   }
 }
 
+.current-lot-location {
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  @include font($font-size-15, $font-family-hiqrough, $blue, 700);
+
+  @include breakpoint(medium){
+    font-size: $font-size-25;
+  }
+
+  &:focus,
+  &:hover{
+    color: $pink;
+    @include text-shadow($yellow);
+  }
+}
+
 .spots-wrapper {
   position: relative;
   z-index: 0;
   margin-top: 1rem;
 
+  @include breakpoint(medium){
+    margin-top: 2rem;
+  }
   .name {
     display: block;
     text-align: center;
@@ -806,7 +833,7 @@ footer {
   align-items: center;
   
   > p {
-    @include font($font-size-15, $font-family-reeniebeanie, $white);
+    @include font($font-size-2, $font-family-reeniebeanie, $white);
     @include breakpoint(medium){
       @include font($font-size-4, $font-family-reeniebeanie, $white);
     }

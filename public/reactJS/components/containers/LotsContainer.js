@@ -17,7 +17,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         onLotClick: (id) => {
-            createCookie("dlot", id);
+            createCookie("dlot", id, 360);
             dispatch(selectParkingLot(id));
             dispatch(fetchSpots(id));
             dispatch(updateLotListener(id));

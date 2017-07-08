@@ -4233,7 +4233,6 @@ footer {
   transition: all 0.2s ease-out; }
   #menu .user-name,
   #menu a {
-    font-family: "HiQRough", sans-serif;
     font-size: 2.5rem;
     font-weight: 700;
     color: #ffffff;
@@ -4243,7 +4242,11 @@ footer {
       #menu .user-name,
       #menu a {
         font-size: 5rem; } }
+  #menu .user-name {
+    font-family: "RobotoBold", sans-serif;
+    border-bottom: 2px solid #fe0070; }
   #menu a {
+    font-family: "HiQRough", sans-serif;
     -webkit-transition: all 0.2s ease-out;
     -moz-transition: all 0.2s ease-out;
     -ms-transition: all 0.2s ease-out;
@@ -4276,15 +4279,18 @@ footer {
   flex-flow: row wrap;
   justify-content: flex-start;
   align-items: flex-start;
-  align-content: space-around;
+  align-content: flex-start;
   z-index: 10;
   background-color: rgba(0, 0, 0, 0.8);
-  padding: 120px 1.5rem 0 1.5rem;
+  padding: 140px 1.5rem 0 1.5rem;
   -webkit-transition: transform 0.2s ease-out;
   -moz-transition: transform 0.2s ease-out;
   -ms-transition: transform 0.2s ease-out;
   -o-transition: transform 0.2s ease-out;
   transition: transform 0.2s ease-out; }
+  @media print, screen and (min-width: 40em) {
+    .lot-wrapper {
+      align-content: space-around; } }
   .lot-wrapper > span:first-child {
     display: block;
     width: 100%;
@@ -4385,10 +4391,29 @@ footer {
     .current-lot-name {
       font-size: 6rem; } }
 
+.current-lot-location {
+  display: block;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  font-family: "HiQRough", sans-serif;
+  font-weight: 700;
+  line-height: inherit;
+  color: #00a3f2; }
+  @media print, screen and (min-width: 40em) {
+    .current-lot-location {
+      font-size: 2.5rem; } }
+  .current-lot-location:focus, .current-lot-location:hover {
+    color: #fe0070;
+    text-shadow: 3px 3px 0 #ffe50d; }
+
 .spots-wrapper {
   position: relative;
   z-index: 0;
   margin-top: 1rem; }
+  @media print, screen and (min-width: 40em) {
+    .spots-wrapper {
+      margin-top: 2rem; } }
   .spots-wrapper .name {
     display: block;
     text-align: center;
@@ -4615,7 +4640,7 @@ footer {
   align-items: center; }
   .lot-texts > p,
   .welcometext > p {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-family: "Reenie Beanie";
     font-weight: 400;
     line-height: inherit;

@@ -13,7 +13,7 @@ class Spot extends Component {
     }
 
     render() {
-        const { onInfoClick, onClick, onLoginClick, canGeoPoll, distance, name, isparked, canmodify, parkedby, parkedtime, isLogged } = this.props;
+        const { onClick, onLoginClick, canGeoPoll, distance, name, isparked, canmodify, parkedby, parkedtime, isLogged } = this.props;
         let buttonTxt = isparked ? "Leave" : "Park";
         let spotClass = isparked ? "spot parked" : "spot";
         let spotClick = !isLogged && !isparked ? onLoginClick : isLogged && canmodify ? onClick : null;
@@ -49,7 +49,6 @@ class Spot extends Component {
 Spot.propTypes = {
     onRemoveSpotInterval: PropTypes.func,
     onSetupSpotInterval: PropTypes.func,
-    onInfoClick: PropTypes.func,
     onClick: PropTypes.func,
     onLoginClick: PropTypes.func,
     canGeoPoll: PropTypes.bool.isRequired,

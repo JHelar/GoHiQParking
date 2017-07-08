@@ -12,9 +12,10 @@ const mapStateToProps = (state) => {
     })[0];
     let lotName = currentLot === undefined ? "" : currentLot.name;
     let spots = currentLot === undefined ? [] : currentLot.spots;
-
+    let lotLocation = currentLot === undefined ? "" : currentLot.location;
     return {
         lotName: lotName,
+        lotLocation: lotLocation,
         isLogged: state.user.isLogged,
         canGeoPoll: state.user.canGeoPoll,
         spots: spots !== undefined ? spots.map((spot, _) => {
@@ -38,10 +39,6 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(fetchSpotInfo(id));
         },
         onRemoveSpotInterval: (id) => {
-        },
-        onInfoClick: (id) => {
-            dispatch(fetchSpotInfo(id));
-            dispatch(showSpotInfo(id));
         },
         onLoginClick: () => dispatch(changeScene(SCENE.SHOW_LOGIN)),
         onSpotClick: (id) => {

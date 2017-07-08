@@ -31720,6 +31720,7 @@ exports.default = GeoClient;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.createMapsUrl = createMapsUrl;
 exports.createCookie = createCookie;
 exports.getCookie = getCookie;
 exports.deleteCookie = deleteCookie;
@@ -31843,6 +31844,10 @@ var mapStyles = {
         return url;
     }
 };
+
+function createMapsUrl(address) {
+    return "https://www.google.com/maps/place/" + address + ",15z";
+}
 
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -32565,9 +32570,10 @@ var mapStateToProps = function mapStateToProps(state) {
     })[0];
     var lotName = currentLot === undefined ? "" : currentLot.name;
     var spots = currentLot === undefined ? [] : currentLot.spots;
-
+    var lotLocation = currentLot === undefined ? "" : currentLot.location;
     return {
         lotName: lotName,
+        lotLocation: lotLocation,
         isLogged: state.user.isLogged,
         canGeoPoll: state.user.canGeoPoll,
         spots: spots !== undefined ? spots.map(function (spot, _) {
@@ -32591,10 +32597,6 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
             dispatch((0, _actions.fetchSpotInfo)(id));
         },
         onRemoveSpotInterval: function onRemoveSpotInterval(id) {},
-        onInfoClick: function onInfoClick(id) {
-            dispatch((0, _actions.fetchSpotInfo)(id));
-            dispatch((0, _actions.showSpotInfo)(id));
-        },
         onLoginClick: function onLoginClick() {
             return dispatch((0, _actions.changeScene)(_constants.SCENE.SHOW_LOGIN));
         },
@@ -33040,7 +33042,6 @@ var Spot = function (_Component) {
         key: 'render',
         value: function render() {
             var _props = this.props,
-                onInfoClick = _props.onInfoClick,
                 onClick = _props.onClick,
                 onLoginClick = _props.onLoginClick,
                 canGeoPoll = _props.canGeoPoll,
@@ -33114,7 +33115,6 @@ var Spot = function (_Component) {
 Spot.propTypes = {
     onRemoveSpotInterval: _react.PropTypes.func,
     onSetupSpotInterval: _react.PropTypes.func,
-    onInfoClick: _react.PropTypes.func,
     onClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
     canGeoPoll: _react.PropTypes.bool.isRequired,
@@ -33212,6 +33212,8 @@ var _Spot = require('../presentational/Spot');
 
 var _Spot2 = _interopRequireDefault(_Spot);
 
+var _helpers = require('../../../general/helpers');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SpotsList = function SpotsList(_ref) {
@@ -33222,7 +33224,7 @@ var SpotsList = function SpotsList(_ref) {
         onRemoveSpotInterval = _ref.onRemoveSpotInterval,
         onSetupSpotInterval = _ref.onSetupSpotInterval,
         onSpotClick = _ref.onSpotClick,
-        _onInfoClick = _ref.onInfoClick,
+        lotLocation = _ref.lotLocation,
         onLoginClick = _ref.onLoginClick;
 
 
@@ -33233,6 +33235,11 @@ var SpotsList = function SpotsList(_ref) {
             'h1',
             { className: 'current-lot-name' },
             lotName
+        ),
+        _react2.default.createElement(
+            'a',
+            { className: 'current-lot-location', target: '_blank', href: (0, _helpers.createMapsUrl)(lotLocation) },
+            lotLocation
         ),
         _react2.default.createElement(
             'div',
@@ -33251,10 +33258,7 @@ var SpotsList = function SpotsList(_ref) {
                     onClick: function onClick() {
                         return onSpotClick(spot.id);
                     },
-                    onLoginClick: onLoginClick,
-                    onInfoClick: function onInfoClick() {
-                        return _onInfoClick(spot.id);
-                    }
+                    onLoginClick: onLoginClick
                 }));
             })
         )
@@ -33266,7 +33270,7 @@ SpotsList.propTypes = {
     onRemoveSpotInterval: _react.PropTypes.func,
     onSpotClick: _react.PropTypes.func,
     onLoginClick: _react.PropTypes.func,
-    onInfoClick: _react.PropTypes.func,
+    lotLocation: _react.PropTypes.string,
     lotName: _react.PropTypes.string.isRequired,
     canGeoPoll: _react.PropTypes.bool.isRequired,
     spots: _react.PropTypes.arrayOf(_react.PropTypes.shape({
@@ -33287,7 +33291,7 @@ SpotsList.propTypes = {
 
 exports.default = SpotsList;
 
-},{"../presentational/Spot":546,"react":509}],549:[function(require,module,exports){
+},{"../../../general/helpers":530,"../presentational/Spot":546,"react":509}],549:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

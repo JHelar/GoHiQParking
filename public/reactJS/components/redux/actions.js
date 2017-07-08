@@ -247,7 +247,7 @@ export function setDefaultScene(){
     return dispatch => {
         dispatch(fetchUser(receiveLogin));
         let dlot = parseInt(getCookie("dlot")) | 0;
-        console.log("Default lot: ", dlot);
+        
         if(dlot !== undefined && dlot !== null && dlot > 0){
             dispatch(selectParkingLot(dlot));
             dispatch(fetchSpots(dlot));

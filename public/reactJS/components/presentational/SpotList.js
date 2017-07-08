@@ -3,11 +3,13 @@
  */
 import React, { Component, PropTypes } from 'react';
 import Spot from '../presentational/Spot';
+import { createMapsUrl } from '../../../general/helpers';
 
-const SpotsList = ({lotName, spots, canGeoPoll, isLogged, onRemoveSpotInterval, onSetupSpotInterval, onSpotClick, onInfoClick, onLoginClick}) => {
+const SpotsList = ({lotName, spots, canGeoPoll, isLogged, onRemoveSpotInterval, onSetupSpotInterval, onSpotClick, lotLocation, onLoginClick}) => {
 
     return (spots !== undefined && <main>
         <h1 className="current-lot-name">{lotName}</h1>
+        <a  className="current-lot-location" target="_blank" href={createMapsUrl(lotLocation)}>{lotLocation}</a>
         <div className="spots-wrapper row align-spaced">
         {spots.map(spot =>
             <Spot
@@ -19,7 +21,6 @@ const SpotsList = ({lotName, spots, canGeoPoll, isLogged, onRemoveSpotInterval, 
                 onSetUpSpotIntervall={() => onSetupSpotInterval(spot.id, spot.pos)}
                 onClick={() => onSpotClick(spot.id)}
                 onLoginClick={onLoginClick}
-                onInfoClick={() => onInfoClick(spot.id)}
             />
         )}
         </div>
@@ -31,7 +32,7 @@ SpotsList.propTypes = {
     onRemoveSpotInterval: PropTypes.func,
     onSpotClick: PropTypes.func,
     onLoginClick: PropTypes.func,
-    onInfoClick: PropTypes.func,
+    lotLocation: PropTypes.string,
     lotName: PropTypes.string.isRequired,
     canGeoPoll: PropTypes.bool.isRequired,
     spots: PropTypes.arrayOf(PropTypes.shape({
